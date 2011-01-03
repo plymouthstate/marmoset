@@ -1,0 +1,106 @@
+body {
+	font-family: Calibri, Trebuchet MS, Arial;
+}
+
+@mixin round-border($size) {
+	border-radius: $size;
+	border-radius: $size;
+	-webkit-border-radius: $size;
+	-webkit-border-radius: $size;
+}
+
+@mixin round-top($size) {
+	border-top-left-radius: $size;
+	border-top-right-radius: $size;
+	-webkit-border-top-left-radius: $size;
+	-webkit-border-top-right-radius: $size;
+}
+
+@mixin round-bottom-right($size) {
+	border-bottom-right-radius: $size;
+	-webkit-border-bottom-right-radius: $size;
+}
+
+$projectrounding: 5px;
+
+.projects {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	h2 {
+		display: inline;
+		font-size: 1.2em;
+		margin: 2px;
+		padding: 0;
+
+		.date {
+			position: absolute;
+			font-weight: normal;
+			right: 1ex;
+		}
+
+		.date span {
+			font-size: .9em;
+		}
+	}
+}
+
+$projectwidth: 80%;
+
+.projects li.project {
+	display: block;
+	position: relative;
+	list-style: none;
+	margin: 3px;
+	padding: 0;
+	background-color: #F3FFE6;
+	height: 2em;
+	@include round-border($projectrounding);
+}
+
+.projects li.priority-2 { background-color: #FFECEF; }
+.projects li.priority-2 .progress { background-color: #FFBABB; }
+.projects li.priority-3 { background-color: #FFF6E7; }
+.projects li.priority-3 .progress { background-color: #FFE2AB; }
+
+.progress, .contents {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	display: block;
+	-webkit-background-clip: padding-box;
+	border: 1px solid #333;
+	@include round-border($projectrounding);
+}
+
+.progress {
+	background-color: #BAFF9D;
+}
+
+.contents {
+	right: 0;
+}
+
+.progress-0 { display: none; }
+.progress-5 { width: 5%; }
+.progress-10 { width: 10%; }
+.progress-15 { width: 15%; }
+.progress-20 { width: 20%; }
+.progress-25 { width: 25%; }
+.progress-30 { width: 30%; }
+.progress-35 { width: 35%; }
+.progress-40 { width: 40%; }
+.progress-45 { width: 45%; }
+.progress-50 { width: 50%; }
+.progress-55 { width: 55%; }
+.progress-60 { width: 60%; }
+.progress-65 { width: 65%; }
+.progress-70 { width: 70%; }
+.progress-75 { width: 75%; }
+.progress-80 { width: 80%; }
+.progress-85 { width: 85%; }
+.progress-90 { width: 90%; }
+.progress-95 { width: 95%; }
+.progress-100 { right: 0; }
