@@ -106,11 +106,14 @@ li.project {}
 .projects li.priority-3 .progress { background-color: #FFE2AB; }
 
 .projects .item-number{
+	display: block;
 	font-size: 1.2em;
 	opacity: 0.3;
 	padding: 0.2em;
 	position: absolute;
-	left: -2em;
+	left: -3.8em;
+	text-align: right;
+	width: 3em;
 }
 
 .focus-meta .project{opacity: 0.3;}
