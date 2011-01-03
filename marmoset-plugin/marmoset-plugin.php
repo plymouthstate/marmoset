@@ -211,13 +211,10 @@ class Marmoset {
 		if( $marm_status != $tax['marm_status'] || $marm_queue != $tax['marm_queue'])  {
 			$order_value = 0;
 
-			add_filter( 'posts_where', __CLASS__ . '::tax_terms_where', 10, 2 );
-			query_posts("posts_per_page=1&post_status=publish&post_type=marm_project&tax_terms=marm_status:{$tax['marm_status']},marm_queue:{$tax['marm_queue']}&meta_key=project_order&orderby=meta_value_num&order=DESC");
-			remove_filter( 'posts_where', __CLASS__ . '::tax_terms_where', 10, 2 );
+			self::get_projects( array( 'posts_per_page' => 1 ) );
 
 			if( have_posts() && $post = the_post() ) {
 				$order_value = get_post_meta( $post->ID, 'project_order', true );
-				var_dump($order_value);die();
 			}
 
 			update_post_meta( $post_id, 'project_order', $order_value + 1 );
@@ -233,44 +230,48 @@ class Marmoset {
 	/**
 	 * Project list to fetch has an implicit queue. Fetch projects with a given status.
 	 */
-	public static function get_projects( $status ) {
-		global $query_string;
+	public static function get_projects( $args ) {
+		$defaults = array(
+			'posts_per_page' => -1,
+			'post_status' => 'publish',
+			'post_type' => 'marm_project',
+			'meta_key' => 'project_order',
+			'orderby' => 'meta_value_num',
+			'order' => 'ASC'
+		);
 
-		parse_str($query_string, $qv);
-		$queue = $qv['marm_queue'];
+		$args = wp_parse_args( $args, $defaults );
 
-		add_filter( 'posts_where', __CLASS__ . '::tax_terms_where', 10, 2 );
-		query_posts("posts_per_page=-1&post_status=publish&post_type=marm_project&tax_terms=marm_status:$status,marm_queue:$queue&meta_key=project_order&orderby=meta_value_num&order=ASC");
-		remove_filter( 'posts_where', __CLASS__ . '::tax_terms_where', 10, 2 );
+		$status = $args['status'];
+
+		if( isset($args['queue']) ) {
+			$queue = $args['queue'];
+		} else {
+			global $query_string;
+
+			parse_str($query_string, $qv);
+			$queue = $qv['marm_queue'];
+		}
+
+		$tax_query = array(
+			array(
+				'taxonomy' => 'marm_status',
+				'terms' => $status,
+				'field' => 'slug',
+			),
+			array(
+				'taxonomy' => 'marm_queue',
+				'terms' => $queue,
+				'field' => 'slug',
+			),
+		);
+
+		$args['tax_query'] = $tax_query;
+
+		query_posts( $args );
 
 		include TEMPLATEPATH . '/projects-compact.php';
 	}//end get_projects
-
-	public static function tax_terms_where($where, $wp_query) {
-		if(isset($wp_query->query)) {
-			$query = $wp_query->query;
-			if (is_string($query))
-				parse_str($query,$query);
-			if (is_array($query) && isset($query['tax_terms'])) {
-				global $wpdb;
-				$tax_terms = explode(',',$query['tax_terms']);
-				foreach($tax_terms as $tax_term) {
-					list($taxonomy,$term) = explode(':',$tax_term);
-					$sql = "
-						AND $wpdb->posts.ID IN (
-								SELECT tr.object_id
-								FROM $wpdb->term_relationships AS tr
-								INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-								INNER JOIN $wpdb->terms AS t ON tt.term_id = t.term_id
-								WHERE tt.taxonomy='%s' AND t.slug='%s'
-								)
-					";
-					$where .= $wpdb->prepare($sql,$taxonomy,$term);
-				}
-			}
-		}
-		return $where;
-	}
 
 	public static function the_due_date() {
 		global $post;
