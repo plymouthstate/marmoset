@@ -291,7 +291,8 @@ body {
   right: -15ex;
   width: 14ex;
   top: -1px;
-  opacity: 0.5; }
+  opacity: 0.5;
+  z-index: 15; }
 
 .complexity span {
   border: 1px solid #ccc;
