@@ -27,11 +27,12 @@ body {
     font-size: 1.2em;
     margin: 2px;
     padding: 0; }
-    .projects h2 .date {
-      position: absolute;
-      font-weight: normal;
-      right: 1ex; }
-    .projects h2 .date span {
+  .projects .date {
+    position: absolute;
+    font-size: 1.2em;
+    font-weight: normal;
+    right: 1ex; }
+    .projects .date span {
       font-size: .9em; }
 
 .ui-state-highlight {
@@ -46,12 +47,15 @@ body {
   height: 2em; }
 
 .project .permalink {
+  color: #777;
   display: none;
   float: right;
-  font-size: 0.9em;
   font-weight: normal;
-  margin-right: 5.5em;
+  margin-right: 6em;
   padding-top: 0.2em; }
+
+.project .permalink a {
+  color: #555; }
 
 .expanded .permalink,
 .project:hover .permalink {
@@ -141,8 +145,8 @@ body {
   text-shadow: rgba(255, 255, 255, 0.6) 0 1px 0; }
 
 .progress {
-  background: #C9DFDD;
-  border-color: #C9DFDD; }
+  background: #c7d6c8;
+  border-color: #c7d6c8; }
 
 .contents {
   border-radius: 5px;
@@ -155,9 +159,13 @@ body {
 
 .project-title {
   right: 0;
-  padding-left: 1ex; }
+  padding-left: 1ex;
+  z-index: 15; }
+  .project-title .type,
   .project-title sup {
     display: none; }
+  .project-title .type {
+    color: #999; }
 
 .details {
   overflow: hidden;
@@ -179,13 +187,14 @@ body {
   opacity: .95; }
 
 .details .meta {
+  border-bottom: 1px solid #ccc;
+  list-style: none;
   margin: 1ex 0;
-  list-style: none; }
+  padding-bottom: 0.5em; }
   .details .meta li {
     margin-left: 0; }
 
 .details .body {
-  border-bottom: 1px solid #ccc;
   margin-top: 0.5em; }
   .details .body p {
     margin-bottom: 1ex; }
@@ -202,6 +211,9 @@ body {
 
 .contents > div.progress-0 {
   display: none; }
+
+.progress-0 {
+  visibility: hidden; }
 
 .progress-5 {
   width: 5%; }
@@ -278,68 +290,136 @@ body {
   left: auto;
   right: -15ex;
   width: 14ex;
-  top: -1px; }
+  top: -1px;
+  opacity: 0.5; }
 
 .complexity span {
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  border-radius: 1ex;
   display: block;
   float: left;
-  width: 1.5ex;
-  border: 1px solid #070;
-  background-color: #7d7;
-  border-radius: 1ex;
+  height: 2em;
   margin-right: 1ex;
-  height: 2em; }
-
-.complexity-1 span {
-  background-color: #7D7;
-  border-color: #070; }
-
-.complexity-2 span {
-  background-color: #B1DB76;
-  border-color: #367500; }
-
-.complexity-3 span {
-  background-color: #DBC076;
-  border-color: #717500; }
-
-.complexity-4 span {
-  background-color: #DBA674;
-  border-color: #915017; }
-
-.complexity-5 span {
-  background-color: #D77;
-  border-color: #700; }
+  width: 1.5ex; }
 
 .complexity .readable {
   display: none; }
 
-.complexity-0 .circle-1,
-.complexity-0 .circle-2,
-.complexity-0 .circle-3,
-.complexity-0 .circle-4,
-.complexity-0 .circle-5,
-.complexity-1 .circle-2,
-.complexity-1 .circle-3,
-.complexity-1 .circle-4,
-.complexity-1 .circle-5,
-.complexity-2 .circle-3,
-.complexity-2 .circle-4,
-.complexity-2 .circle-5,
-.complexity-3 .circle-4,
-.complexity-3 .circle-5,
-.complexity-4 .circle-5 {
-  background-color: #f5f5f5;
-  border-color: #ccc; }
+.complexity-1 .indicator-1 {
+  background-color: #7D7;
+  border-color: #070; }
 
-.complexity {
-  opacity: 0.3; }
+.complexity-2 .indicator-1,
+.complexity-2 .indicator-2 {
+  background-color: #b1db76;
+  border-color: #367500; }
+
+.complexity-3 .indicator-1,
+.complexity-3 .indicator-2,
+.complexity-3 .indicator-3 {
+  background-color: #dbc076;
+  border-color: #717500; }
+
+.complexity-4 .indicator-1,
+.complexity-4 .indicator-2,
+.complexity-4 .indicator-3,
+.complexity-4 .indicator-4 {
+  background-color: #dba674;
+  border-color: #915017; }
+
+.complexity-5 .indicator-1,
+.complexity-5 .indicator-2,
+.complexity-5 .indicator-3,
+.complexity-5 .indicator-4,
+.complexity-5 .indicator-5 {
+  background-color: #d77;
+  border-color: #700; }
 
 .contents:hover .complexity,
 .expanded .complexity {
   opacity: 1; }
 
-.complexity .circle-5 {
+.complexity .indicator-5 {
   margin-right: 0; }
+
+.single-marmproject .projects > .project {
+  background: #fff;
+  border: 1px solid #888;
+  cursor: default;
+  height: auto;
+  position: relative;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px; }
+  .single-marmproject .projects > .project .progress, .single-marmproject .projects > .project .contents, .single-marmproject .projects > .project .details, .single-marmproject .projects > .project .contents > div {
+    position: relative; }
+  .single-marmproject .projects > .project .item-number {
+    display: none; }
+  .single-marmproject .projects > .project .contents {
+    background: transparent;
+    border-bottom: none;
+    right: 1px; }
+  .single-marmproject .projects > .project .project-title {
+    background: transparent;
+    border: none;
+    padding-right: 6em;
+    position: relative; }
+  .single-marmproject .projects > .project h2 {
+    display: block;
+    font-size: 1.8em;
+    margin-right: 5.2em; }
+    .single-marmproject .projects > .project h2 .type {
+      display: inline; }
+  .single-marmproject .projects > .project .date {
+    font-size: 1.8em;
+    right: 4em;
+    top: 0; }
+  .single-marmproject .projects > .project .progress-container {
+    border-bottom: 1px solid #888;
+    border-top: 1px solid #888;
+    clear: both;
+    margin-top: 0.4em;
+    position: static;
+    height: 0.4em; }
+  .single-marmproject .projects > .project .progress {
+    border: none;
+    position: relative;
+    height: 0.4em;
+    left: 0;
+    right: 0;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0; }
+  .single-marmproject .projects > .project .progress-0 {
+    background-color: #f5f5f5;
+    visibility: visible; }
+  .single-marmproject .projects > .project .progress-100 {
+    right: 1px; }
+  .single-marmproject .projects > .project .contents > div.complexity {
+    position: absolute;
+    opacity: 1;
+    right: 0; }
+  .single-marmproject .projects > .project .complexity span {
+    height: 2.5em;
+    margin-bottom: 0.25em;
+    margin-top: 0.25em; }
+  .single-marmproject .projects > .project .details {
+    background: transparent;
+    border: none;
+    display: block;
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+    position: static;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0; }
+    .single-marmproject .projects > .project .details .meta, .single-marmproject .projects > .project .details .body p {
+      font-size: 1.1em; }
+
+.single-marmproject .projects > .expanded .permalink,
+.single-marmproject .projects > .project:hover .permalink {
+  display: none; }
 
 /* vim:filetype=css:
 */
