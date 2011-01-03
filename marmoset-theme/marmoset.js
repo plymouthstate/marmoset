@@ -27,6 +27,49 @@ $.root.delegate('html', 'click', function() { marm.toggle_select(); });
 $.root.delegate('.project .details', 'click', function(e) { e.stopPropagation(); });
 $.root.delegate('.project .permalink a', 'click', function(e) { e.stopPropagation(); });
 
+$.root.delegate('.project .complexity', 'mouseleave', function(e) { 
+	var $el = $(this);
+
+	$el
+		.removeClass('complexity-1')
+		.removeClass('complexity-2')
+		.removeClass('complexity-3')
+		.removeClass('complexity-4')
+		.removeClass('complexity-5')
+		.addClass('complexity-' + $el.data('complexity'));
+});
+
+$.root.delegate('.project .complexity', 'click', function(e) { 
+	e.stopPropagation();
+
+	var $el = $(this);
+
+	var temp_complexity = $el.data('temp-complexity');
+
+	// TODO: ajax save complexity click
+	$el.data('complexity', temp_complexity);
+});
+
+$.root.delegate('.project .complexity .indicator', 'mouseover', function(e) { 
+	var $el = $(this);
+	var $parent = $el.parent();
+
+	var complexity = 0;
+	for(; complexity < 6; complexity++ ) {
+		if( $el.is('.indicator-' + complexity) ) {
+			$parent
+				.removeClass('complexity-1')
+				.removeClass('complexity-2')
+				.removeClass('complexity-3')
+				.removeClass('complexity-4')
+				.removeClass('complexity-5')
+				.addClass('complexity-' + complexity)
+				.data('temp-complexity', complexity);
+			break;
+		}//end if
+	}//end for
+});
+
 $.root.delegate('#toggle-unfocused', 'click', function(e) {
 	e.preventDefault();
 	marm.hide_unfocused();
