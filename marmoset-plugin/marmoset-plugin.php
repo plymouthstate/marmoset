@@ -326,3 +326,30 @@ register_activation_hook( __FILE__, 'Marmoset::activate' );
 add_action('save_post', 'Marmoset::project_properties_save');
 
 add_action( 'add_meta_boxes_marm_project', 'Marmoset::remove_meta_boxes' );
+
+if( !function_exists( 'the_project_complexity' ) ) {
+	$marm_project_complexity = array();
+
+	function the_project_complexity() {
+		global $post;
+
+		if( !isset( $marm_project_complexity[ $post->ID ] ) ) {
+			$marm_project_complexity[ $post->ID ] = (int) get_post_meta( get_the_ID(), 'project_complexity', true);
+		}//end if
+
+		echo $marm_project_complexity[ $post->ID ];
+		
+	}//end the_project_complexity
+}//end if
+
+if( !function_exists( 'the_project_queue' ) ) {
+	$marm_project_queue = array();
+
+	function get_project_queue() {
+		global $post;
+
+		$queue = wp_get_object_terms( get_the_ID(), array('marm_queue') );
+
+		return $queue[0];
+	}//end the_project_queue
+}//end if
