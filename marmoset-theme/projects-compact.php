@@ -13,9 +13,13 @@
 				<span class="date" title="Estimated Date of Completion"><span><?php Marmoset::the_due_date(); ?></span></span>
 				<span class="permalink">[<a href="<?php the_permalink(); ?>" title="View Project Details">Details</a>]</span>
 			</div>
-			<div data-complexity="<?php the_project_complexity(); ?>" class="complexity complexity-<?php the_project_complexity(); ?>" title="Project Complexity (<?php the_project_complexity(); ?>)">
+			<div data-complexity="<?php the_project_complexity(); ?>" data-complexity-original="<?php the_project_complexity(); ?>" class="complexity complexity-<?php the_project_complexity(); ?>" title="Project Complexity (<?php the_project_complexity(); ?>)">
 				<span class="readable"><?php the_project_complexity(); ?></span>
 				<span class="indicator indicator-1"></span><span class="indicator indicator-2"></span><span class="indicator indicator-3"></span><span class="indicator indicator-4"></span><span class="indicator indicator-5"></span></span>
+				<ul>
+					<li class="complexity-clear">clear</li>
+					<li class="complexity-reset">reset</li>
+				</ul>
 			</div>
 			<div class="progress-container">
 				<div class="progress progress-<?php echo get_post_meta( get_the_ID(), 'project_progress', true ); ?>"></div> 

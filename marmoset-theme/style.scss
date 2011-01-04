@@ -273,8 +273,8 @@ li.project {}
 
 .contents > div.complexity {
 	left: auto;
-	right: -15ex;
-	width: 14ex;
+	right: -31ex;
+	width: 30ex;
 	top: -1px;
 
 	opacity: 0.5;
@@ -314,6 +314,25 @@ li.project {}
 .expanded .complexity{opacity:1;}
 
 .complexity .indicator-5 { margin-right: 0; }
+
+.complexity ul{ 
+	display: none;
+	float: left;
+	list-style-type: none; 
+	margin: 0;
+	padding: 0;
+
+	li {
+		color: #555;
+		display: inline;
+		margin: 0 0 0 0.5em;
+		padding: 0.5em 0 0 0;
+	}
+}
+
+.complexity:hover ul{
+	display: block;
+}
 
 .single-marmproject .projects > .project {
 	background: #fff;

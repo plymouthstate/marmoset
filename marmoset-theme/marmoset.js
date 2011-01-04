@@ -1,142 +1,3 @@
-
-(function($) {
-
-$.root = $(document);
-
-$('.projects').sortable({
-	connectWith: '.projects',
-	cursor: 'default',
-	opacity: 0.4,
-	dropOnEmpty: true,
-	placeholder: 'ui-state-highlight',
-	stop: function(event, ui){
-		// purge any lingering inline styles from dragging...because those are stupid
-		ui.item.attr('style', '');
-	},
-	deactivate: function(event, ui){
-		marm.update_numbers(ui.item.closest('.projects'));
-	}
-});
-
-$.root.delegate('.projects', 'selectstart', function() { return false; });
-
-var proj_queue = $('.project-queue').data('queue');
-
-$.root.delegate('.project', 'click', function(e) { e.stopPropagation(); marm.toggle_select( $(this) ); });
-$.root.delegate('html', 'click', function() { marm.toggle_select(); });
-$.root.delegate('.project .details', 'click', function(e) { e.stopPropagation(); });
-$.root.delegate('.project .permalink a', 'click', function(e) { e.stopPropagation(); });
-
-$.root.delegate('.project .complexity', 'mouseleave', function(e) { 
-	var $el = $(this);
-
-	$el
-		.removeClass('complexity-1')
-		.removeClass('complexity-2')
-		.removeClass('complexity-3')
-		.removeClass('complexity-4')
-		.removeClass('complexity-5')
-		.addClass('complexity-' + $el.data('complexity'));
-});
-
-$.root.delegate('.project .complexity', 'click', function(e) { 
-	e.stopPropagation();
-
-	var $el = $(this);
-
-	var temp_complexity = $el.data('temp-complexity');
-
-	// TODO: ajax save complexity click
-	$el.data('complexity', temp_complexity);
-});
-
-$.root.delegate('.project .complexity .indicator', 'mouseover', function(e) { 
-	var $el = $(this);
-	var $parent = $el.parent();
-
-	var complexity = 0;
-	for(; complexity < 6; complexity++ ) {
-		if( $el.is('.indicator-' + complexity) ) {
-			$parent
-				.removeClass('complexity-1')
-				.removeClass('complexity-2')
-				.removeClass('complexity-3')
-				.removeClass('complexity-4')
-				.removeClass('complexity-5')
-				.addClass('complexity-' + complexity)
-				.data('temp-complexity', complexity);
-			break;
-		}//end if
-	}//end for
-});
-
-$.root.delegate('#toggle-unfocused', 'click', function(e) {
-	e.preventDefault();
-	marm.hide_unfocused();
-});
-
-$.root.delegate('.project .meta li a, #project-filter ul a', 'click', function(e) {
-	e.preventDefault();
-
-	var meta = $(this).closest('li').attr('class');
-	var meta_contents = $(this).html();
-	var href = $(this).attr('href');
-	var member = /[a-z_]+$/.exec( href );
-
-	marm.toggle_meta_filter( meta, member, meta_contents, true );
-});
-
-$.root.delegate('.projects', 'sortstart', function(event, ui) {
-	$('.project.expanded').removeClass('expanded');
-	$('body').removeClass('focused');
-});
-
-$.root.delegate('.projects', 'sortupdate', function(event, ui) {
-	var $e = $(ui.item),
-		placement,
-		target_id = $e.data('postid'),
-		other_id = 0,
-		proj_status = $e.closest('.project-status').data('status');
-
-	// show the "no projects" text if this list is empty
-	$(this).nextAll('p').toggle( $(this).children(':first').length == 0 );
-
-	// don't run twice if project switched statuses
-	if( ui.sender != null ) {
-		return;
-	}
-
-	var $next = $e.nextAll('.project:first');
-
-	if( $next.length == 1 ) {
-		placement = 'before';
-		other_id = $next.data('postid');
-	} else {
-		var $prev = $e.prevAll('.project:first');
-		
-		if( $prev.length == 1 ) {
-			placement = 'after';
-			other_id = $prev.data('postid');
-		} else {
-			placement = 'single';
-		}
-	}
-
-	var args = {
-		action: 'project_order',
-		target_id: target_id,
-		other_id: other_id,
-		placement: placement,
-		proj_queue: proj_queue,
-		proj_status: proj_status
-	};
-
-	$.get( admin_ajax, args, function( data, ts ) {
-	});
-});
-
-})(jQuery);
-
 var marm = {
 	meta_filters: [],
 	count_projects: function() {
@@ -269,3 +130,168 @@ var marm = {
 		});
 	}
 };
+
+/**
+ * Marmoset Complexity object
+ */
+marm.complexity = {
+	cancel: function() {
+		var $el = $(this);
+
+		if( !$el.is('.complexity') ) {
+			$el = $el.closest('.complexity');
+		}//end if
+
+		var complexity = $el.data('complexity');
+
+		marm.complexity.toggle( $el, complexity );
+	},
+	clear: function() {
+		var $el = $(this).closest('.complexity');
+		marm.complexity.toggle( $el, 0, true );
+	},
+	over: function() {
+		var $el = $(this);
+
+		var complexity = 0;
+		for(; complexity < 6; complexity++ ) {
+			if( $el.is('.indicator-' + complexity) ) {
+				break;
+			}//end if
+		}//end for
+
+		marm.complexity.toggle( $el, complexity );
+	},
+	reset: function() {
+		var $el = $(this).closest('.complexity');
+		var complexity = $el.data('complexity-original');
+
+		marm.complexity.toggle( $el, complexity, true );
+	},
+	set: function( $el ) {
+		var complexity = $el.data('temp-complexity');
+
+		marm.complexity.toggle( $el, complexity, true );
+	},
+	toggle: function( $el, complexity, finalize_complexity ) {
+		for( var i = 0; i < 6; i++ ) {
+			$el.removeClass('complexity-' + i);
+		}//end for
+
+		$el.addClass('complexity-' + complexity);
+		$el.data('temp-complexity', complexity);
+
+		if( finalize_complexity === true ) {
+			$el.data('complexity', complexity);
+		}
+	}
+};
+
+(function($) {
+
+$.root = $(document);
+
+$('.projects').sortable({
+	connectWith: '.projects',
+	cursor: 'default',
+	opacity: 0.4,
+	dropOnEmpty: true,
+	placeholder: 'ui-state-highlight',
+	stop: function(event, ui){
+		// purge any lingering inline styles from dragging...because those are stupid
+		ui.item.attr('style', '');
+	},
+	deactivate: function(event, ui){
+		marm.update_numbers(ui.item.closest('.projects'));
+	}
+});
+
+$.root.delegate('.projects', 'selectstart', function() { return false; });
+
+var proj_queue = $('.project-queue').data('queue');
+
+$.root.delegate('.project', 'click', function(e) { e.stopPropagation(); marm.toggle_select( $(this) ); });
+$.root.delegate('html', 'click', function() { marm.toggle_select(); });
+$.root.delegate('.project .details', 'click', function(e) { e.stopPropagation(); });
+$.root.delegate('.project .permalink a', 'click', function(e) { e.stopPropagation(); });
+
+/**
+ * Complexity Behaviors
+ */
+$.root.delegate('.project .complexity .complexity-reset', 'click', marm.complexity.reset); 
+$.root.delegate('.project .complexity .complexity-clear', 'click', marm.complexity.clear);
+$.root.delegate('.project .complexity ul', 'hover', marm.complexity.cancel);
+$.root.delegate('.project .complexity', 'mouseleave', marm.complexity.cancel);
+$.root.delegate('.project .complexity .indicator', 'mouseover', marm.complexity.over);
+$.root.delegate('.project .complexity', 'click', function(e) { 
+	e.stopPropagation();
+	marm.complexity.set( $(this) );
+});
+
+$.root.delegate('#toggle-unfocused', 'click', function(e) {
+	e.preventDefault();
+	marm.hide_unfocused();
+});
+
+$.root.delegate('.project .meta li a, #project-filter ul a', 'click', function(e) {
+	e.preventDefault();
+
+	var meta = $(this).closest('li').attr('class');
+	var meta_contents = $(this).html();
+	var href = $(this).attr('href');
+	var member = /[a-z_]+$/.exec( href );
+
+	marm.toggle_meta_filter( meta, member, meta_contents, true );
+});
+
+$.root.delegate('.projects', 'sortstart', function(event, ui) {
+	$('.project.expanded').removeClass('expanded');
+	$('body').removeClass('focused');
+});
+
+$.root.delegate('.projects', 'sortupdate', function(event, ui) {
+	var $e = $(ui.item),
+		placement,
+		target_id = $e.data('postid'),
+		other_id = 0,
+		proj_status = $e.closest('.project-status').data('status');
+
+	// show the "no projects" text if this list is empty
+	$(this).nextAll('p').toggle( $(this).children(':first').length == 0 );
+
+	// don't run twice if project switched statuses
+	if( ui.sender != null ) {
+		return;
+	}
+
+	var $next = $e.nextAll('.project:first');
+
+	if( $next.length == 1 ) {
+		placement = 'before';
+		other_id = $next.data('postid');
+	} else {
+		var $prev = $e.prevAll('.project:first');
+		
+		if( $prev.length == 1 ) {
+			placement = 'after';
+			other_id = $prev.data('postid');
+		} else {
+			placement = 'single';
+		}
+	}
+
+	var args = {
+		action: 'project_order',
+		target_id: target_id,
+		other_id: other_id,
+		placement: placement,
+		proj_queue: proj_queue,
+		proj_status: proj_status
+	};
+
+	$.get( admin_ajax, args, function( data, ts ) {
+	});
+});
+
+})(jQuery);
+
