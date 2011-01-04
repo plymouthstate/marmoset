@@ -160,7 +160,7 @@ marm.complexity = {
 			}//end if
 		}//end for
 
-		marm.complexity.toggle( $el, complexity );
+		marm.complexity.toggle( $el.closest('.complexity'), complexity );
 	},
 	reset: function() {
 		var $el = $(this).closest('.complexity');
