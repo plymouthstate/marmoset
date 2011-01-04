@@ -11,8 +11,13 @@ body {
   padding-top: 2em; }
 
 #header h1 {
+  background-image: url(images/marmoset.png);
+  background-repeat: no-repeat;
   font-family: Georgia;
-  font-size: 2.5em; }
+  font-size: 2.5em;
+  height: 75px;
+  margin-top: 1em;
+  padding-left: 90px; }
   #header h1 a {
     color: black;
     text-decoration: none; }
