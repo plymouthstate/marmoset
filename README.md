@@ -1,3 +1,4 @@
+![Marmoset](http://i.abackstrom.com/marmoset.png)
 Marmoset, a WordPress-powered project list.
 
 	cd path/to/wordpress/wp-content
