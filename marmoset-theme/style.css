@@ -423,11 +423,16 @@ body {
   .single-marmproject .projects > .project .contents > div.complexity {
     position: absolute;
     opacity: 1;
-    right: 0; }
+    right: 3px;
+    width: auto;
+    top: 0; }
   .single-marmproject .projects > .project .complexity span {
     height: 2.5em;
     margin-bottom: 0.25em;
     margin-top: 0.25em; }
+  .single-marmproject .projects > .project .complexity:hover ul {
+    position: absolute;
+    right: -5em; }
   .single-marmproject .projects > .project .details {
     background: transparent;
     border: none;

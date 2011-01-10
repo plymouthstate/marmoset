@@ -217,13 +217,15 @@ $.root.delegate('.project .permalink a', 'click', function(e) { e.stopPropagatio
 
 /**
  * Complexity Behaviors
+ *
+ * events are namespaced as marm_complexity
  */
-$.root.delegate('.project .complexity .complexity-reset', 'click', marm.complexity.reset); 
-$.root.delegate('.project .complexity .complexity-clear', 'click', marm.complexity.clear);
-$.root.delegate('.project .complexity ul', 'hover', marm.complexity.cancel);
-$.root.delegate('.project .complexity', 'mouseleave', marm.complexity.cancel);
-$.root.delegate('.project .complexity .indicator', 'mouseover', marm.complexity.over);
-$.root.delegate('.project .complexity', 'click', function(e) { 
+$.root.delegate('.project .complexity .complexity-reset', 'click.marm_complexity', marm.complexity.reset); 
+$.root.delegate('.project .complexity .complexity-clear', 'click.marm_complexity', marm.complexity.clear);
+$.root.delegate('.project .complexity ul', 'hover.marm_complexity', marm.complexity.cancel);
+$.root.delegate('.project .complexity', 'mouseleave.marm_complexity', marm.complexity.cancel);
+$.root.delegate('.project .complexity .indicator', 'mouseover.marm_complexity', marm.complexity.over);
+$.root.delegate('.project .complexity', 'click.marm_complexity', function(e) { 
 	e.stopPropagation();
 	marm.complexity.set( $(this) );
 });
