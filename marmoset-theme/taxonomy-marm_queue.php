@@ -34,6 +34,11 @@
 </div>
 <div class="clear"></div>
 
+<div class="grid_16">
+	<?php include 'submit.php'; ?>
+</div>
+<div class="clear"></div>
+
 </div>
 
 <?php get_footer(); ?>

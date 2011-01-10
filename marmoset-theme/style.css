@@ -450,5 +450,46 @@ body {
 .single-marmproject .projects > .project:hover .permalink {
   display: none; }
 
+textarea[name=marm-content] {
+  width: 75%;
+  height: 6em; }
+
+footer {
+  text-align: center;
+  border-top: 1px solid black;
+  margin-top: 1em;
+  padding-bottom: 3em;
+  padding-top: 1ex; }
+
+.submit-project .input-stakeholders {
+  display: block;
+  height: 16em;
+  width: 40%;
+  overflow: auto; }
+
+form ul, form li {
+  list-style: none;
+  margin: 0; }
+form .input-stakeholders input[type=checkbox] {
+  display: none; }
+form .input-stakeholders .children input[type=checkbox] {
+  display: inline-block; }
+form .children {
+  margin-left: 1em; }
+form label {
+  display: block;
+  float: left;
+  width: 6em;
+  text-align: right;
+  margin-right: 1em; }
+form ul ul label {
+  display: inline;
+  float: none;
+  width: auto;
+  text-align: default;
+  margin-right: 0; }
+form input[type=submit] {
+  margin-top: 1em; }
+
 /* vim:filetype=css:
 */

@@ -69,6 +69,8 @@ class Marmoset {
 		if( is_admin() ) {
 			add_action( 'wp_ajax_project_order', __CLASS__ . '::project_order' );
 		}
+
+		add_action( 'wp_ajax_submit_project', __CLASS__ . '::submit_project' );
 	}//end init
 
 	public static function project_meta_box_cb() {
@@ -121,7 +123,7 @@ class Marmoset {
 			$tax['marm_status'] = $marm_status->term_id;
 		}
 
-		wp_nonce_field( plugin_basename(__FILE__), 'marm-nonce' );
+		self::wp_nonce_field();
 
 		echo '<label for="marm-progress">Progress:</label> ';
 		echo '<input name="marm-progress" style="text-align: right;" type="text" size="4" maxlength="3" value="' . $project_progress . '"> %<br/>';
@@ -144,14 +146,10 @@ class Marmoset {
 		echo '<input name="marm-complexity" type="range" size="5" min="1" max="5" value="' . $project_complexity . '"><br/>';
 	}
 
-	public static function project_properties_save( $post_id ) {
+	public static function project_properties_save( $post_id, $force = false ) {
 		global $wpdb;
 
-		if( !isset( $_POST['marm-nonce']) ) {
-			return $post_id;
-		}
-
-		if( !current_user_can( 'edit_posts' ) ) {
+		if( ! $force && ! current_user_can( 'edit_posts' ) ) {
 			return $post_id;
 		}
 
@@ -211,7 +209,7 @@ class Marmoset {
 		if( $marm_status != $tax['marm_status'] || $marm_queue != $tax['marm_queue'])  {
 			$order_value = 0;
 
-			self::get_projects( array( 'posts_per_page' => 1 ) );
+			self::get_projects( array( 'posts_per_page' => 1, 'echo' => false ) );
 
 			if( have_posts() && $post = the_post() ) {
 				$order_value = get_post_meta( $post->ID, 'project_order', true );
@@ -237,7 +235,8 @@ class Marmoset {
 			'post_type' => 'marm_project',
 			'meta_key' => 'project_order',
 			'orderby' => 'meta_value_num',
-			'order' => 'ASC'
+			'order' => 'ASC',
+			'echo' => true,
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -270,7 +269,9 @@ class Marmoset {
 
 		query_posts( $args );
 
-		include TEMPLATEPATH . '/projects-compact.php';
+		if( $args['echo'] ) {
+			include TEMPLATEPATH . '/projects-compact.php';
+		}
 	}//end get_projects
 
 	public static function the_due_date() {
@@ -318,6 +319,42 @@ class Marmoset {
 		}
 
 		update_post_meta( $target_id, 'project_order', $new_sort_order );
+	}
+	/**
+	 * Submit a project via ajax.
+	 */
+	public static function submit_project() {
+		header('Content-type: application/json');
+
+		$post_type = 'marm_project';
+		$post_status = 'publish';
+		$post_title = $_POST['marm-title'];
+		$post_content = $_POST['marm-content'];
+
+		$post = compact( 'post_type', 'post_status', 'post_title', 'post_content' );
+		$post_id = wp_insert_post( $post );
+
+		if ( is_wp_error( $post_id ) ) {
+			/// TODO: better
+			die( $post_id );
+		}
+
+		$marm_stakehold = $_POST['tax_input']['marm_stakehold'];
+		$marm_stakehold = array_map( create_function( '$a', 'return (int)$a;' ), $marm_stakehold );
+
+		wp_set_object_terms( $post_id, 'Proposed', 'marm_status' );
+		wp_set_object_terms( $post_id, 'Proposed', 'marm_queue' );
+		wp_set_object_terms( $post_id, $marm_stakehold, 'marm_stakehold' );
+
+		update_post_meta( $post_id, 'project_proposed', strftime('%F') );
+		update_post_meta( $post_id, 'due_date', $_POST['marm-duedate'] );
+
+		echo json_encode( array( 'post_id' => $post_id ) );
+		die();
+	}//end submit_project
+
+	public static function wp_nonce_field() {
+		wp_nonce_field( plugin_basename(__FILE__), 'marm-nonce' );
 	}
 }
 
