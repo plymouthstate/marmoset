@@ -176,6 +176,32 @@ class Marmoset {
 	}//end get_the_stakeholders
 
 	/**
+	 * Return post members in The Loop, caching in $post.
+	 */
+	public static function get_the_members() {
+		global $post;
+
+		if( !isset( $post->members ) ) {
+			$post->members = wp_get_object_terms( get_the_ID(), array('marm_members') );
+		}//end if
+
+		return $post->members;
+	}//end get_the_members
+
+	/**
+	 * Return post members in The Loop, caching in $post.
+	 */
+	public static function get_the_status() {
+		global $post;
+
+		if( !isset( $post->marm_status ) ) {
+			$post->marm_status = array_pop( wp_get_object_terms( get_the_ID(), array('marm_status') ) );
+		}//end if
+
+		return $post->marm_status;
+	}//end get_the_status
+
+	/**
 	 * return the start date for the project
 	 * @param $format string date format
 	 * @param $gmt_offset string GMT offset
