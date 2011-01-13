@@ -157,6 +157,7 @@ class Marmoset {
 			return $post_id;
 		}
 
+
 		$post = get_post( $post_id );
 		$tax = self::project_taxonomies( $post_id );
 
@@ -218,6 +219,7 @@ class Marmoset {
 			update_post_meta( $post_id, 'project_order', $order_value + 1 );
 		}
 	}//end project_properties_save
+
 
 	public static function remove_meta_boxes() {
 		remove_meta_box('tagsdiv-marm_queue', 'marm_project', 'side');
@@ -356,11 +358,26 @@ class Marmoset {
 	public static function wp_nonce_field() {
 		wp_nonce_field( plugin_basename(__FILE__), 'marm-nonce' );
 	}
+	public static function save_complexity(){
+
+		$project_complexity = $_POST['marm-complexity'];			
+
+		if( $project_complexity < 1 ) {
+			$project_complexity = 1;
+		} elseif( $project_complexity > 5 ) {
+			$project_complexity = 5;
+		}
+
+		update_post_meta( $_POST['project-id'], 'project_complexity', $project_complexity );
+
+	}
 }
 
 add_action( 'init', 'Marmoset::init' );
 register_activation_hook( __FILE__, 'Marmoset::activate' );
 add_action('save_post', 'Marmoset::project_properties_save');
+
+add_action( 'wp_ajax_save_complexity', 'Marmoset::save_complexity' );
 
 add_action( 'add_meta_boxes_marm_project', 'Marmoset::remove_meta_boxes' );
 

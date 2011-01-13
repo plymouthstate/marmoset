@@ -183,6 +183,12 @@ marm.complexity = {
 
 		if( finalize_complexity === true ) {
 			$el.data('complexity', complexity);
+			var params = { 
+				'action': 'save_complexity',  
+				'marm-complexity': $el.data('complexity'), 
+				'project-id': $el.closest('li').data('postid'), 
+			};
+			$.post( admin_ajax , params , function(data){});
 		}
 	}
 };
