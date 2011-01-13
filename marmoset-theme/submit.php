@@ -19,10 +19,10 @@
 		</li>
 		<li class="stakeholders">
 			<label for="stakeholders">Stakeholders:</label>
-			<?php if ( wp_count_terms('marm_stakehold') > 0 ): ?>
+			<?php if ( wp_count_terms('marm_stakeholders') > 0 ): ?>
 				<div class="input-stakeholders">
 					<ul>
-						<?php wp_terms_checklist( 0, 'taxonomy=marm_stakehold' ); ?>
+						<?php wp_terms_checklist( 0, 'taxonomy=marm_stakeholders' ); ?>
 					</ul>
 				</div>
 			<?php else: ?>

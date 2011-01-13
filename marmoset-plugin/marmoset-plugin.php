@@ -46,7 +46,7 @@ class Marmoset {
 			$post->taxonomies = get_the_taxonomies();
 		}//end if
 
-		return $post->taxonomies['marm_stakehold'];
+		return $post->taxonomies['marm_stakeholders'];
 	}//end get_formatted_stakeholders
 
 	/**
@@ -125,7 +125,7 @@ class Marmoset {
 		global $post;
 
 		if( !isset( $post->stakeholders ) ) {
-			$post->stakeholders = wp_get_object_terms( get_the_ID(), array('marm_stakehold') );
+			$post->stakeholders = wp_get_object_terms( get_the_ID(), array('marm_stakeholders') );
 		}//end if
 
 		return $post->stakeholders;
@@ -157,7 +157,7 @@ class Marmoset {
 			'hierarchical' => true,
 			'supports' => array('title', 'editor', 'comments', 'revisions', /*/), 'custom-fields', /*/),
 			'menu_position' => 4,
-			'taxonomies' => array( 'marm_status', 'marm_stakehold' ),
+			'taxonomies' => array( 'marm_status', 'marm_stakeholders' ),
 			'register_meta_box_cb' => 'Marmoset::project_meta_box_cb',
 			'rewrite' => array('slug' => 'project'),
 		);
@@ -179,7 +179,7 @@ class Marmoset {
 			'show_ui' => true,
 			'hierarchical' => true,
 		);
-		register_taxonomy( 'marm_stakehold', 'marm_project', $args );
+		register_taxonomy( 'marm_stakeholders', 'marm_project', $args );
 
 		$args = array(
 			'label' => 'Project Queue',
@@ -551,13 +551,13 @@ class Marmoset {
 			die( $post_id );
 		}
 
-		$marm_stakehold = $_POST['tax_input']['marm_stakehold'];
+		$marm_stakeholders = $_POST['tax_input']['marm_stakeholders'];
 
 		// will be null if there are no terms in the stakeholder taxonomy
-		if( is_array( $marm_stakehold ) ) {
-			$marm_stakehold = array_map( create_function( '$a', 'return (int)$a;' ), $marm_stakehold );
+		if( is_array( $marm_stakeholders ) ) {
+			$marm_stakeholders = array_map( create_function( '$a', 'return (int)$a;' ), $marm_stakeholders );
 		} else {
-			$marm_stakehold = array();
+			$marm_stakeholders = array();
 		}
 
 		// find new stakeholders
@@ -565,13 +565,13 @@ class Marmoset {
 			$stakeholder = trim($stakeholder);
 
 			if( $stakeholder ) {
-				$marm_stakehold[] = $stakeholder;
+				$marm_stakeholders[] = $stakeholder;
 			}
 		}
 
 		wp_set_object_terms( $post_id, 'Proposed', 'marm_status' );
 		wp_set_object_terms( $post_id, 'Proposed', 'marm_queue' );
-		wp_set_object_terms( $post_id, $marm_stakehold, 'marm_stakehold' );
+		wp_set_object_terms( $post_id, $marm_stakeholders, 'marm_stakeholders' );
 
 		update_post_meta( $post_id, 'project_proposed', strftime('%F') );
 		update_post_meta( $post_id, 'due_date', $_POST['marm-duedate'] );

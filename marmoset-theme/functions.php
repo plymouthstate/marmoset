@@ -23,7 +23,7 @@ class Marmoset_Theme {
 		$taxonomies = array(
 			'marm_members',
 			'marm_queue',
-			'marm_stakehold',
+			'marm_stakeholders',
 			'marm_status',
 			'marm_project'
 		);
