@@ -74,7 +74,25 @@ class Marmoset {
 		if( $date !== '' ) {
 			return self::format_date( $date, $format, $gmt_offset );
 		}//end if
-	}//end get_formatted_complete_date
+	}//end get_the_complete_date
+
+	/**
+	 * returns the project complexity
+	 */
+	public static function get_the_complexity() {
+		global $post;
+		static $project_complexity;
+
+		if( !isset( $project_complexity[ $post->ID ] ) ) {
+			$project_complexity[ $post->ID ] = (int) get_post_meta( get_the_ID(), 'project_complexity', true);
+
+			if( !$project_complexity[ $post->ID ] ) {
+				$project_complexity[ $post->ID ] = 1;
+			}//end if
+		}//end if
+
+		return $project_complexity[ $post->ID ];
+	}//end get_the_complexity
 
 	/**
 	 * return the due date for the project
@@ -91,18 +109,44 @@ class Marmoset {
 	}//end get_formatted_due_date
 
 	/**
-	 * return the proposed date for the project
+	 * returns the project progress
+	 */
+	public static function get_the_progress() {
+		global $post;
+
+		if( !isset( $post->progress ) ) {
+			$post->progress = get_post_meta( $post->ID, 'project_progress', true );
+		}//end if
+
+		return $post->progress;
+	}//end get_the_progress
+
+	/**
+	 * return the estimated_start date for the project
 	 * @param $format string date format
 	 * @param $gmt_offset string GMT offset
 	 */
-	public static function get_the_proposed_date( $format = null, $gmt_offset = null ) {
+	public static function get_the_estimated_start_date( $format = null, $gmt_offset = null ) {
 		global $post;
 
-		$date = get_post_meta( $post->ID, 'project_proposed', true );
+		$date = get_post_meta( $post->ID, 'estimated_start_date', true );
 		if( $date !== '' ) {
 			return self::format_date( $date, $format, $gmt_offset );
 		}//end if
-	}//end get_formatted_proposed_date
+	}//end get_the_estimated_start_date
+
+	/**
+	 * returns the project members
+	 */
+	public static function get_the_members() {
+		global $post;
+
+		if( !isset( $post->members ) ) {
+			$post->members = wp_get_object_terms( get_the_ID(), array('marm_members') );
+		}//end if
+
+		return $post->members;
+	}//end get_the_members
 
 	/**
 	 * returns the project queue
@@ -219,10 +263,20 @@ class Marmoset {
 		$project_progress = (int)get_post_meta( $post->ID, 'project_progress', true );
 		$project_complexity = (int)get_post_meta( $post->ID, 'project_complexity', true );
 		$due_date = get_post_meta( $post->ID, 'due_date', true );
-		$project_proposed = get_post_meta( $post->ID, 'project_proposed', true );
+		$start_date = get_post_meta( $post->ID, 'start_date', true );
+		$complete_date = get_post_meta( $post->ID, 'complete_date', true );
+		$estimated_start_date = get_post_meta( $post->ID, 'estimated_start_date', true );
 
 		if( $due_date != '' ) {
 			$due_date = strftime('%F', $due_date);
+		}
+
+		if( $start_date != '' ) {
+			$start_date = strftime('%F', $start_date);
+		}
+
+		if( $complete_date != '' ) {
+			$complete_date = strftime('%F', $complete_date);
 		}
 
 		if( $project_proposed != '' ) {
@@ -249,11 +303,17 @@ class Marmoset {
 		echo '<label for="marm-progress">Progress:</label> ';
 		echo '<input name="marm-progress" style="text-align: right;" type="text" size="4" maxlength="3" value="' . $project_progress . '"> %<br/>';
 
-		echo '<label for="marm-proposed">Proposed:</label> ';
-		echo '<input name="marm-proposed" type="text" size="15" value="' . $project_proposed . '"><br/>';
+		echo '<label for="marm-estimatedstartdate">Est. Start Date:</label> ';
+		echo '<input name="marm-estimatedstartdate" type="text" size="15" value="' . $estimated_start_date . '"><br/>';
+
+		echo '<label for="marm-startdate">Actual Start Date:</label> ';
+		echo '<input name="marm-startdate" type="text" size="15" value="' . $start_date . '"><br/>';
 
 		echo '<label for="marm-duedate">Due Date:</label> ';
 		echo '<input name="marm-duedate" type="text" size="15" value="' . $due_date . '"><br/>';
+
+		echo '<label for="marm-completedate">Completion Date:</label> ';
+		echo '<input name="marm-completedate" type="text" size="15" value="' . $complete_date . '"><br/>';
 
 		echo '<label for="marm-status">Status:</label> ';
 		wp_dropdown_categories("hide_empty=0&taxonomy=marm_status&orderby=name&name=marm-status&selected={$tax['marm_status']}");
@@ -298,6 +358,14 @@ class Marmoset {
 			$project_complexity = 5;
 		}
 
+		$complete_date = $_POST['marm-completedate'];
+		if( empty($complete_date) ) {
+			delete_post_meta( $post_id, 'complete_date' );
+		} else {
+			$complete_date = strtotime($complete_date);
+			update_post_meta( $post_id, 'complete_date', $complete_date );
+		}
+
 		$due_date = $_POST['marm-duedate'];
 		if( empty($due_date) ) {
 			delete_post_meta( $post_id, 'due_date' );
@@ -306,12 +374,20 @@ class Marmoset {
 			update_post_meta( $post_id, 'due_date', $due_date );
 		}
 
-		$project_proposed = $_POST['marm-proposed'];
-		if( empty($project_proposed) ) {
-			delete_post_meta( $post_id, 'project_proposed' );
+		$start_date = $_POST['marm-startdate'];
+		if( empty($start_date) ) {
+			delete_post_meta( $post_id, 'start_date' );
 		} else {
-			$project_proposed = strtotime($project_proposed);
-			update_post_meta( $post_id, 'project_proposed', $project_proposed );
+			$start_date = strtotime($start_date);
+			update_post_meta( $post_id, 'start_date', $start_date );
+		}
+
+		$estimated_start_date = $_POST['marm-estimatedstartdate'];
+		if( empty($estimated_start_date) ) {
+			delete_post_meta( $post_id, 'estimated_start_date' );
+		} else {
+			$estimated_start_date = strtotime($estimated_start_date);
+			update_post_meta( $post_id, 'estimated_start_date', $estimated_start_date );
 		}
 
 		update_post_meta( $post_id, 'project_progress', $progress );
@@ -450,6 +526,13 @@ class Marmoset {
 	}//end the_complete_date
 
 	/**
+	 * output the project's complexity
+	 */
+	public static function the_complexity() {
+		echo self::get_the_complexity();
+	}//end the_complexity
+
+	/**
 	 * output the due date for the project
 	 * @param $format string date format
 	 * @param $gmt_offset string GMT offset
@@ -466,20 +549,27 @@ class Marmoset {
 	}//end the_members
 
 	/**
+	 * output the project's progress
+	 */
+	public static function the_progress() {
+		echo self::get_the_progress();
+	}//end the_progress
+
+	/**
+	 * output the estimated_start date for the project
+	 * @param $format string date format
+	 * @param $gmt_offset string GMT offset
+	 */
+	public static function the_estimated_start_date( $format = null, $gmt_offset = null ) {
+		echo self::get_the_estimated_start_date( $format, $gmt_offset );
+	}//end the_estimated_start_date
+
+	/**
 	 * output the project's queue
 	 */
 	public static function the_queue() {
 		echo self::get_formatted_queue();
 	}//end the_queue
-
-	/**
-	 * output the proposed date for the project
-	 * @param $format string date format
-	 * @param $gmt_offset string GMT offset
-	 */
-	public static function the_proposed_date( $format = null, $gmt_offset = null ) {
-		echo self::get_the_proposed_date( $format, $gmt_offset );
-	}//end the_proposed_date
 
 	/**
 	 * output the project's stakeholders
@@ -619,16 +709,4 @@ if( !function_exists( 'the_project_complexity' ) ) {
 		echo $marm_project_complexity[ $post->ID ];
 		
 	}//end the_project_complexity
-}//end if
-
-if( !function_exists( 'the_project_queue' ) ) {
-	$marm_project_queue = array();
-
-	function get_project_queue() {
-		global $post;
-
-		$queue = wp_get_object_terms( get_the_ID(), array('marm_queue') );
-
-		return $queue[0];
-	}//end the_project_queue
 }//end if

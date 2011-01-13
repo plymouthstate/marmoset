@@ -1,5 +1,5 @@
 <?php
-
+require_once 'PSU.php';
 class Marmoset_Theme {
 	public static function init() {
 		if( !is_admin() ) {
@@ -25,7 +25,6 @@ class Marmoset_Theme {
 			'marm_queue',
 			'marm_stakeholders',
 			'marm_status',
-			'marm_project'
 		);
 
 		foreach( $taxonomies as $taxonomy ) {

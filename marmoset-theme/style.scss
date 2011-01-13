@@ -72,6 +72,27 @@ $projectrounding: 5px;
 	}
 }
 
+.project {
+	.details .meta {
+		overflow: hidden;
+
+		.label{ 
+			color: #666; 
+			margin-right: 0.5em; 
+		}
+
+		.queue { display: none; }
+		.status { display: none; }
+		.start_date,
+		.due_date,
+		.complete_date,
+		.estimated_start_date{
+			clear: right;
+			float: right;
+		}
+	}
+}
+
 $projectwidth: 80%;
 
 .ui-state-highlight {

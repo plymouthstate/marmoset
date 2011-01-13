@@ -40,6 +40,22 @@ body {
     .projects .date span {
       font-size: .9em; }
 
+.project .details .meta {
+  overflow: hidden; }
+  .project .details .meta .label {
+    color: #666;
+    margin-right: 0.5em; }
+  .project .details .meta .queue {
+    display: none; }
+  .project .details .meta .status {
+    display: none; }
+  .project .details .meta .start_date,
+  .project .details .meta .due_date,
+  .project .details .meta .complete_date,
+  .project .details .meta .estimated_start_date {
+    clear: right;
+    float: right; }
+
 .ui-state-highlight {
   border: 1px dashed #999; }
 

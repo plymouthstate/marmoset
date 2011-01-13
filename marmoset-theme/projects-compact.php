@@ -13,8 +13,8 @@
 				<span class="date" title="Estimated Date of Completion"><span><?php Marmoset::the_due_date('Y-m-d'); ?></span></span>
 				<span class="permalink">[<a href="<?php the_permalink(); ?>" title="View Project Details">Details</a>]</span>
 			</div>
-			<div data-complexity="<?php the_project_complexity(); ?>" data-complexity-original="<?php the_project_complexity(); ?>" class="complexity complexity-<?php the_project_complexity(); ?>" title="Project Complexity (<?php the_project_complexity(); ?>)">
-				<span class="readable"><?php the_project_complexity(); ?></span>
+			<div data-complexity="<?php Marmoset::the_complexity(); ?>" data-complexity-original="<?php Marmoset::the_complexity(); ?>" class="complexity complexity-<?php Marmoset::the_complexity(); ?>" title="Project Complexity (<?php Marmoset::the_complexity(); ?>)">
+				<span class="readable"><?php Marmoset::the_complexity(); ?></span>
 				<span class="indicator indicator-1"></span><span class="indicator indicator-2"></span><span class="indicator indicator-3"></span><span class="indicator indicator-4"></span><span class="indicator indicator-5"></span></span>
 				<ul>
 					<li class="complexity-clear">clear</li>
@@ -22,16 +22,18 @@
 				</ul>
 			</div>
 			<div class="progress-container">
-				<div class="progress progress-<?php echo get_post_meta( get_the_ID(), 'project_progress', true ); ?>"></div> 
+				<div class="progress progress-<?php Marmoset::the_progress(); ?>"></div> 
 			</div>
 		</div> 
 		<div class="details">
 			<ul class="meta">
 				<li class="queue"><?php Marmoset::the_queue(); ?></li>
 				<li class="status"><?php Marmoset::the_status(); ?></li>
-				<li class="proposed_date">Date Proposed: <?php Marmoset::the_proposed_date(); ?></li>
-				<li class="due_date">Date Due: <?php Marmoset::the_due_date(); ?></li>
-				<li class="members"><?php Marmoset::the_members(); ?></li>
+				<?php if( Marmoset::get_the_estimated_start_date() ): ?><li class="estimated_start_date"><span class="label">Estimated Start Date:</span><?php Marmoset::the_estimated_start_date(); ?></li><?php endif; ?>
+				<?php if( Marmoset::get_the_start_date() ): ?><li class="start_date"><span class="label"><span class="label">Actual Start Date:</span> <?php Marmoset::the_start_date(); ?></li><?php endif; ?>
+				<?php if( Marmoset::get_the_due_date() ): ?><li class="due_date"><span class="label">Due Date:</span> <?php Marmoset::the_due_date(); ?></li><?php endif; ?>
+				<?php if( Marmoset::get_the_complete_date() ): ?><li class="complete_date"><span class="label">Date Completed:</span> <?php Marmoset::the_complete_date(); ?></li><?php endif; ?>
+				<?php if( Marmoset::get_the_members() ): ?><li class="members"><?php Marmoset::the_members(); ?></li><?php endif; ?>
 				<?php if( Marmoset::get_the_stakeholders() ): ?><li class="stakehold"><?php Marmoset::the_stakeholders(); ?></li><?php endif; ?>
 			</ul>
 			<?php if( get_the_content() ): ?>
