@@ -261,6 +261,16 @@ class Marmoset {
 		);
 		register_taxonomy( 'marm_members', 'marm_project', $args );
 
+
+		$args = array(
+			'label' => 'Complexity',
+			'show_in_nav_menus' => true,
+			'show_ui' => true,
+			'public' => true,
+			'publicly_queryable' => true,
+		);
+		register_taxonomy( 'marm_complexity', 'marm_project', $args );
+
 		if( is_admin() ) {
 			add_action( 'wp_ajax_project_order', __CLASS__ . '::project_order' );
 		}
@@ -358,7 +368,7 @@ class Marmoset {
 		$tax = self::project_taxonomies( $post_id );
 
 		$progress = abs((int)$_POST['marm-progress']);
-		$complexity = abs((int)$_POST['marm-complexity']);
+		$project_complexity = abs((int)substr($_POST['marm-complexity'], -1));
 
 		if( $progress > 0 ) {
 			// increments of 5
@@ -406,7 +416,7 @@ class Marmoset {
 		}
 
 		update_post_meta( $post_id, 'project_progress', $progress );
-		update_post_meta( $post_id, 'project_complexity', $complexity );
+		update_post_meta( $post_id, 'project_complexity', $project_complexity );
 
 		// don't add revisions to a taxonomy, add the original post
 		$post_parent = wp_is_post_revision( $post_id );
