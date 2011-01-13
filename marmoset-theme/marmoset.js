@@ -301,5 +301,25 @@ $.root.delegate('.projects', 'sortupdate', function(event, ui) {
 	});
 });
 
+$.root.delegate( '.submit-project .stakeholders a:last', 'click.submit-project.stakeholders', function( e ) {
+	e.preventDefault();
+	$(e.currentTarget).closest('div').prevAll('div.hidden:first').removeClass('hidden').end().remove();
+	$.root.undelegate( e.handleObj.selector, e.handleObj.origType );
+
+	var $theCopyRow, $theA;
+
+	$.root.delegate( '.submit-project .stakeholders a:last', 'click.submit-project.stakeholders', function( e ) {
+		e.preventDefault();
+
+		if( ! $theA ) {
+			$theA = $(e.currentTarget);
+			$theCopyRow = $theA.siblings().find('input').attr('value', '').end();
+		}
+
+		var $newCopyRow = $theCopyRow.clone();
+		$newCopyRow.insertBefore( $theA );
+	});
+});
+
 })(jQuery);
 

@@ -17,13 +17,23 @@
 			<label>Due date:</label>
 			<input name="marm-duedate" type="text" size="30">
 		</li>
-		<li>
-			<label for="stakeholders">Stakeholders</label>
-			<div class="input-stakeholders">
-				<ul>
-					<?php wp_terms_checklist( 0, 'taxonomy=marm_stakehold' ); ?>
-				</ul>
+		<li class="stakeholders">
+			<label for="stakeholders">Stakeholders:</label>
+			<?php if ( wp_count_terms('marm_stakehold') > 0 ): ?>
+				<div class="input-stakeholders">
+					<ul>
+						<?php wp_terms_checklist( 0, 'taxonomy=marm_stakehold' ); ?>
+					</ul>
+				</div>
+			<?php else: ?>
+				The list of stakeholders is currently empty.
+			<?php endif; ?>
+			<br>
+			<div class="hidden">
+				<input type="text" name="marm-stakeholder[]" size="20" placeholder="New stakeholder"><!-- No space, doesn't work with .siblings() anyway. --><a href="#">Delete</a><br>
+				<a href="#">Add another&hellip;</a>
 			</div>
+			<div>Don't see your group? <a href="#">Create new stakeholders</a>.</div>
 		</li>
 		<li>
 			<label for="">&nbsp;</label>

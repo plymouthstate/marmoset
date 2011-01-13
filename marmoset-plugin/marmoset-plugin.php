@@ -342,7 +342,22 @@ class Marmoset {
 		}
 
 		$marm_stakehold = $_POST['tax_input']['marm_stakehold'];
-		$marm_stakehold = array_map( create_function( '$a', 'return (int)$a;' ), $marm_stakehold );
+
+		// will be null if there are no terms in the stakeholder taxonomy
+		if( is_array( $marm_stakehold ) ) {
+			$marm_stakehold = array_map( create_function( '$a', 'return (int)$a;' ), $marm_stakehold );
+		} else {
+			$marm_stakehold = array();
+		}
+
+		// find new stakeholders
+		foreach ( $_POST['marm-stakeholder'] as $stakeholder ) {
+			$stakeholder = trim($stakeholder);
+
+			if( $stakeholder ) {
+				$marm_stakehold[] = $stakeholder;
+			}
+		}
 
 		wp_set_object_terms( $post_id, 'Proposed', 'marm_status' );
 		wp_set_object_terms( $post_id, 'Proposed', 'marm_queue' );

@@ -476,6 +476,26 @@ form {
 		margin: 0;
 	}
 
+	li {
+		padding-left: 7em;
+
+		label {
+			display: block;
+			float: left;
+			text-align: right;
+			margin-left: -7em;
+			width: 6em;
+			padding-right: 1em;
+		}
+
+		li { padding-left: 0; }
+		li label {
+			margin-left: 0;
+			width: auto;
+			padding-right: 1em;
+		}
+	}
+
 	.input-stakeholders {
 		input[type=checkbox] { display: none; }
 
@@ -485,14 +505,6 @@ form {
 	}
 
 	.children { margin-left: 1em; }
-
-	label {
-		display: block;
-		float: left;
-		width: 6em;
-		text-align: right;
-		margin-right: 1em;
-	}
 
 	ul ul label {
 		display: inline;
