@@ -47,7 +47,7 @@
 						'hide_empty' => 0,
 						'orderby' => 'slug',
 					);
-					$complexities = get_terms( 'marm_complexity', $args ); 
+					$complexities = get_terms( 'marm_complexity', $args );
 
 					foreach( $complexities as $complexity )
 					{

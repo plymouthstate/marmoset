@@ -36,6 +36,7 @@
 				<?php if( Marmoset::get_the_complete_date() ): ?><li class="complete_date"><span class="label">Date Completed:</span> <?php Marmoset::the_complete_date(); ?></li><?php endif; ?>
 				<?php if( Marmoset::get_the_members() ): ?><li class="members"><?php Marmoset::the_members(); ?></li><?php endif; ?>
 				<?php if( Marmoset::get_the_stakeholders() ): ?><li class="stakeholders"><?php Marmoset::the_stakeholders(); ?></li><?php endif; ?>
+				<?php if( Marmoset::get_the_complexity_description() ): ?><li class="complexity">Project Complexity: <?php Marmoset::the_complexity_description();  ?></li><?php endif; ?>
 			</ul>
 			<?php if( get_the_content() ): ?>
 				<div class="body">

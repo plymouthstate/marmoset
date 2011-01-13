@@ -610,6 +610,16 @@ class Marmoset {
 		echo self::get_formatted_status();
 	}//end the_queue
 	
+	public static function get_the_complexity_description()
+	{
+		$complexity = (int) get_post_meta( get_the_ID(), 'project_complexity', true);
+		$complexity_info = get_term_by( 'slug', 'complexity-'.$complexity, 'marm_complexity' );
+		return $complexity_info->description;
+	}
+	public static function the_complexity_description()
+	{
+		echo self::get_the_complexity_description();
+	}
 	/**
 	 * Called via admin-ajax.php.
 	 */
