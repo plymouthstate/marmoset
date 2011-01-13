@@ -34,7 +34,7 @@
 				<?php if( Marmoset::get_the_due_date() ): ?><li class="due_date"><span class="label">Due Date:</span> <?php Marmoset::the_due_date(); ?></li><?php endif; ?>
 				<?php if( Marmoset::get_the_complete_date() ): ?><li class="complete_date"><span class="label">Date Completed:</span> <?php Marmoset::the_complete_date(); ?></li><?php endif; ?>
 				<?php if( Marmoset::get_the_members() ): ?><li class="members"><?php Marmoset::the_members(); ?></li><?php endif; ?>
-				<?php if( Marmoset::get_the_stakeholders() ): ?><li class="stakehold"><?php Marmoset::the_stakeholders(); ?></li><?php endif; ?>
+				<?php if( Marmoset::get_the_stakeholders() ): ?><li class="stakeholders"><?php Marmoset::the_stakeholders(); ?></li><?php endif; ?>
 			</ul>
 			<?php if( get_the_content() ): ?>
 				<div class="body">

@@ -50,7 +50,7 @@ var marm = {
 				meta_data.or = 'or ';
 			}//end if
 
-			if( meta == 'stakehold' ) {
+			if( meta == 'stakeholder' ) {
 				meta_data.readable_meta = 'stakeholder';
 			} else if( meta == 'queue' || meta == 'status' || meta == 'complexity' ) {
 				meta_data.concat = 'as its';
@@ -244,10 +244,10 @@ $.root.delegate('#toggle-unfocused', 'click', function(e) {
 $.root.delegate('.project .meta li a, #project-filter ul a', 'click', function(e) {
 	e.preventDefault();
 
-	var meta = $(this).closest('li').attr('class');
-	var meta_contents = $(this).html();
-	var href = $(this).attr('href');
-	var member = /[a-z_]+$/.exec( href );
+	var meta = $(this).closest('li').attr('class'),
+		meta_contents = $(this).html(),
+		href = $(this).attr('href'),
+		member = /[a-z_]+$/.exec( href );
 
 	marm.toggle_meta_filter( meta, member, meta_contents, true );
 });

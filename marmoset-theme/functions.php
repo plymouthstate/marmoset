@@ -44,6 +44,9 @@ class Marmoset_Theme {
 		return $classes;
 	}//end post_class
 
+	/**
+	 * Run from footer.php to apply filtering settings from the query string.
+	 */
 	public static function project_select() {
 		$echo = false;
 
@@ -52,8 +55,8 @@ class Marmoset_Theme {
 		if( $_GET['member'] ) { $_GET['members'] = $_GET['member']; unset( $_GET['member'] ); }
 		if( $_GET['members'] ) { $get_meta[] = 'members'; }
 		if( $_GET['status'] ) { $get_meta[] = 'status'; }
-		if( $_GET['stakeholders'] ) { $_GET['stakehold'] = $_GET['stakeholders']; unset( $_GET['stakeholders'] ); }
-		if( $_GET['stakehold'] ) { $get_meta[] = 'stakehold'; }
+		if( $_GET['stakeholder'] ) { $_GET['stakeholders'] = $_GET['stakeholder']; unset( $_GET['stakeholder'] ); }
+		if( $_GET['stakeholders'] ) { $get_meta[] = 'stakeholders'; }
 
 		if( $get_meta ) {
 			echo '<script>';
