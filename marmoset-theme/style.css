@@ -463,7 +463,7 @@ footer {
 
 .submit-project .input-stakeholders {
   display: block;
-  height: 16em;
+  max-height: 16em;
   width: 40%;
   overflow: auto; }
 
@@ -485,9 +485,9 @@ form li {
     margin-left: 0;
     width: auto;
     padding-right: 1em; }
-form .input-stakeholders input[type=checkbox] {
+form .stakeholder-levels-2 input[type=checkbox] {
   display: none; }
-form .input-stakeholders .children input[type=checkbox] {
+form .stakeholder-levels-2 .children input[type=checkbox] {
   display: inline-block; }
 form .children {
   margin-left: 1em; }

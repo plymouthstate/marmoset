@@ -19,8 +19,12 @@
 		</li>
 		<li class="stakeholders">
 			<label for="stakeholders">Stakeholders:</label>
+			<?php
+			// hide checkboxes on top-level terms if there are child terms
+			$stakeholder_nochildren = wp_count_terms('marm_stakeholders') == wp_count_terms('marm_stakeholders', array( 'parent' => 0 ) );
+			?>
 			<?php if ( wp_count_terms('marm_stakeholders') > 0 ): ?>
-				<div class="input-stakeholders">
+				<div class="input-stakeholders stakeholder-levels-<?php echo $stakeholder_nochildren ? 1 : 2; ?>">
 					<ul>
 						<?php wp_terms_checklist( 0, 'taxonomy=marm_stakeholders' ); ?>
 					</ul>
