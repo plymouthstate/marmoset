@@ -12,15 +12,6 @@ var admin_ajax = '<?php echo admin_url('admin-ajax.php'); ?>';
 </script>
 </head>
 <body <?php body_class(); ?>>
-<div id="project-filter">
-	Focusing on projects with:
-	<ul></ul>
-
-	<div class="options">
-		<div><span id="project-filter-total">0</span> Projects Total</div>
-		<a href="" id="toggle-unfocused"><span class="hide">Hide</span><span class="show">Show</span> Unfocused</a>
-	</div>
-</div>
 
 <div class="container_16" id="outer">
 	<div class="grid_16" id="header">
