@@ -10,6 +10,142 @@ License: GPL2
 */
 
 class Marmoset {
+	/**
+	 * returns the project's members
+	 */
+	public static function get_formatted_members() {
+		global $post;
+
+		if( ! $post->taxonomies ) {
+			$post->taxonomies = get_the_taxonomies();
+		}//end if
+
+		return $post->taxonomies['marm_members'];
+	}//end get_formatted_queue
+
+	/**
+	 * returns the project's queue
+	 */
+	public static function get_formatted_queue() {
+		global $post;
+
+		if( ! $post->taxonomies ) {
+			$post->taxonomies = get_the_taxonomies();
+		}//end if
+
+		return $post->taxonomies['marm_queue'];
+	}//end get_formatted_queue
+
+	/**
+	 * returns the project's stakeholders
+	 */
+	public static function get_formatted_stakeholders() {
+		global $post;
+
+		if( ! $post->taxonomies ) {
+			$post->taxonomies = get_the_taxonomies();
+		}//end if
+
+		return $post->taxonomies['marm_stakehold'];
+	}//end get_formatted_stakeholders
+
+	/**
+	 * returns the project's status
+	 */
+	public static function get_formatted_status() {
+		global $post;
+
+		if( ! $post->taxonomies ) {
+			$post->taxonomies = get_the_taxonomies();
+		}//end if
+
+		return $post->taxonomies['marm_status'];
+	}//end get_formatted_status
+
+	/**
+	 * return the complete date for the project
+	 * @param $format string date format
+	 * @param $gmt_offset string GMT offset
+	 */
+	public static function get_the_complete_date( $format = null, $gmt_offset = null ) {
+		global $post;
+
+		$date = get_post_meta( $post->ID, 'complete_date', true );
+		if( $date !== '' ) {
+			return self::format_date( $date, $format, $gmt_offset );
+		}//end if
+	}//end get_formatted_complete_date
+
+	/**
+	 * return the due date for the project
+	 * @param $format string date format
+	 * @param $gmt_offset string GMT offset
+	 */
+	public static function get_the_due_date( $format = null, $gmt_offset = null ) {
+		global $post;
+
+		$date = get_post_meta( $post->ID, 'due_date', true );
+		if( $date !== '' ) {
+			return self::format_date( $date, $format, $gmt_offset );
+		}//end if
+	}//end get_formatted_due_date
+
+	/**
+	 * return the proposed date for the project
+	 * @param $format string date format
+	 * @param $gmt_offset string GMT offset
+	 */
+	public static function get_the_proposed_date( $format = null, $gmt_offset = null ) {
+		global $post;
+
+		$date = get_post_meta( $post->ID, 'project_proposed', true );
+		if( $date !== '' ) {
+			return self::format_date( $date, $format, $gmt_offset );
+		}//end if
+	}//end get_formatted_proposed_date
+
+	/**
+	 * returns the project queue
+	 */
+	public static function get_the_queue() {
+		global $post;
+
+		if( !isset( $post->queue ) ) {
+			$queue = wp_get_object_terms( get_the_ID(), array('marm_queue') );
+			$post->queue = $queue[0];
+		}//end if
+
+		return $post->queue;
+	}//end get_the_queue
+
+	/**
+	 * returns the project stakeholders
+	 */
+	public static function get_the_stakeholders() {
+		global $post;
+
+		if( !isset( $post->stakeholders ) ) {
+			$post->stakeholders = wp_get_object_terms( get_the_ID(), array('marm_stakehold') );
+		}//end if
+
+		return $post->stakeholders;
+	}//end get_the_stakeholders
+
+	/**
+	 * return the start date for the project
+	 * @param $format string date format
+	 * @param $gmt_offset string GMT offset
+	 */
+	public static function get_the_start_date( $format = null, $gmt_offset = null ) {
+		global $post;
+
+		$date = get_post_meta( $post->ID, 'start_date', true );
+		if( $date !== '' ) {
+			return self::format_date( $date, $format, $gmt_offset );
+		}//end if
+	}//end get_formatted_start_date
+
+
 	public static function init() {
 		$args = array(
 			'labels' => array(
@@ -76,21 +212,6 @@ class Marmoset {
 	public static function project_meta_box_cb() {
 		add_meta_box('marm-project-props', 'Project Properties', 'Marmoset::project_properties', 'marm_project', 'side', 'high' );
 	}//end project_meta_box_cb
-
-	public static function project_taxonomies( $post_id ) {
-		if( $parent_id = wp_is_post_revision( $post_id ) ) {
-			$post_id = $parent_id;
-		}
-
-		$terms = wp_get_object_terms( $post_id, array('marm_queue', 'marm_status') );
-
-		$return = array();
-		foreach( $terms as $term ) {
-			$return[$term->taxonomy] = $term->term_id;
-		}
-
-		return $return;
-	}
 
 	public static function project_properties() {
 		global $post;
@@ -220,12 +341,40 @@ class Marmoset {
 		}
 	}//end project_properties_save
 
+	public static function project_taxonomies( $post_id ) {
+		if( $parent_id = wp_is_post_revision( $post_id ) ) {
+			$post_id = $parent_id;
+		}
 
-	public static function remove_meta_boxes() {
-		remove_meta_box('tagsdiv-marm_queue', 'marm_project', 'side');
-		remove_meta_box('commentstatusdiv', 'marm_project', 'normal');
-		remove_meta_box('revisionsdiv', 'marm_project', 'normal');
+		$terms = wp_get_object_terms( $post_id, array('marm_queue', 'marm_status') );
+
+		$return = array();
+		foreach( $terms as $term ) {
+			$return[$term->taxonomy] = $term->term_id;
+		}
+
+		return $return;
 	}
+
+	/**
+	 * formats a date in the given format and gmt offset.  If no format or gmt offset
+	 * is provided, grab the format from the options table.
+	 *
+	 * @param $date timestamp
+	 * @param $format string date format
+	 * @param $gmt_offset string GMT offset
+	 */
+	public static function format_date( $date, $format = null, $gmt_offset = null ) {
+		if( $format === null ) {
+			$format = get_option('date_format');
+		}//end if
+
+		if( $gmt_offset === null ) {
+			$gmt_offset = get_option('gmt_offset');
+		}//end if
+
+		return date_i18n( $format, $date, $gmt_offset );
+	}//end format_date
 
 	/**
 	 * Project list to fetch has an implicit queue. Fetch projects with a given status.
@@ -276,14 +425,75 @@ class Marmoset {
 		}
 	}//end get_projects
 
-	public static function the_due_date() {
-		global $post;
-
-		$due_date = get_post_meta( $post->ID, 'due_date', true );
-		if( $due_date !== '' ) {
-			echo strftime('%F', $due_date);
-		}
+	public static function remove_meta_boxes() {
+		remove_meta_box('tagsdiv-marm_queue', 'marm_project', 'side');
+		remove_meta_box('commentstatusdiv', 'marm_project', 'normal');
+		remove_meta_box('revisionsdiv', 'marm_project', 'normal');
 	}
+
+	/**
+	 * output the start date for the project
+	 * @param $format string date format
+	 * @param $gmt_offset string GMT offset
+	 */
+	public static function the_start_date( $format = null, $gmt_offset = null ) {
+		echo self::get_the_start_date( $format, $gmt_offset );
+	}//end the_start_date
+
+	/**
+	 * output the completion date for the project
+	 * @param $format string date format
+	 * @param $gmt_offset string GMT offset
+	 */
+	public static function the_complete_date( $format = null, $gmt_offset = null ) {
+		echo self::get_the_complete_date( $format, $gmt_offset );
+	}//end the_complete_date
+
+	/**
+	 * output the due date for the project
+	 * @param $format string date format
+	 * @param $gmt_offset string GMT offset
+	 */
+	public static function the_due_date( $format = null, $gmt_offset = null ) {
+		echo self::get_the_due_date( $format, $gmt_offset );
+	}//end the_due_date
+
+	/**
+	 * output the project's members
+	 */
+	public static function the_members() {
+		echo self::get_formatted_members();
+	}//end the_members
+
+	/**
+	 * output the project's queue
+	 */
+	public static function the_queue() {
+		echo self::get_formatted_queue();
+	}//end the_queue
+
+	/**
+	 * output the proposed date for the project
+	 * @param $format string date format
+	 * @param $gmt_offset string GMT offset
+	 */
+	public static function the_proposed_date( $format = null, $gmt_offset = null ) {
+		echo self::get_the_proposed_date( $format, $gmt_offset );
+	}//end the_proposed_date
+
+	/**
+	 * output the project's stakeholders
+	 */
+	public static function the_stakeholders() {
+		echo self::get_formatted_stakeholders();
+	}//end the_stakeholders
+
+	/**
+	 * output the project's status
+	 */
+	public static function the_status() {
+		echo self::get_formatted_status();
+	}//end the_queue
 	
 	/**
 	 * Called via admin-ajax.php.
