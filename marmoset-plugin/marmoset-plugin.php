@@ -178,19 +178,6 @@ class Marmoset {
 	/**
 	 * Return post members in The Loop, caching in $post.
 	 */
-	public static function get_the_members() {
-		global $post;
-
-		if( !isset( $post->members ) ) {
-			$post->members = wp_get_object_terms( get_the_ID(), array('marm_members') );
-		}//end if
-
-		return $post->members;
-	}//end get_the_members
-
-	/**
-	 * Return post members in The Loop, caching in $post.
-	 */
 	public static function get_the_status() {
 		global $post;
 
