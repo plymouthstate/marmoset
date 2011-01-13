@@ -1,7 +1,11 @@
 <?php
 require_once 'PSU.php';
 class Marmoset_Theme {
-	public static function init() {
+	public $found_members = array();
+	public $found_stakeholders = array();
+	public $found_statuses = array();
+
+	public function init() {
 		if( !is_admin() ) {
 			wp_enqueue_script( 'marmoset-js', get_bloginfo('template_directory') . '/marmoset.js', array('jquery-ui-183'), 3, true );
 			wp_enqueue_style( 'marmoset-960', get_bloginfo('template_directory') . '/960.css' );
@@ -15,11 +19,19 @@ class Marmoset_Theme {
 			wp_register_script( 'jquery-blockui', 'https://www.plymouth.edu/js/jquery-plugins/jquery.blockui.js', false, '2', true);
 			wp_enqueue_script( 'jquery-blockui' );
 
-			add_filter( 'post_class', array( 'Marmoset_Theme', 'post_class'), 10, 3 );
+			add_filter( 'post_class', array( $this, 'post_class'), 10, 3 );
+		}
+
+		if( is_taxonomy('marm_queue') ) {
+			add_action( 'wp_footer', array( $this, 'project_filter' ) );
 		}
 	}
 
-	public static function post_class( $classes, $class, $ID ) {
+	public function project_filter() {
+		include TEMPLATEPATH . '/includes/project-filter.php';
+	}//end project_filter
+
+	public function post_class( $classes, $class, $ID ) {
 		$taxonomies = array(
 			'marm_members',
 			'marm_queue',
@@ -47,7 +59,7 @@ class Marmoset_Theme {
 	/**
 	 * Run from footer.php to apply filtering settings from the query string.
 	 */
-	public static function project_select() {
+	public function project_select() {
 		$echo = false;
 
 		$get_meta = array();
@@ -76,6 +88,27 @@ class Marmoset_Theme {
 			echo '</script>';
 		}//end if
 	}//end project_select
-}
 
-add_action( 'init', 'Marmoset_Theme::init' );
+	/**
+	 * Track the terms found on this page.
+	 */
+	public function update_found_terms() {
+		$stakeholders = Marmoset::get_the_stakeholders();
+		foreach( $stakeholders as $stakeholder ) {
+			$this->found_stakeholders[ $stakeholder->slug ] = 1;
+		}
+
+		$members = Marmoset::get_the_members();
+		foreach( $members as $member ) {
+			$this->found_members[ $member->slug ] = 1;
+		}
+
+		$status = Marmoset::get_the_status();
+		$this->found_statuses[ $status->slug ] = 1;
+	}//end update_found_terms
+}//end Marmoset_Theme
+
+global $marmoset_theme;
+$marmoset_theme = new Marmoset_Theme;
+
+add_action( 'init', array( $marmoset_theme, 'init' ) );
