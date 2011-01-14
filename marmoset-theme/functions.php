@@ -1,5 +1,5 @@
 <?php
-require_once 'PSU.php';
+
 class Marmoset_Theme {
 	public $found_members = array();
 	public $found_stakeholders = array();
