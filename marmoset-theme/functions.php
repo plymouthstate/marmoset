@@ -96,23 +96,23 @@ class Marmoset_Theme {
 	public function update_found_terms() {
 		$stakeholders = Marmoset::get_the_stakeholders();
 		foreach( $stakeholders as $stakeholder ) {
-			$this->found_stakeholders[ $stakeholder->slug ] = 1;
+			$this->found_stakeholders[ $stakeholder->slug ] += 1;
 		}
 
 		$members = Marmoset::get_the_members();
 		foreach( $members as $member ) {
-			$this->found_members[ $member->slug ] = 1;
+			$this->found_members[ $member->slug ] += 1;
 		}
 
 		$status = Marmoset::get_the_status();
-		$this->found_statuses[ $status->slug ] = 1;
+		$this->found_statuses[ $status->slug ] += 1;
 	}//end update_found_terms
 
 	public function output_found_terms() {
 		echo '<ul>';
-		$this->output_found_terms_for( 'marm_stakeholders', array_keys($this->found_stakeholders) );
-		$this->output_found_terms_for( 'marm_members', array_keys($this->found_members) );
-		$this->output_found_terms_for( 'marm_status', array_keys($this->found_statuses) );
+		$this->output_found_terms_for( 'marm_stakeholders', $this->found_stakeholders );
+		$this->output_found_terms_for( 'marm_members', $this->found_members );
+		$this->output_found_terms_for( 'marm_status', $this->found_statuses );
 		echo '</ul>';
 	}
 
@@ -123,9 +123,9 @@ class Marmoset_Theme {
 		echo '<li class="' . substr( $taxonomy->name, 5 ) . '"><span>' . $taxonomy->labels->name . ':</span>';
 
 		echo '<ul>';
-		foreach( $terms as $term_slug ) {
+		foreach( $terms as $term_slug => $found_count ) {
 			$term = get_term_by( 'slug', $term_slug, $taxonomy->name );
-			echo '<li class="' . $term->slug . '"><a href="#">' . $term->name . '</a></li>';
+			echo '<li class="' . $term->slug . '"><a href="#">' . $term->name . ' (' . $found_count . ')</a></li>';
 		}
 		echo '</ul><br class="clear"></li>';
 	}//end output_found_terms_for
