@@ -329,11 +329,21 @@ $.root.delegate( '.submit-project .stakeholders a:last', 'click.submit-project.s
 });
 
 $(function(){
+	var options = {
+		moreKeys: {
+			'Esc': 27
+		}
+	};
+
 	$.root.shortkeys({
 		'f': function() {
 			$('#project-filter').toggle();
+		},
+		'Esc': function() {
+			$('#project-filter').toggle(false);
+			marm.toggle_select();
 		}
-	});
+	}, options);
 });
 
 })(jQuery);
