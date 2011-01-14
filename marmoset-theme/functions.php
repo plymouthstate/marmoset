@@ -7,12 +7,14 @@ class Marmoset_Theme {
 
 	public function init() {
 		if( !is_admin() ) {
-			wp_enqueue_script( 'marmoset-js', get_bloginfo('template_directory') . '/marmoset.js', array('jquery-ui-183', 'jquery-shortkeys'), 3, true );
+			wp_enqueue_script( 'marmoset-js', get_bloginfo('template_directory') . '/marmoset.js', array('jquery-ui-183', 'jquery-hotkeys'), 3, true );
 			wp_enqueue_style( 'marmoset-960', get_bloginfo('template_directory') . '/960.css' );
 			wp_enqueue_style( 'marmoset-style', get_bloginfo('template_directory') . '/style.css', 'marmoset-960', 1 );
 
 			wp_enqueue_script( 'jquery-ui-183', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js', array('jquery'), '1.8.3', true );
-			wp_enqueue_script( 'jquery-shortkeys', get_bloginfo('template_directory') . '/js/jquery.shortkeys.js', array('jquery'), 1, true );
+
+			wp_deregister_script( 'jquery-hotkeys' );
+			wp_enqueue_script( 'jquery-hotkeys', get_bloginfo('template_directory') . '/js/jquery.hotkeys.js', array('jquery'), '0.8', true );
 
 			wp_deregister_script( 'jquery' );
 			wp_register_script( 'jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js', false, '1.4.4', true);
