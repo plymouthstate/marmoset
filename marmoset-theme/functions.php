@@ -116,15 +116,15 @@ class Marmoset_Theme {
 		echo '</ul>';
 	}
 
-	public function output_found_terms_for( $taxonomy_slug, $term_slugs ) {
+	public function output_found_terms_for( $taxonomy_slug, $terms ) {
 		$taxonomy = get_taxonomy( $taxonomy_slug );
-		$terms = get_terms( $taxonomy_slug, $term_slugs );
 
 		// trim marm_ off the front (hacky, needs a fix)
 		echo '<li class="' . substr( $taxonomy->name, 5 ) . '"><span>' . $taxonomy->labels->name . ':</span>';
 
 		echo '<ul>';
-		foreach( $terms as $term ) {
+		foreach( $terms as $term_slug ) {
+			$term = get_term_by( 'slug', $term_slug, $taxonomy->name );
 			echo '<li class="' . $term->slug . '"><a href="#">' . $term->name . '</a></li>';
 		}
 		echo '</ul><br class="clear"></li>';
