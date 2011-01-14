@@ -47,6 +47,9 @@
 				</div>
 			<?php endif; ?>
 		</div>
+		<div id="comments">
+			<?php comments_template(); ?>
+		</div>
 	</li> 
 	<?php $marmoset_theme->update_found_terms(); ?>
 	<?php $i++; ?>

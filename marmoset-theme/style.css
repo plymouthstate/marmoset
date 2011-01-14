@@ -234,6 +234,130 @@ body {
   .details .body p {
     margin-bottom: 1ex; }
 
+#comments {
+  clear: both; }
+  #comments .navigation {
+    padding: 0 0 18px 0; }
+  #comments h3#comments {
+    margin-left: 10px; }
+  #comments h3#comment-title,
+  #comments h3#reply-title {
+    color: #000;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 18px 0; }
+  #comments h3#comments-title {
+    padding: 24px 0; }
+  #comments .commentlist {
+    list-style: none;
+    margin: 0 0 0 18px; }
+    #comments .commentlist li.comment {
+      border-bottom: 1px solid #e7e7e7;
+      line-height: 18px;
+      margin: 0 0 24px 0;
+      padding: 0 0 0 42px;
+      position: relative; }
+    #comments .commentlist li:last-child {
+      border-bottom: none;
+      margin-bottom: 0; }
+    #comments .commentlist ol {
+      list-style: decimal; }
+    #comments .commentlist .avatar {
+      position: absolute;
+      top: 4px;
+      left: 0; }
+    #comments .commentlist .children {
+      list-style: none;
+      margin: 0; }
+      #comments .commentlist .children li {
+        border: none;
+        margin: 0; }
+    #comments .commentlist #respond {
+      margin: 0 0 18px 0; }
+    #comments .commentlist ul #respond {
+      margin: 0; }
+  #comments .comment-body ul,
+  #comments .comment-body ol {
+    margin-bottom: 18px; }
+  #comments .comment-body p:last-child {
+    margin-bottom: 6px; }
+  #comments .comment-body blockquote p:last-child {
+    margin-bottom: 24px; }
+  #comments .comment-author cite {
+    color: #000;
+    font-style: normal;
+    font-weight: bold; }
+  #comments .comment-author .says {
+    font-style: italic; }
+  #comments .comment-meta {
+    font-size: 12px;
+    margin: 0 0 18px 0; }
+    #comments .comment-meta a:active,
+    #comments .comment-meta a:hover {
+      color: #ff4b33; }
+  #comments .reply {
+    font-size: 12px;
+    padding: 0 0 24px 0; }
+    #comments .reply a,
+    #comments .reply a.comment-edit-link {
+      color: 888; }
+    #comments .reply a:hover,
+    #comments .reply a.comment-edit-link:hover {
+      color: #ff4b33; }
+  #comments .nopassword,
+  #comments .nocomments {
+    display: none; }
+  #comments .pingback {
+    border-bottom: 1px solid #e7e7e7;
+    margin-bottom: 18px;
+    padding-botton: 18px; }
+    #comments .pingback p {
+      color: #888;
+      display: block;
+      font-size: 12px;
+      line-height: 18px;
+      margin: 0; }
+    #comments .pingback .url {
+      font-size: 13px;
+      font-style: italic; }
+  #comments #respond {
+    border-top: 1px solid #e7e7e7;
+    margin: 24px 10px;
+    overflow: hidden;
+    position: relative; }
+    #comments #respond p {
+      margin: 0; }
+    #comments #respond .comment-notes {
+      margin-bottom: 1em; }
+    #comments #respond .required {
+      color: #ff4b33;
+      font-weight: bold; }
+    #comments #respond label {
+      color: #888;
+      font-size: 12px; }
+    #comments #respond input {
+      margin: 0 0 9px;
+      width: 20%; }
+    #comments #respond textarea {
+      width: 98%; }
+    #comments #respond .form-allowed-tags {
+      color: #888;
+      font-size: 12px;
+      line-height: 18px; }
+      #comments #respond .form-allowed-tags code {
+        font-size: 11px; }
+    #comments #respond .form_submit {
+      margin: 12px 0; }
+      #comments #respond .form_submit input {
+        font-size: 14px;
+        width: auto; }
+  #comments .children #respond {
+    margin: 0 48px 0 0; }
+  #comments #cancel-comment-reply-link {
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 18px; }
+
 .expanded {
   z-index: 90 !important; }
 
