@@ -229,6 +229,13 @@ marm.complexity = {
 				'project-id': $el.closest('li').data('postid'), 
 			};
 			$.post( admin_ajax , params , function(data){});
+			var params = { 
+				'action': 'display_complexity',  
+				'marm-complexity': $el.data('complexity'), 
+			};
+			$.post( admin_ajax, params, function(description) {
+				$el.parents('div').next('div').find( '.complexity' ).text( 'Project Complexity: '+description ); 
+			});
 		}
 	}
 };
@@ -237,20 +244,22 @@ marm.complexity = {
 
 $.root = $(document);
 
-$('.projects').sortable({
-	connectWith: '.projects',
-	cursor: 'default',
-	opacity: 0.4,
-	dropOnEmpty: true,
-	placeholder: 'ui-state-highlight',
-	stop: function(event, ui){
-		// purge any lingering inline styles from dragging...because those are stupid
-		ui.item.attr('style', '');
-	},
-	deactivate: function(event, ui){
-		marm.update_numbers(ui.item.closest('.projects'));
-	}
-});
+if( user_admin ) {
+	$('.projects').sortable({
+		connectWith: '.projects',
+		cursor: 'default',
+		opacity: 0.4,
+		dropOnEmpty: true,
+		placeholder: 'ui-state-highlight',
+		stop: function(event, ui){
+			// purge any lingering inline styles from dragging...because those are stupid
+			ui.item.attr('style', '');
+		},
+		deactivate: function(event, ui){
+			marm.update_numbers(ui.item.closest('.projects'));
+		}
+	});
+}
 
 $.root.delegate('.projects', 'selectstart', function() { return false; });
 

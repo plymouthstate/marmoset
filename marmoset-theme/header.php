@@ -9,10 +9,18 @@
 <?php wp_head(); ?>
 <script type="text/javascript">
 var admin_ajax = '<?php echo admin_url('admin-ajax.php'); ?>';
+<?php 
+if( is_user_logged_in ) {
+	if( current_user_can( 'administrator' ) ) {
+		?>
+		var user_admin = true;	
+		<?php
+	}
+}
+?>
 </script>
 </head>
 <body <?php body_class(); ?>>
-
 <div class="container_16" id="outer">
 	<div class="grid_16" id="header">
 		<h1><span><a href="<?php echo home_url( '/' ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></span></h1></a>

@@ -721,6 +721,15 @@ class Marmoset {
 		update_post_meta( $_POST['project-id'], 'project_complexity', $project_complexity );
 
 	}
+	public static function display_complexity(){
+		$args = array(
+			'slug' => 'complexity-'.$_POST[ 'marm-complexity' ],
+			'hide_empty' => 0
+		);
+		$tax = get_term_by( 'slug', 'complexity-'.$_POST[ 'marm-complexity' ], 'marm_complexity' );
+		echo htmlspecialchars_decode($tax->description);
+		die();
+	}
 }
 
 add_action( 'init', 'Marmoset::init' );
@@ -728,6 +737,7 @@ register_activation_hook( __FILE__, 'Marmoset::activate' );
 add_action('save_post', 'Marmoset::project_properties_save');
 
 add_action( 'wp_ajax_save_complexity', 'Marmoset::save_complexity' );
+add_action( 'wp_ajax_display_complexity', 'Marmoset::display_complexity' );
 
 add_action( 'add_meta_boxes_marm_project', 'Marmoset::remove_meta_boxes' );
 
