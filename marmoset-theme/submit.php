@@ -1,5 +1,5 @@
 <?php require_once ABSPATH . '/wp-admin/includes/template.php'; ?>
-
+<div id="submit-container">
 <h2>Submit Project</h2>
 <form action="<?php echo admin_url( 'admin-ajax.php' ); ?>" class="submit-project" method="post">
 	<input type="hidden" name="action" value="submit_project">
@@ -69,3 +69,4 @@
 		</li>
 	</ul>
 </form>
+</div>
