@@ -12,6 +12,11 @@ var marm = {
 		$('#project-filter-total').html( $( filter_classes ).length );
 	},
 	hide_unfocused: function( state ) {
+		// never hide when there are no focused items
+		if( marm.meta_filters.length == 0 ) {
+			state = false;
+		}
+
 		if( state === true ) {
 			$('body').not('.hide-unfocused').addClass('hide-unfocused');
 		} else if( state === false ) {
@@ -336,6 +341,10 @@ $(function(){
 	$.root.bind('keydown', 'esc', function(e) {
 		$('#project-filter').toggle(false);
 		marm.toggle_select();
+	});
+
+	$.root.bind('keydown', 'h', function(e) {
+		marm.hide_unfocused();
 	});
 });
 
