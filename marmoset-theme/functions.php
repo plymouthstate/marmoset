@@ -30,6 +30,14 @@ class Marmoset_Theme {
 		}
 	}
 
+	public function body_class( $classes ) {
+		if( current_user_can( 'edit_posts' ) ) {
+			$classes[] = 'user-cap-edit_posts';
+		}
+
+		return $classes;
+	}//end body_class
+
 	public function project_filter() {
 		include TEMPLATEPATH . '/includes/project-filter.php';
 	}//end project_filter
@@ -228,3 +236,4 @@ $marmoset_theme = new Marmoset_Theme;
 
 add_action( 'init', array( $marmoset_theme, 'init' ) );
 add_action( 'widgets_init', array( $marmoset_theme, 'widgets_init' ) );
+add_action( 'body_class', array( $marmoset_theme, 'body_class' ) );

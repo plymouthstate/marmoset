@@ -1,6 +1,11 @@
 var marm = {
 	meta_filters: [],
 
+	// a list of cached user capabilities
+	user_cap: {
+		edit_posts: false
+	},
+
 	count_projects: function() {
 		var i = 0;
 		var final_count = 0;
@@ -244,22 +249,23 @@ marm.complexity = {
 
 $.root = $(document);
 
-if( user_admin ) {
-	$('.projects').sortable({
-		connectWith: '.projects',
-		cursor: 'default',
-		opacity: 0.4,
-		dropOnEmpty: true,
-		placeholder: 'ui-state-highlight',
-		stop: function(event, ui){
-			// purge any lingering inline styles from dragging...because those are stupid
-			ui.item.attr('style', '');
-		},
-		deactivate: function(event, ui){
-			marm.update_numbers(ui.item.closest('.projects'));
-		}
-	});
-}
+marm.user_cap.edit_posts = $('body').hasClass('user-cap-edit_posts');
+
+$('.projects').sortable({
+	connectWith: '.projects',
+	cursor: 'default',
+	opacity: 0.4,
+	disabled: !marm.user_cap.edit_posts,
+	dropOnEmpty: true,
+	placeholder: 'ui-state-highlight',
+	stop: function(event, ui){
+		// purge any lingering inline styles from dragging...because those are stupid
+		ui.item.attr('style', '');
+	},
+	deactivate: function(event, ui){
+		marm.update_numbers(ui.item.closest('.projects'));
+	}
+});
 
 $.root.delegate('.projects', 'selectstart', function() { return false; });
 
@@ -278,15 +284,18 @@ $.root.delegate('.project .permalink a', 'click', function(e) { e.stopPropagatio
  *
  * events are namespaced as marm_complexity
  */
-$.root.delegate('.project .complexity .complexity-reset', 'click.marm_complexity', marm.complexity.reset); 
-$.root.delegate('.project .complexity .complexity-clear', 'click.marm_complexity', marm.complexity.clear);
-$.root.delegate('.project .complexity ul', 'hover.marm_complexity', marm.complexity.cancel);
-$.root.delegate('.project .complexity', 'mouseleave.marm_complexity', marm.complexity.cancel);
-$.root.delegate('.project .complexity .indicator', 'mouseover.marm_complexity', marm.complexity.over);
-$.root.delegate('.project .complexity', 'click.marm_complexity', function(e) { 
-	e.stopPropagation();
-	marm.complexity.set( $(this) );
-});
+
+if( marm.user_cap.edit_posts ) {
+	$.root.delegate('.project .complexity .complexity-reset', 'click.marm_complexity', marm.complexity.reset); 
+	$.root.delegate('.project .complexity .complexity-clear', 'click.marm_complexity', marm.complexity.clear);
+	$.root.delegate('.project .complexity ul', 'hover.marm_complexity', marm.complexity.cancel);
+	$.root.delegate('.project .complexity', 'mouseleave.marm_complexity', marm.complexity.cancel);
+	$.root.delegate('.project .complexity .indicator', 'mouseover.marm_complexity', marm.complexity.over);
+	$.root.delegate('.project .complexity', 'click.marm_complexity', function(e) { 
+		e.stopPropagation();
+		marm.complexity.set( $(this) );
+	});
+}
 
 $.root.delegate('#toggle-unfocused', 'click', function(e) {
 	e.preventDefault();

@@ -305,7 +305,7 @@ li.project {}
 .progress-95 { width: 95%; }
 .progress-100 { right: 0; }
 
-.project { cursor: move; }
+.project { cursor: pointer; cursor: hand; }
 
 .hidden { display: none; }
 
@@ -377,7 +377,7 @@ li.project {}
 }
 
 .complexity:hover ul{
-	display: block;
+	display: none;
 }
 
 .single-marmproject .projects > .project {
@@ -558,6 +558,14 @@ form {
 	input[type=submit] {
 		margin-top: 1em;
 	}
+}
+
+/* links that only editors can see */
+.editors-only { display: none; }
+.user-cap-edit_posts {
+	.editors-only { display: inline; }
+	.project { cursor: move; }
+	.complexity:hover ul { display: block; }
 }
 
 /* vim:filetype=css:

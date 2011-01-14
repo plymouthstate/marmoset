@@ -12,7 +12,10 @@
 					<span><span class="type"><a href="<?php bloginfo('url'); ?>/queue/<?php echo $post->queue->slug; ?>/"><?php echo $post->queue->name; ?> Project</a> &raquo;</span> <?php the_title(); ?></span>
 				</h2>
 				<span class="date" title="Estimated Date of Completion"><span><?php Marmoset::the_due_date('Y-m-d'); ?></span></span>
-				<span class="permalink">[<a href="<?php the_permalink(); ?>" title="View Project Details">Details</a>]</span>
+				<span class="permalink">
+					[<a href="<?php the_permalink(); ?>" title="View Project Details">Details</a>]
+					<span class="editors-only">[<a href="<?php echo get_edit_post_link(); ?>" title="Edit Project Details">Edit</a>]</span>
+				</span>
 			</div>
 			<div data-complexity="<?php Marmoset::the_complexity(); ?>" data-complexity-original="<?php Marmoset::the_complexity(); ?>" class="complexity complexity-<?php Marmoset::the_complexity(); ?>" title="Project Complexity (<?php Marmoset::the_complexity(); ?>)">
 				<span class="readable"><?php Marmoset::the_complexity(); ?></span>
