@@ -1,4 +1,5 @@
 <ol class="projects">
+<?php global $marmoset_theme; ?>
 <?php if ( have_posts() ) : $i = 1; ?>
 	<?php while ( have_posts() ) : the_post(); ?>
 	<?php Marmoset::get_the_queue(); ?>
@@ -43,6 +44,7 @@
 			<?php endif; ?>
 		</div>
 	</li> 
+	<?php $marmoset_theme->update_found_terms(); ?>
 	<?php $i++; ?>
 	<?php endwhile; ?>
 <?php endif; ?>

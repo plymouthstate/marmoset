@@ -1,4 +1,8 @@
+<?php global $marmoset_theme; ?>
+
 <div id="project-filter">
+	<h2>Filters</h2>
+	<?php $marmoset_theme->output_found_terms(); ?>
 	Focusing on projects with:
 	<ul></ul>
 

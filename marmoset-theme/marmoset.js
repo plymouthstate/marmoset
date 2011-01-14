@@ -26,6 +26,7 @@ var marm = {
 	meta_contents: function( meta, member ) {
 		return $($('.project .meta .' + meta + ' a[href$=' + member + ']').get(0)).html(); 
 	},
+
 	meta_data: function( meta, member, calc ) {
 		var meta_data = {
 			id: meta + '_' + member,
@@ -62,37 +63,37 @@ var marm = {
 	toggle_meta_filter: function( meta, member, meta_contents, calc_project_count ) {
 		meta_contents = meta_contents || marm.meta_contents( meta, member );
 
-		var focus_class = 'focus-meta';
+		var focus_class = 'focus-meta',
+			meta_data = marm.meta_data( meta, member ),
+			$style = $('#' + meta_data.style_id),
+			filter_index = $.inArray( meta_data.id, marm.meta_filters );
 
-		var $filter = $('#project-filter ul');
-
-		var meta_data = marm.meta_data( meta, member );
-
-		var filter_index = $.inArray( meta_data.id, marm.meta_filters );
-
-		if( !~filter_index ) {
+		if( $style.length == 0 ) {
 			marm.meta_filters.push(meta_data.id);
 
-			$('head').append('<style id="' + meta_data.style_id + '" class="selected">.focus-meta .' + meta_data.meta + '_'+ meta_data.member +'{display: block !important; opacity:1;}</style>');
+			var theCss = '.focus-meta .' + meta_data.meta + '_' + meta_data.member +
+				'{display: block !important; opacity: 1}';
 
-			$filter.append('<li id="filter-' + meta_data.style_id +'" class="' + meta_data.meta +'">(<span class="filter_count">' + meta_data.count +'</span>) ' + meta_data.or + '<a href="' + member +'">' + meta_contents + '</a> '+meta_data.concat+' '+ meta_data.readable_meta +'</li>').closest('div').show();
+			theCss = theCss + ' #project-filter .' + meta_data.meta + ' .' + meta_data.member + ' a ' +
+				'{color: black; background-color: red;}';
+
+			var $style = $('<style/>')
+				.attr('id', meta_data.style_id)
+				.text( theCss );
+
+			$style.appendTo('head');
 		} else {
 			marm.meta_filters.splice(filter_index, 1);
 
-			$('#' + meta_data.style_id).remove();
-			$('#filter-' + meta_data.style_id).remove();
+			$style.remove();
 
 			if( $('#project-filter li').length == 0 ) {
-				$filter.closest('div').hide();
 				marm.hide_unfocused( false );
 			}//end if
 		}//end else
 
-		if( $('style.selected').length ) {
-			$('body').not('.' + focus_class).addClass( focus_class );
-		} else {
-			$('body').removeClass( focus_class );
-		}//end else
+		console.log( marm.meta_filters );
+		$('body').toggleClass( focus_class, marm.meta_filters.length > 0 );
 
 		if( calc_project_count ) {
 			marm.count_projects();
@@ -244,10 +245,12 @@ $.root.delegate('#toggle-unfocused', 'click', function(e) {
 $.root.delegate('.project .meta li a, #project-filter ul a', 'click', function(e) {
 	e.preventDefault();
 
-	var meta = $(this).closest('li').attr('class'),
+	var $li = $(this).closest('li');
+
+	var member = $li.attr('class'),
 		meta_contents = $(this).html(),
 		href = $(this).attr('href'),
-		member = /[a-z_]+$/.exec( href );
+		meta = $li.parents('li').attr('class');
 
 	marm.toggle_meta_filter( meta, member, meta_contents, true );
 });

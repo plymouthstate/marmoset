@@ -106,6 +106,28 @@ class Marmoset_Theme {
 		$status = Marmoset::get_the_status();
 		$this->found_statuses[ $status->slug ] = 1;
 	}//end update_found_terms
+
+	public function output_found_terms() {
+		echo '<ul>';
+		$this->output_found_terms_for( 'marm_stakeholders', array_keys($this->found_stakeholders) );
+		$this->output_found_terms_for( 'marm_members', array_keys($this->found_members) );
+		$this->output_found_terms_for( 'marm_status', array_keys($this->found_statuses) );
+		echo '</ul>';
+	}
+
+	public function output_found_terms_for( $taxonomy_slug, $term_slugs ) {
+		$taxonomy = get_taxonomy( $taxonomy_slug );
+		$terms = get_terms( $taxonomy_slug, $term_slugs );
+
+		// trim marm_ off the front (hacky, needs a fix)
+		echo '<li class="' . substr( $taxonomy->name, 5 ) . '"><span>' . $taxonomy->labels->name . ':</span>';
+
+		echo '<ul>';
+		foreach( $terms as $term ) {
+			echo '<li class="' . $term->slug . '"><a href="#">' . $term->name . '</a></li>';
+		}
+		echo '</ul><br class="clear"></li>';
+	}//end output_found_terms_for
 }//end Marmoset_Theme
 
 global $marmoset_theme;
