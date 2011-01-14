@@ -6,27 +6,6 @@ Author: Adam Backstrom
 Version: 0.1
 */
 
-body {
-	font-family: Calibri, Trebuchet MS, Arial;
-	background-color: #eee;
-	padding-top: 2em;
-}
-
-#header h1 {
-	background-image: url(images/marmoset.png);
-	background-repeat: no-repeat;
-	font-family: Georgia;
-	font-size: 2.5em;
-	height: 75px;
-	margin-top: 1em;
-	padding-left: 90px;
-
-	a {
-		color: black;
-		text-decoration: none;
-	}
-}
-
 @mixin inner-fade($args) {
 	-webkit-box-shadow: $args;
 	-moz-box-shadow: $args;
@@ -47,6 +26,41 @@ body {
 
 $projectrounding: 5px;
 
+/*************************
+ * Base Tags
+ *************************/
+body {
+	font-family: Calibri, Trebuchet MS, Arial;
+	background-color: #eee;
+	padding-top: 2em;
+}
+
+/*************************
+ * Header Area
+ *************************/
+
+#header h1 {
+	background-image: url(images/marmoset.png);
+	background-repeat: no-repeat;
+	font-family: Georgia;
+	font-size: 2.5em;
+	height: 75px;
+	margin-top: 1em;
+	padding-left: 90px;
+
+	a {
+		color: black;
+		text-decoration: none;
+	}
+}
+
+/*************************
+ * Body Area
+ *************************/
+
+/*------------------------
+ - Projects
+ ------------------------*/
 .projects {
 	list-style: none;
 	margin: 0;
@@ -72,7 +86,30 @@ $projectrounding: 5px;
 	}
 }
 
+.projects > li {
+	display: block;
+	position: relative;
+	list-style: none;
+	margin: 0 0 1em 0;
+	padding: 0;
+	height: 2em;
+}
+
 .project {
+	cursor: pointer; 
+	cursor: hand;
+
+	.permalink{
+		color: #777;
+		display: none;
+		float: right;
+		font-weight: normal;
+		margin-right: 6em;
+		padding-top: 0.2em;
+
+		a{ color: #555; }
+	}
+
 	.details .meta {
 		overflow: hidden;
 
@@ -91,6 +128,22 @@ $projectrounding: 5px;
 			float: right;
 		}
 	}
+
+	li.priority-2 { background-color: #FFECEF; }
+	li.priority-2 .progress { background-color: #FFBABB; }
+	li.priority-3 { background-color: #FFF6E7; }
+	li.priority-3 .progress { background-color: #FFE2AB; }
+
+	.item-number{
+		display: block;
+		font-size: 1.2em;
+		opacity: 0.3;
+		padding: 0.2em;
+		position: absolute;
+		left: -3.8em;
+		text-align: right;
+		width: 3em;
+	}
 }
 
 $projectwidth: 80%;
@@ -99,47 +152,9 @@ $projectwidth: 80%;
 	border: 1px dashed #999;
 }
 
-.projects > li {
-	display: block;
-	position: relative;
-	list-style: none;
-	margin: 0 0 1em 0;
-	padding: 0;
-	height: 2em;
-}
-
-li.project {}
-
-.project .permalink{
-	color: #777;
-	display: none;
-	float: right;
-	font-weight: normal;
-	margin-right: 6em;
-	padding-top: 0.2em;
-}
-
-.project .permalink a{ color: #555; }
-
 .expanded .permalink,
 .project:hover .permalink{
 	display: inline;
-}
-
-.projects li.priority-2 { background-color: #FFECEF; }
-.projects li.priority-2 .progress { background-color: #FFBABB; }
-.projects li.priority-3 { background-color: #FFF6E7; }
-.projects li.priority-3 .progress { background-color: #FFE2AB; }
-
-.projects .item-number{
-	display: block;
-	font-size: 1.2em;
-	opacity: 0.3;
-	padding: 0.2em;
-	position: absolute;
-	left: -3.8em;
-	text-align: right;
-	width: 3em;
 }
 
 .focus-meta .project{opacity: 0.3;}
@@ -167,9 +182,7 @@ li.project {}
 	opacity: .9;
 
 	ul {
-		span {
-			float: left;
-		}
+		span { float: left; }
 
 		ul {
 			display: inline-block;
@@ -521,8 +534,6 @@ li.project {}
 .progress-95 { width: 95%; }
 .progress-100 { right: 0; }
 
-.project { cursor: pointer; cursor: hand; }
-
 .hidden { display: none; }
 
 .project-status {
@@ -745,11 +756,14 @@ form {
 			padding-right: 1em;
 		}
 
-		li { padding-left: 0; }
-		li label {
-			margin-left: 0;
-			width: auto;
-			padding-right: 1em;
+		li { 
+			padding-left: 0; 
+
+			label {
+				margin-left: 0;
+				width: auto;
+				padding-right: 1em;
+			}
 		}
 	}
 
@@ -771,9 +785,7 @@ form {
 		margin-right: 0;
 	}
 
-	input[type=submit] {
-		margin-top: 1em;
-	}
+	input[type=submit] { margin-top: 1em; }
 }
 
 /* links that only editors can see */
