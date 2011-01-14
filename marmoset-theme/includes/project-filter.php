@@ -3,8 +3,6 @@
 <div id="project-filter" style="display:none;">
 	<h2>Filters</h2>
 	<?php $marmoset_theme->output_found_terms(); ?>
-	Focusing on projects with:
-	<ul></ul>
 
 	<div class="options">
 		<div><span id="project-filter-total">0</span> Projects Total</div>

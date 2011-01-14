@@ -120,6 +120,7 @@ class Marmoset_Theme {
 
 	public function output_found_terms_for( $taxonomy_slug, $terms ) {
 		$taxonomy = get_taxonomy( $taxonomy_slug );
+		$terms_full = array();
 
 		// trim marm_ off the front (hacky, needs a fix)
 		echo '<li class="' . substr( $taxonomy->name, 5 ) . '"><span>' . $taxonomy->labels->name . ':</span>';
@@ -127,8 +128,16 @@ class Marmoset_Theme {
 		echo '<ul>';
 		foreach( $terms as $term_slug => $found_count ) {
 			$term = get_term_by( 'slug', $term_slug, $taxonomy->name );
-			echo '<li class="' . $term->slug . '"><a href="#">' . $term->name . ' (' . $found_count . ')</a></li>';
+			$term->found_count = $found_count;
+			$terms_full[] = $term;
 		}
+
+		usort( $terms_full, create_function( '$a, $b', 'return strnatcasecmp($a->name, $b->name);' ) );
+
+		foreach( $terms_full as $term ) {
+			echo '<li class="' . $term->slug . '"><a href="#">' . $term->name . ' (' . $term->found_count . ')</a></li>';
+		}
+
 		echo '</ul><br class="clear"></li>';
 	}//end output_found_terms_for
 

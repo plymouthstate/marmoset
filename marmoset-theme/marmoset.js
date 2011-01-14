@@ -1,5 +1,6 @@
 var marm = {
 	meta_filters: [],
+
 	count_projects: function() {
 		var i = 0;
 		var final_count = 0;
@@ -11,6 +12,7 @@ var marm = {
 
 		$('#project-filter-total').html( $( filter_classes ).length );
 	},
+
 	hide_unfocused: function( state ) {
 		// never hide when there are no focused items
 		if( marm.meta_filters.length == 0 ) {
@@ -25,9 +27,11 @@ var marm = {
 			$('body').toggleClass('hide-unfocused');
 		}//end else
 	},
+
 	add_meta_filter: function( meta, member, meta_contents, calc_project_count ) {
 		meta_contents = meta_contents || marm.meta_contents( meta, member );
 	},
+
 	meta_contents: function( meta, member ) {
 		return $($('.project .meta .' + meta + ' a[href$=' + member + ']').get(0)).html(); 
 	},
@@ -65,48 +69,75 @@ var marm = {
 
 		return meta_data;
 	},
+
+	clear_filters: function() {
+		marm.meta_filters = [];
+
+		$('style.filter').each( function(i,e) { marm.toggle_filter_style(e,false); } );
+		$('body').toggleClass( 'focus-meta', marm.meta_filters.length > 0 );
+
+		marm.count_projects();
+	},
+
+	toggle_filter_style: function( elem, enable ) {
+		var $style = $(elem);
+
+		if( typeof enable == 'undefined' ) {
+			enable = $style.data('disabled');
+		}
+
+		if( enable ) {
+			$style.data('disabled', false).text( $style.data('contents') );
+		} else {
+			$style.data('disabled', true).empty();
+
+			if( $('#project-filter li').length == 0 ) {
+				marm.hide_unfocused( false );
+			}//end if
+		}
+
+		$('body').toggleClass( 'focus-meta', marm.meta_filters.length > 0 );
+	},
+
 	toggle_meta_filter: function( meta, member, meta_contents, calc_project_count ) {
 		meta_contents = meta_contents || marm.meta_contents( meta, member );
 
-		var focus_class = 'focus-meta',
-			meta_data = marm.meta_data( meta, member ),
+		var meta_data = marm.meta_data( meta, member ),
 			$style = $('#' + meta_data.style_id),
 			filter_index = $.inArray( meta_data.id, marm.meta_filters );
 
 		if( $style.length == 0 ) {
-			marm.meta_filters.push(meta_data.id);
-
 			var theCss = '.focus-meta .' + meta_data.meta + '_' + meta_data.member +
 				'{display: block !important; opacity: 1}';
 
 			theCss = theCss + ' #project-filter .' + meta_data.meta + ' .' + meta_data.member + ' a ' +
 				'{color: black; background-color: red;}';
 
+			// add in disabled state; will be enabled by toggle_filter_style
 			var $style = $('<style/>')
 				.attr('id', meta_data.style_id)
+				.addClass('filter')
 				.attr('type', 'text/css')
+				.data('contents', theCss)
+				.data('disabled', true)
 				.text( theCss );
 
 			$style.appendTo('head');
-		} else if( $style.data('disabled') == true ) {
+		}
+		
+		if( $style.data('disabled') == true ) {
 			marm.meta_filters.push(meta_data.id);
-			$style.text( $style.data('contents') ).data('disabled', false);
+			marm.toggle_filter_style( $style );
 		} else {
 			marm.meta_filters.splice(filter_index, 1);
-
-			$style.data('contents', $style.text()).data('disabled', true).empty();
-
-			if( $('#project-filter li').length == 0 ) {
-				marm.hide_unfocused( false );
-			}//end if
+			marm.toggle_filter_style( $style );
 		}//end else
-
-		$('body').toggleClass( focus_class, marm.meta_filters.length > 0 );
 
 		if( calc_project_count ) {
 			marm.count_projects();
 		}//end if
 	},
+
 	toggle_select: function( $o ) {
 		// was an object passed in?
 		if( $o ) {
@@ -253,6 +284,11 @@ $.root.delegate('#toggle-unfocused', 'click', function(e) {
 	marm.hide_unfocused();
 });
 
+// Don't let clicks in the filter window close that window.
+$.root.delegate('#project-filter', 'click', function(e) {
+	e.stopPropagation();
+});
+
 $.root.delegate('#project-filter ul a', 'click', function(e) {
 	e.preventDefault();
 	e.stopPropagation();
@@ -348,6 +384,10 @@ $(function(){
 
 	$.root.bind('keydown', 'h', function(e) {
 		marm.hide_unfocused();
+	});
+
+	$.root.bind('keydown', 'c', function(e) {
+		marm.clear_filters();
 	});
 });
 
