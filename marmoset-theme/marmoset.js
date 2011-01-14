@@ -253,7 +253,7 @@ $.root.delegate('#toggle-unfocused', 'click', function(e) {
 	marm.hide_unfocused();
 });
 
-$.root.delegate('.project .meta li a, #project-filter ul a', 'click', function(e) {
+$.root.delegate('#project-filter ul a', 'click', function(e) {
 	e.preventDefault();
 	e.stopPropagation();
 

@@ -131,9 +131,91 @@ class Marmoset_Theme {
 		}
 		echo '</ul><br class="clear"></li>';
 	}//end output_found_terms_for
+
+	public function widgets_init() {
+		register_sidebar(array(
+			'name' => 'Project List',
+			'before_widget' => '<div id="%1$s" class="widget %2$s">',
+			'after_widget' => '</div>',
+			'before_title' => '<h2>',
+			'after_title' => '</h2>',
+		)); 
+
+		register_widget( 'Marmoset_Widget_Projects' );
+		register_widget( 'Marmoset_Widget_Submit_Project' );
+	}//end widgets_init
 }//end Marmoset_Theme
+
+class Marmoset_Widget_Submit_Project extends WP_Widget {
+	public function __construct() {
+		parent::__construct(false, 'Marmoset: Submit Project');
+	}
+
+	public function widget( $args, $instance ) {
+		?>
+		<div class="grid_16">
+			<?php include 'submit.php'; ?>
+		</div>
+		<div class="clear"></div>
+		<?php
+	}
+}
+
+class Marmoset_Widget_Projects extends WP_Widget {
+	public function __construct() {
+		parent::__construct(false, 'Marmoset: Projects');
+	}
+
+	public function widget( $args, $instance ) {
+		extract( $args );
+
+		$term = get_term_by( 'slug', $instance['term_slug'], 'marm_status' );
+		$title = $term->name;
+
+		?>
+
+		<div class="grid_16 project-status" data-status="current">
+		<h2><?php echo $title; ?></h2>
+			<div>
+				<?php Marmoset::get_projects( array( 'marm_status' => $term->slug) ); ?>
+			</div>
+		</div>
+		<div class="clear"></div>
+
+		<?php
+	}
+
+	public function form( $instance ) {
+		$taxonomy = get_taxonomy( 'marm_status' );
+		$terms = get_terms( $taxonomy->name );
+
+		$selected_term = $instance['term_slug'];
+
+		echo '<select id="' . $this->get_field_id('term_slug') .
+			'" name="' . $this->get_field_name('term_slug') . '">';
+
+		foreach( $terms as $term ) {
+			echo '<option value="' . $term->slug . '"';
+			if( $term->slug == $selected_term ) {
+				echo ' selected="selected"';
+			}
+			echo '>';
+			echo esc_html( $term->name );
+			echo '</option>';;
+		}
+
+		echo '</select>';
+	}//end form
+
+	public function update( $new, $old ) {
+		$instance = $old;
+		$instance['term_slug'] = $new['term_slug'];
+		return $instance;
+	}//end update
+}//end Marmoset_Widget_Projects
 
 global $marmoset_theme;
 $marmoset_theme = new Marmoset_Theme;
 
 add_action( 'init', array( $marmoset_theme, 'init' ) );
+add_action( 'widgets_init', array( $marmoset_theme, 'widgets_init' ) );

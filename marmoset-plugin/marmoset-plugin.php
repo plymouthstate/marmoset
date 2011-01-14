@@ -235,6 +235,7 @@ class Marmoset {
 			'public' => true,
 			'show_ui' => true,
 			'hierarchical' => true,
+			'rewrite' => array('slug' => 'stakeholder'),
 		);
 		register_taxonomy( 'marm_stakeholders', 'marm_project', $args );
 
@@ -256,6 +257,7 @@ class Marmoset {
 			'public' => true,
 			'publicly_queryable' => true,
 			'hierarchical' => true, // needed for default checkbox ui in dashboard
+			'rewrite' => array('slug' => 'member'),
 		);
 		register_taxonomy( 'marm_members', 'marm_project', $args );
 
