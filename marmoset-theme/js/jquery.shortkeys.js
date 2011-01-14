@@ -11,6 +11,7 @@ jQuery.fn.shortkeys = jQuery.fn.keys = function (obj, settings) {
 	this.onFormElement = false;
 	this.keysDown = new Array();
 	this.init = function (obj) {
+		var i, j, x;
 		for(x in this.wackyKeys) {
 			this.wackyKeys[x.toUpperCase()] = this.wackyKeys[x];
 		}
@@ -33,6 +34,13 @@ jQuery.fn.shortkeys = jQuery.fn.keys = function (obj, settings) {
 		return inp.toUpperCase().charCodeAt(0);
 	};	
 	this.keyAdd = function(keyCode) {
+		for(i in this.keysDown) {
+			if(this.keysDown[i] == keyCode) {
+				// already there
+				return null;
+			}
+		};
+
 		this.keysDown.push(keyCode);
 		this.keysDown.sort();
 	};
@@ -41,8 +49,8 @@ jQuery.fn.shortkeys = jQuery.fn.keys = function (obj, settings) {
 			if(this.keysDown[i] == keyCode) {
 				this.keysDown.splice(i,1);
 			}
-		};	
-		this.keysDown.sort();	
+		};
+		this.keysDown.sort();
 	};		
 	this.keyTest = function (i) {
 		if (this.keys[i].length != this.keysDown.length) return false;
@@ -86,8 +94,8 @@ jQuery.fn.shortkeys = jQuery.fn.keys = function (obj, settings) {
 		el.keyRemoveAll();
 	});
 	
-	this.init(obj);
 	jQuery.extend(this.wackyKeys, this.settings.moreKeys);
+	this.init(obj);
 
 	return this;
 }
