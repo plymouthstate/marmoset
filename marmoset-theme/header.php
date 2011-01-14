@@ -9,15 +9,6 @@
 <?php wp_head(); ?>
 <script type="text/javascript">
 var admin_ajax = '<?php echo admin_url('admin-ajax.php'); ?>';
-<?php 
-if( is_user_logged_in ) {
-	if( current_user_can( 'administrator' ) ) {
-		?>
-		var user_admin = true;	
-		<?php
-	}
-}
-?>
 </script>
 </head>
 <body <?php body_class(); ?>>
