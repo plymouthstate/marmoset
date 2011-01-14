@@ -218,7 +218,10 @@ $.root.delegate('.projects', 'selectstart', function() { return false; });
 var proj_queue = $('.project-queue').data('queue');
 
 $.root.delegate('.project', 'click', function(e) { e.stopPropagation(); marm.toggle_select( $(this) ); });
-$.root.delegate('html', 'click', function() { marm.toggle_select(); });
+$.root.delegate('html', 'click', function() {
+	marm.toggle_select();
+	$('#project-filter').hide();
+});
 $.root.delegate('.project .details', 'click', function(e) { e.stopPropagation(); });
 $.root.delegate('.project .permalink a', 'click', function(e) { e.stopPropagation(); });
 
@@ -244,6 +247,7 @@ $.root.delegate('#toggle-unfocused', 'click', function(e) {
 
 $.root.delegate('.project .meta li a, #project-filter ul a', 'click', function(e) {
 	e.preventDefault();
+	e.stopPropagation();
 
 	var $li = $(this).closest('li');
 
@@ -324,5 +328,12 @@ $.root.delegate( '.submit-project .stakeholders a:last', 'click.submit-project.s
 	});
 });
 
-})(jQuery);
+$(function(){
+	$.root.shortkeys({
+		'f': function() {
+			$('#project-filter').toggle();
+		}
+	});
+});
 
+})(jQuery);

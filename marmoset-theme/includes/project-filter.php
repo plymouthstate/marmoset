@@ -1,6 +1,6 @@
 <?php global $marmoset_theme; ?>
 
-<div id="project-filter">
+<div id="project-filter" style="display:none;">
 	<h2>Filters</h2>
 	<?php $marmoset_theme->output_found_terms(); ?>
 	Focusing on projects with:
