@@ -84,20 +84,23 @@ var marm = {
 
 			var $style = $('<style/>')
 				.attr('id', meta_data.style_id)
+				.attr('type', 'text/css')
 				.text( theCss );
 
 			$style.appendTo('head');
+		} else if( $style.data('disabled') == true ) {
+			marm.meta_filters.push(meta_data.id);
+			$style.text( $style.data('contents') ).data('disabled', false);
 		} else {
 			marm.meta_filters.splice(filter_index, 1);
 
-			$style.remove();
+			$style.data('contents', $style.text()).data('disabled', true).empty();
 
 			if( $('#project-filter li').length == 0 ) {
 				marm.hide_unfocused( false );
 			}//end if
 		}//end else
 
-		console.log( marm.meta_filters );
 		$('body').toggleClass( focus_class, marm.meta_filters.length > 0 );
 
 		if( calc_project_count ) {
