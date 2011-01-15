@@ -15,5 +15,17 @@ var admin_ajax = '<?php echo admin_url('admin-ajax.php'); ?>';
 <div class="container_16" id="outer">
 	<div class="grid_16" id="header">
 		<h1><span><a href="<?php echo home_url( '/' ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></span></h1></a>
+		<a href="#" class="button add">
+			<span>Submit Project</span>
+		</a>
+		<a href="#" class="button">
+			<span>Sign In</span>
+		</a>
+		<a href="#" class="button save">
+			<span>Save</span>
+		</a>
+		<a href="#" class="button delete">
+			<span>Delete</span>
+		</a>
 	</div>
 	<div class="clear"></div>
