@@ -1,3 +1,4 @@
+<?php /* Template Name: Submit */ ?>
 <?php get_header(); ?>
 <?php
 /*******
