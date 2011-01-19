@@ -217,7 +217,7 @@ class Marmoset_Widget_Projects extends WP_Widget {
 
 		?>
 
-		<div class="grid_16 project-status" data-status="current">
+		<div class="grid_16 project-status" data-status="<?php echo $term->slug; ?>">
 		<h2><?php echo $title; ?></h2>
 			<div>
 				<?php Marmoset::get_projects( array( 'marm_status' => $term->slug) ); ?>
