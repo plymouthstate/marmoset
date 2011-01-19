@@ -37,7 +37,7 @@
 				<input type="text" name="marm-stakeholder[]" size="20" placeholder="New stakeholder"><!-- No space, doesn't work with .siblings() anyway. --><a href="#">Delete</a><br>
 				<a href="#">Add another&hellip;</a>
 			</div>
-			<div>Don't see your group? <a href="#">Create new stakeholders</a>.</div>
+			<div class="help">Don't see your group? <a href="#">Create new stakeholders</a>.</div>
 		</li>
 		<li>
 			<ul>
@@ -63,10 +63,10 @@
 				?>
 			</ul>
 		</li>
-		<li>
+		<li class="actions">
 			<label for="">&nbsp;</label>
 			<button type="submit" class="button save">Submit Project</button>
-			<button type="button" class="button">Cancel</button>
+			<a href="" class="cancel">Cancel Submission</a>
 		</li>
 	</ul>
 </form>

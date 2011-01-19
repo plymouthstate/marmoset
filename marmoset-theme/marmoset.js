@@ -370,6 +370,14 @@ $.root.delegate('.projects', 'sortupdate', function(event, ui) {
 	});
 });
 
+$.root.delegate('.submit-project .cancel', 'click.submit-project.cancel', function( e ) {
+	e.preventDefault();
+	$.colorbox.close();
+	$.publish('submit-project-cancel');
+});
+
+$.root.delegate('.submit-project .save', 'click.submit-project.save', function( e ) { $.publish('submit-project-save'); } );
+
 $.root.delegate( '.submit-project .stakeholders a:last', 'click.submit-project.stakeholders', function( e ) {
 	e.preventDefault();
 	$(e.currentTarget).closest('div').prevAll('div.hidden:first').removeClass('hidden').end().remove();
@@ -399,7 +407,7 @@ $.root.delegate( '.submit-project .stakeholders a:last', 'click.submit-project.s
  ***************/
 $(function(){
 	$('.submit-proposal').colorbox({
-		height: 500,
+		height: 550,
 		width: 650,
 		title: 'Submit Project',
 		inline: true,

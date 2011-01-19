@@ -652,12 +652,21 @@ footer {
 
 .submit-project {
   padding: 2em 2em 0 2em; }
+  .submit-project a {
+    color: #666; }
+  .submit-project .actions {
+    margin-top: 2em; }
+  .submit-project .cancel {
+    display: none;
+    padding-left: 2em; }
+  .submit-project .input-stakeholders {
+    display: block;
+    max-height: 16em;
+    width: 40%;
+    overflow: auto; }
 
-.submit-project .input-stakeholders {
-  display: block;
-  max-height: 16em;
-  width: 40%;
-  overflow: auto; }
+#colorbox .submit-project .cancel {
+  display: inline; }
 
 form {
   font-size: 1.2em; }
