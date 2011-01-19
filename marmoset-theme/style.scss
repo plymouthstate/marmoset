@@ -768,14 +768,34 @@ footer {
 #submit-container{ display: none; }
 .page #submit-container{ display: block; }
 
-.submit-project{ padding: 2em 2em 0 2em; }
+.submit-project{ 
+	padding: 2em 2em 0 2em; 
 
-.submit-project .input-stakeholders {
-	display: block;
-	max-height: 16em;
-	width: 40%;
-	overflow: auto;
+	a { color: #666; }
+
+	.actions {
+		margin-top: 2em;
+	}
+
+	.cancel { 
+		display: none; 
+		padding-left: 2em;
+	}
+
+	.help {}
+
+	.input-stakeholders {
+		display: block;
+		max-height: 16em;
+		width: 40%;
+		overflow: auto;
+	}
+
+	.submit {
+	}
 }
+
+#colorbox .submit-project .cancel { display: inline; }
 
 form { 
 	font-size: 1.2em;
@@ -893,6 +913,9 @@ button.add:hover,
 input.add:hover,
 a.add:hover{ background-color: #cfe5fc; }
 
+button.login,
+input.login,
+a.login,
 button.save,
 input.save,
 a.save{
@@ -905,6 +928,9 @@ a.save{
 	}
 }
 
+button.login:hover,
+input.login:hover,
+a.login:hover,
 button.save:hover,
 input.save:hover,
 a.save:hover{ background-color: #d4f9cf; }

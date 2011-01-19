@@ -652,12 +652,21 @@ footer {
 
 .submit-project {
   padding: 2em 2em 0 2em; }
+  .submit-project a {
+    color: #666; }
+  .submit-project .actions {
+    margin-top: 2em; }
+  .submit-project .cancel {
+    display: none;
+    padding-left: 2em; }
+  .submit-project .input-stakeholders {
+    display: block;
+    max-height: 16em;
+    width: 40%;
+    overflow: auto; }
 
-.submit-project .input-stakeholders {
-  display: block;
-  max-height: 16em;
-  width: 40%;
-  overflow: auto; }
+#colorbox .submit-project .cancel {
+  display: inline; }
 
 form {
   font-size: 1.2em; }
@@ -756,17 +765,26 @@ input.add:hover,
 a.add:hover {
   background-color: #cfe5fc; }
 
+button.login,
+input.login,
+a.login,
 button.save,
 input.save,
 a.save {
   background: #b8f4b7;
   border-color: #64af69;
   color: #0c4414; }
+  button.login span,
+  input.login span,
+  a.login span,
   button.save span,
   input.save span,
   a.save span {
     border-color: #cdf7ca; }
 
+button.login:hover,
+input.login:hover,
+a.login:hover,
 button.save:hover,
 input.save:hover,
 a.save:hover {
