@@ -645,7 +645,7 @@ footer {
 #submit-container {
   display: none; }
 
-.page-template-submit-page-php #submit-container {
+.marm-submit #submit-container {
   display: block; }
 
 .submit-project {
@@ -660,7 +660,6 @@ footer {
   .submit-project .input-stakeholders {
     display: block;
     max-height: 16em;
-    width: 40%;
     overflow: auto; }
 
 #colorbox .submit-project .cancel {

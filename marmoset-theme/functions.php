@@ -35,7 +35,10 @@ class Marmoset_Theme {
 		if( is_taxonomy('marm_queue') ) {
 			add_action( 'wp_footer', array( $this, 'project_filter' ) );
 		}
-	}
+
+		global $wp_rewrite;
+		$wp_rewrite->flush_rules();
+	}//end init
 
 	public function body_class( $classes ) {
 		if( current_user_can( 'edit_posts' ) ) {
@@ -44,6 +47,38 @@ class Marmoset_Theme {
 
 		return $classes;
 	}//end body_class
+
+	public function body_class_submit( $classes ) {
+		$classes[] = 'marm-submit';
+		return $classes;
+	}
+
+	public function query_vars( $query_vars ) {
+		$query_vars[] = 'marm_submit';
+		return $query_vars;
+	}//end query_vars
+
+	public function rewrite_rules_array( $rules ) {
+		$new = array();
+		$new['submit/?$'] = 'index.php?marm_submit=1';
+		return $new + $rules;
+	}//end query_vars
+
+	public function template_redirect() {
+		global $wp_query;
+
+		if( $wp_query->query_vars['marm_submit'] ) {
+			add_filter( 'body_class', array( $this, 'body_class_submit' ) );
+			include TEMPLATEPATH . '/submit.php';
+			die();
+		} else {
+			add_action( 'wp_footer', array( $this, 'include_submit_form' ) );
+		}
+	}//end template_redirect
+
+	public function include_submit_form() {
+		include TEMPLATEPATH . '/includes/submit-form.php';
+	}
 
 	public function project_filter() {
 		include TEMPLATEPATH . '/includes/project-filter.php';
@@ -166,24 +201,8 @@ class Marmoset_Theme {
 		)); 
 
 		register_widget( 'Marmoset_Widget_Projects' );
-		register_widget( 'Marmoset_Widget_Submit_Project' );
 	}//end widgets_init
 }//end Marmoset_Theme
-
-class Marmoset_Widget_Submit_Project extends WP_Widget {
-	public function __construct() {
-		parent::__construct(false, 'Marmoset: Submit Project');
-	}
-
-	public function widget( $args, $instance ) {
-		?>
-		<div class="grid_16">
-			<?php include 'submit.php'; ?>
-		</div>
-		<div class="clear"></div>
-		<?php
-	}
-}
 
 class Marmoset_Widget_Projects extends WP_Widget {
 	public function __construct() {
@@ -244,3 +263,6 @@ $marmoset_theme = new Marmoset_Theme;
 add_action( 'init', array( $marmoset_theme, 'init' ) );
 add_action( 'widgets_init', array( $marmoset_theme, 'widgets_init' ) );
 add_action( 'body_class', array( $marmoset_theme, 'body_class' ) );
+add_filter( 'query_vars', array( $marmoset_theme, 'query_vars' ) );
+add_action( 'template_redirect', array( $marmoset_theme, 'template_redirect' ) );
+add_action( 'rewrite_rules_array', array( $marmoset_theme, 'rewrite_rules_array' ) );

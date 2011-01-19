@@ -764,7 +764,7 @@ footer {
 }
 
 #submit-container{ display: none; }
-.page-template-submit-page-php #submit-container{ display: block; }
+.marm-submit #submit-container{ display: block; }
 
 .submit-project{ 
 	padding: 2em 2em 0 2em; 
@@ -785,7 +785,6 @@ footer {
 	.input-stakeholders {
 		display: block;
 		max-height: 16em;
-		width: 40%;
 		overflow: auto;
 	}
 

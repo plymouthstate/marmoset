@@ -19,7 +19,7 @@ var admin_ajax = '<?php echo admin_url('admin-ajax.php'); ?>';
 	<nav class="grid_16">
 		<?php Marmoset::the_queues('grid_12 alpha queues', 'button', true); ?>
 		<ul class="grid_4 omega options">
-			<?php if( is_user_logged_in() && $page = get_page_by_path('submit') ) : ?>
+			<?php if( is_user_logged_in() ) : ?>
 				<?php if( is_single() && 'marm_project' == get_post_type() ): ?>
 				<li>
 				<a href="<?php echo get_edit_post_link(); ?>" class="button save"><span>Edit Project</span></a>
@@ -36,4 +36,3 @@ var admin_ajax = '<?php echo admin_url('admin-ajax.php'); ?>';
 		</ul>
 	</nav>
 	<div class="grid_16" class="body">
-	<?php include 'submit.php'; ?>
