@@ -16,7 +16,10 @@ body {
 /*************************
  * Header Area
  *************************/
-#header h1 {
+header {
+  overflow: hidden; }
+
+header h1 {
   background-image: url(images/marmoset.png);
   background-repeat: no-repeat;
   font-family: Georgia;
@@ -24,9 +27,31 @@ body {
   height: 75px;
   margin-top: 1em;
   padding-left: 90px; }
-  #header h1 a {
+  header h1 a {
     color: black;
     text-decoration: none; }
+
+/*************************
+ * Nav Area
+ *************************/
+nav {
+  margin-bottom: 1em;
+  overflow: hidden; }
+  nav .options {
+    text-align: right; }
+    nav .options li {
+      margin: 0 0 0 1em; }
+  nav .queues li {
+    margin: 0 1em 0 0; }
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0; }
+
+nav li {
+  display: inline;
+  padding: 0; }
 
 /*************************
  * Body Area
@@ -607,8 +632,8 @@ body {
   display: none; }
 
 textarea[name=marm-content] {
-  width: 75%;
-  height: 6em; }
+  width: 90%;
+  height: 8em; }
 
 footer {
   text-align: center;
@@ -618,6 +643,15 @@ footer {
   padding-top: 1ex; }
   footer a {
     color: #666; }
+
+#submit-container {
+  display: none; }
+
+.page #submit-container {
+  display: block; }
+
+.submit-project {
+  padding: 2em 2em 0 2em; }
 
 .submit-project .input-stakeholders {
   display: block;
@@ -666,9 +700,12 @@ form {
   form option,
   form select,
   form textarea {
-    border: 1px solid #555;
+    border: 1px solid #999;
     font-size: inherit;
-    padding: 0.3em; }
+    padding: 0.3em;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px; }
   form input[type=submit] {
     margin-top: 1em; }
 
