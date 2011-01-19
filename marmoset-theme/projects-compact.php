@@ -3,6 +3,7 @@
 <?php if ( have_posts() ) : $i = 1; ?>
 	<?php while ( have_posts() ) : the_post(); ?>
 	<?php Marmoset::get_the_queue(); ?>
+	<?php global $post; ?>
 	<?php $post->meta = get_post_meta( $post->ID, '' ); ?>
 	<li data-postid="<?php the_ID(); ?>" <?php post_class('project'); ?>> 
 		<span class="item-number"><?php echo $i; ?>.</span>
