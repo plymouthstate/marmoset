@@ -65,7 +65,8 @@
 		</li>
 		<li>
 			<label for="">&nbsp;</label>
-			<input type="submit" value="Submit Project" class="button">
+			<button type="submit" class="button save">Submit Project</button>
+			<button type="button" class="button">Cancel</button>
 		</li>
 	</ul>
 </form>
