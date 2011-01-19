@@ -21,7 +21,6 @@
 				<span class="readable"><?php Marmoset::the_complexity_name(); ?></span>
 				<span class="indicator indicator-1"></span><span class="indicator indicator-2"></span><span class="indicator indicator-3"></span><span class="indicator indicator-4"></span><span class="indicator indicator-5"></span></span>
 				<ul>
-					<li class="complexity-clear">clear</li>
 					<li class="complexity-reset">reset</li>
 				</ul>
 			</div>

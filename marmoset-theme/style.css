@@ -571,15 +571,14 @@ nav li {
     padding-right: 6em;
     position: relative; }
   .single-marmproject .projects > .project h2 {
-    display: block;
+    display: inline;
     font-size: 1.8em;
     margin-right: 5.2em; }
     .single-marmproject .projects > .project h2 .type {
       display: inline; }
   .single-marmproject .projects > .project .date {
     font-size: 1.8em;
-    right: 4em;
-    top: 0; }
+    margin-right: 1em; }
   .single-marmproject .projects > .project .progress-container {
     border-bottom: 1px solid #888;
     border-top: 1px solid #888;
@@ -612,8 +611,7 @@ nav li {
     margin-bottom: 0.25em;
     margin-top: 0.25em; }
   .single-marmproject .projects > .project .complexity:hover ul {
-    position: absolute;
-    right: -5em; }
+    display: none; }
   .single-marmproject .projects > .project .details {
     background: transparent;
     border: none;

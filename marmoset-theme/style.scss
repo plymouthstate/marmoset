@@ -668,7 +668,7 @@ $projectwidth: 80%;
 	}
 
 	h2 { 
-		display: block;
+		display: inline;
 		font-size: 1.8em; 
 		margin-right: 5.2em;
 
@@ -677,8 +677,7 @@ $projectwidth: 80%;
 
 	.date{ 
 		font-size: 1.8em;
-		right: 4em; 
-		top: 0;
+		margin-right: 1em;
 	}
 
 	.progress-container {
@@ -723,8 +722,7 @@ $projectwidth: 80%;
 	}
 	
 	.complexity:hover ul {
-		position: absolute;
-		right: -5em;
+		display: none;
 	}
 
 

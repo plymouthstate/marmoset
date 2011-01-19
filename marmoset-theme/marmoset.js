@@ -191,10 +191,6 @@ marm.complexity = {
 
 		marm.complexity.toggle( $el, complexity );
 	},
-	clear: function() {
-		var $el = $(this).closest('.complexity');
-		marm.complexity.toggle( $el, 0, true );
-	},
 	over: function() {
 		var $el = $(this);
 
@@ -287,7 +283,6 @@ $.root.delegate('.project .permalink a', 'click', function(e) { e.stopPropagatio
 
 if( marm.user_cap.edit_posts ) {
 	$.root.delegate('.project .complexity .complexity-reset', 'click.marm_complexity', marm.complexity.reset); 
-	$.root.delegate('.project .complexity .complexity-clear', 'click.marm_complexity', marm.complexity.clear);
 	$.root.delegate('.project .complexity ul', 'hover.marm_complexity', marm.complexity.cancel);
 	$.root.delegate('.project .complexity', 'mouseleave.marm_complexity', marm.complexity.cancel);
 	$.root.delegate('.project .complexity .indicator', 'mouseover.marm_complexity', marm.complexity.over);
