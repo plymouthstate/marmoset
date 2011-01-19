@@ -375,6 +375,8 @@ $.root.delegate( '.submit-project .stakeholders a:last', 'click.submit-project.s
 	$(e.currentTarget).closest('div').prevAll('div.hidden:first').removeClass('hidden').end().remove();
 	$.root.undelegate( e.handleObj.selector, e.handleObj.origType );
 
+	$.publish('submit-project-stakeholder-add');
+
 	var $theCopyRow, $theA;
 
 	$.root.delegate( '.submit-project .stakeholders a:last', 'click.submit-project.stakeholders', function( e ) {
@@ -387,9 +389,30 @@ $.root.delegate( '.submit-project .stakeholders a:last', 'click.submit-project.s
 
 		var $newCopyRow = $theCopyRow.clone();
 		$newCopyRow.insertBefore( $theA );
+
+		$.publish('submit-project-stakeholder-add');
 	});
 });
 
+/***************
+ * Colorbox Stuff
+ ***************/
+$(function(){
+	$('.submit-proposal').colorbox({
+		height: 500,
+		width: 650,
+		title: 'Submit Project',
+		inline: true,
+		href: '.submit-project'
+	});
+
+	$.subscribe('submit-project-stakeholder-add', $.colorbox.resize);
+	$.subscribe('submit-project-stakeholder-remove', $.colorbox.resize);
+});
+
+/**************
+ * Document.ready
+ *************/
 $(function(){
 	$.root.bind('keydown', 'f', function(e) {
 		$('#project-filter').toggle();
@@ -407,6 +430,7 @@ $(function(){
 	$.root.bind('keydown', 'c', function(e) {
 		marm.clear_filters();
 	});
+
 });
 
 })(jQuery);
