@@ -893,6 +893,9 @@ button.add:hover,
 input.add:hover,
 a.add:hover{ background-color: #cfe5fc; }
 
+button.login,
+input.login,
+a.login,
 button.save,
 input.save,
 a.save{
@@ -905,6 +908,9 @@ a.save{
 	}
 }
 
+button.login:hover,
+input.login:hover,
+a.login:hover,
 button.save:hover,
 input.save:hover,
 a.save:hover{ background-color: #d4f9cf; }

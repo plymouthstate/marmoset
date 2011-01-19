@@ -756,17 +756,26 @@ input.add:hover,
 a.add:hover {
   background-color: #cfe5fc; }
 
+button.login,
+input.login,
+a.login,
 button.save,
 input.save,
 a.save {
   background: #b8f4b7;
   border-color: #64af69;
   color: #0c4414; }
+  button.login span,
+  input.login span,
+  a.login span,
   button.save span,
   input.save span,
   a.save span {
     border-color: #cdf7ca; }
 
+button.login:hover,
+input.login:hover,
+a.login:hover,
 button.save:hover,
 input.save:hover,
 a.save:hover {

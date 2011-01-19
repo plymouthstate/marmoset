@@ -19,15 +19,16 @@ var admin_ajax = '<?php echo admin_url('admin-ajax.php'); ?>';
 	<nav class="grid_16">
 		<?php Marmoset::the_queues('grid_12 alpha queues', 'button', true); ?>
 		<ul class="grid_4 omega options">
-			<?php if( is_user_logged_in() ) : ?>
+			<?php if( is_user_logged_in() && $page = get_page_by_path('submit') ) : ?>
 			<li>
-				<a href="#" class="button add submit-proposal"><span>Add Project</span></a>
+				<a href="<?php echo home_url().'/submit/'; ?>" class="button add submit-proposal"><span>Add Project</span></a>
 			</li>
-			<?php else: ?>
+			<?php elseif( !is_user_logged_in() ): ?>
 			<li>
-				<a href="#" class="button"><span>Sign In</span></a>
+				<a href="<?php echo home_url().'/wp-admin/'; ?>" class="button login"><span>Sign In</span></a>
 			</li>
 			<?php endif; ?>
 		</ul>
 	</nav>
 	<div class="grid_16" class="body">
+	<?php include 'submit.php'; ?>
