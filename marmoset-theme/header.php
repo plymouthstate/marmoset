@@ -12,20 +12,22 @@ var admin_ajax = '<?php echo admin_url('admin-ajax.php'); ?>';
 </script>
 </head>
 <body <?php body_class(); ?>>
-<div class="container_16" id="outer">
-	<div class="grid_16" id="header">
+<div class="container_16 outer">
+	<header class="grid_16">
 		<h1><span><a href="<?php echo home_url( '/' ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></span></h1></a>
-		<a href="#" class="button add">
-			<span>Submit Project</span>
-		</a>
-		<a href="#" class="button">
-			<span>Sign In</span>
-		</a>
-		<a href="#" class="button save">
-			<span>Save</span>
-		</a>
-		<a href="#" class="button delete">
-			<span>Delete</span>
-		</a>
-	</div>
-	<div class="clear"></div>
+	</header>
+	<nav class="grid_16">
+		<?php Marmoset::the_queues('grid_12 alpha queues', 'button', true); ?>
+		<ul class="grid_4 omega options">
+			<?php if( is_user_logged_in() ) : ?>
+			<li>
+				<a href="#" class="button add submit-proposal"><span>Add Project</span></a>
+			</li>
+			<?php else: ?>
+			<li>
+				<a href="#" class="button"><span>Sign In</span></a>
+			</li>
+			<?php endif; ?>
+		</ul>
+	</nav>
+	<div class="grid_16" class="body">

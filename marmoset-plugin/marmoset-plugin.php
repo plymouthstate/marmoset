@@ -597,6 +597,23 @@ class Marmoset {
 	}//end the_queue
 
 	/**
+	 * output all queues
+	 */
+	public static function the_queues( $class = 'queues', $term_class = '', $span = false) {
+		$terms = get_terms('marm_queue');
+		$text = '<ul class="'.$class.'">'."\n";
+		foreach( $terms as $term) {
+			if( $span ) {
+				$term->name = '<span>'.$term->name.'</span>';
+			}//end if
+			$text .= '<li><a href="'.get_bloginfo('url').'/queue/'.$term->slug.'/" class="'.$term_class.' '.$term->slug.'">'.$term->name.'</a></li>'."\n";
+		}//end foreach
+		$text .= '</ul>';
+
+		echo $text;
+	}//end the_queues
+
+	/**
 	 * output the project's stakeholders
 	 */
 	public static function the_stakeholders() {
