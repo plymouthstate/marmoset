@@ -1,3 +1,4 @@
+</div><!-- .body -->
 <footer class="grid_16">
 	<a href="http://github.com/abackstrom/marmoset">http://github.com/abackstrom/marmoset</a>
 </footer>
