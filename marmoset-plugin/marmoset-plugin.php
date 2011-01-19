@@ -264,8 +264,32 @@ class Marmoset {
 		register_taxonomy( 'marm_complexity', 'marm_project', $args );
 
 		if( wp_count_terms( 'marm_complexity' ) == 0 ) {
+
+			$default_complexity = array();
+			$default_complexity[] = array(
+				'name' => 'Value Size',
+				'desc' => 'a few developer hours ( < 12 hours )',
+			);
+			$default_complexity[] = array(
+				'name' => 'Medium',
+				'desc' => 'a few developer days ( < 10 days )',
+			);
+			$default_complexity[] = array(
+				'name' => 'Large',
+				'desc' => 'a few developer days ( < 6 weeks )',
+			);
+			$default_complexity[] = array(
+				'name' => 'Very Large',
+				'desc' => 'a few developer months ( < 3 months )',
+			);
+			$default_complexity[] = array(
+				'name' => 'Super Size',
+				'desc' => 'more than a few developer months ( > 3 months )',
+			);
+
 			for( $i = 1; $i <= 5; $i++ ) {
-				wp_insert_term( "Complexity $i", 'marm_complexity', array(
+				wp_insert_term( $default_complexity[$i][$name], 'marm_complexity', array(
+					'description' => $default_complexity[$i][$dsec],
 					'slug' => "complexity-$i",
 				));
 			}
@@ -799,7 +823,8 @@ class Marmoset {
 
 	public static function display_complexity() {
 		$tax = get_term_by( 'slug', 'complexity-' . $_POST['marm-complexity'], 'marm_complexity' );
-		echo $tax->description;
+		echo htmlspecialchars_decode( $tax->description );
+		die();
 	}
 }
 
