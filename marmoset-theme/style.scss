@@ -107,10 +107,10 @@ nav li {
 	}
 
 	.date {
-		position: absolute;
+		float: right;
 		font-size: 1.2em;
 		font-weight: normal;
-		right: 1ex;
+		margin-right: 1ex;
 
 		span {
 			font-size: .9em;
@@ -136,7 +136,7 @@ nav li {
 		display: none;
 		float: right;
 		font-weight: normal;
-		margin-right: 6em;
+		margin-right: 1em;
 		padding-top: 0.2em;
 
 		a{ color: #555; }

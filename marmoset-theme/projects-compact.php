@@ -11,7 +11,7 @@
 				<h2>
 					<span><span class="type"><a href="<?php bloginfo('url'); ?>/queue/<?php echo $post->queue->slug; ?>/"><?php echo $post->queue->name; ?></a> &raquo;</span> <?php the_title(); ?></span>
 				</h2>
-				<span class="date" title="Estimated Date of Completion"><span><?php Marmoset::the_due_date('F d, Y'); ?></span></span>
+				<span class="date" title="Estimated Date of Completion"><span><?php Marmoset::the_due_date(); ?></span></span>
 				<span class="permalink">
 					[<a href="<?php the_permalink(); ?>" title="View Project Details">Details</a>]
 					<span class="editors-only">[<a href="<?php echo get_edit_post_link(); ?>" title="Edit Project Details">Edit</a>]</span>
