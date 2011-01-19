@@ -40,28 +40,8 @@
 			<div class="help">Don't see your group? <a href="#">Create new stakeholders</a>.</div>
 		</li>
 		<li>
-			<ul>
-				<?php 
-					$args = array(
-						'fields' => 'all',
-						'hide_empty' => 0,
-						'orderby' => 'slug',
-					);
-					$complexities = get_terms( 'marm_complexity', $args );
-
-					foreach( $complexities as $complexity )
-					{
-						?>
-
-							<li>
-								<input value="<?php echo $complexity->slug; ?>" type="radio" name="complexity" /> 
-								<label><?php echo $complexity->name.' - '.$complexity->description; ?> </label>
-							</li>
-
-						<?php
-					}//end foreach
-				?>
-			</ul>
+			<label for="complexity">Complexity:</label>
+			<?php wp_dropdown_categories("hide_empty=0&taxonomy=marm_complexity&orderby=slug&name=marm-complexity"); ?>
 		</li>
 		<li class="actions">
 			<label for="">&nbsp;</label>

@@ -233,7 +233,7 @@ marm.complexity = {
 				'marm-complexity': $el.data('complexity'), 
 				'project-id': $el.closest('li').data('postid'), 
 			};
-			$.post( admin_ajax , params , function(data){});
+			$.post( admin_ajax, params );
 			var params = { 
 				'action': 'display_complexity',  
 				'marm-complexity': $el.data('complexity'), 
