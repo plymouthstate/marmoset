@@ -17,8 +17,8 @@
 					<span class="editors-only">[<a href="<?php echo get_edit_post_link(); ?>" title="Edit Project Details">Edit</a>]</span>
 				</span>
 			</div>
-			<div data-complexity="<?php Marmoset::the_complexity(); ?>" data-complexity-original="<?php Marmoset::the_complexity(); ?>" class="complexity complexity-<?php Marmoset::the_complexity(); ?>" title="Project Complexity (<?php Marmoset::the_complexity(); ?>)">
-				<span class="readable"><?php Marmoset::the_complexity(); ?></span>
+			<div data-complexity="<?php Marmoset::the_complexity_int(); ?>" data-complexity-original="<?php Marmoset::the_complexity_int(); ?>" class="complexity <?php Marmoset::the_complexity_slug(); ?>" title="<?php Marmoset::the_complexity_name(); ?>">
+				<span class="readable"><?php Marmoset::the_complexity_name(); ?></span>
 				<span class="indicator indicator-1"></span><span class="indicator indicator-2"></span><span class="indicator indicator-3"></span><span class="indicator indicator-4"></span><span class="indicator indicator-5"></span></span>
 				<ul>
 					<li class="complexity-clear">clear</li>
