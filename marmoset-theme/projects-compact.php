@@ -9,7 +9,7 @@
 		<div class="contents">
 			<div class="project-title">
 				<h2>
-					<span><span class="type"><a href="<?php bloginfo('url'); ?>/queue/<?php echo $post->queue->slug; ?>/"><?php echo $post->queue->name; ?> Project</a> &raquo;</span> <?php the_title(); ?></span>
+					<span><span class="type"><a href="<?php bloginfo('url'); ?>/queue/<?php echo $post->queue->slug; ?>/"><?php echo $post->queue->name; ?></a> &raquo;</span> <?php the_title(); ?></span>
 				</h2>
 				<span class="date" title="Estimated Date of Completion"><span><?php Marmoset::the_due_date('Y-m-d'); ?></span></span>
 				<span class="permalink">
