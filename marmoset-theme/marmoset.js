@@ -407,7 +407,6 @@ $.root.delegate( '.submit-project .stakeholders a:last', 'click.submit-project.s
  ***************/
 $(function(){
 	$('.submit-proposal').colorbox({
-		height: 550,
 		width: 650,
 		title: 'Submit Project',
 		inline: true,
