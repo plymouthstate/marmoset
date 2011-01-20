@@ -7,10 +7,10 @@ class Marmoset_Theme {
 
 	public function init() {
 		if( !is_admin() ) {
-			wp_enqueue_script( 'marmoset-js', get_bloginfo('template_directory') . '/marmoset.js', array('jquery-ui-183', 'jquery-hotkeys'), 3, true );
+			wp_enqueue_script( 'marmoset-js', get_bloginfo('template_directory') . '/marmoset.js', array('jquery-ui-183', 'jquery-hotkeys'), 4, true );
 			wp_enqueue_style( 'marmoset-960', get_bloginfo('template_directory') . '/960.css' );
 			wp_enqueue_style( 'colorbox-theme6', get_bloginfo('template_directory') . '/js/colorbox/theme6/colorbox.css' );
-			wp_enqueue_style( 'marmoset-style', get_bloginfo('template_directory') . '/style.css', 'marmoset-960', 1 );
+			wp_enqueue_style( 'marmoset-style', get_bloginfo('template_directory') . '/style.css', 'marmoset-960', 2 );
 
 			wp_enqueue_script( 'jquery-ui-183', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js', array('jquery'), '1.8.3', true );
 
