@@ -7,12 +7,12 @@
 	<?php $post->meta = get_post_meta( $post->ID, '' ); ?>
 	<li data-postid="<?php the_ID(); ?>" <?php post_class('project'); ?>>
 		<span class="item-number"><?php echo $i; ?>.</span>
-		<div class="contents">
+		<div class="contents <?php if( Marmoset::is_overdue() ) : echo 'past-due'; endif; ?>" title="<?php if( Marmoset::is_overdue() ) : echo Marmoset::get_the_overdue_date(); endif; ?>">
 			<div class="project-title">
 				<h2>
 					<span><span class="type"><a href="<?php bloginfo('url'); ?>/queue/<?php echo $post->queue->slug; ?>/"><?php echo $post->queue->name; ?></a> &raquo;</span> <?php the_title(); ?></span>
 				</h2>
- 				<span class="date" title="Estimated Date of Completion"><span class="<?php if( Marmoset::is_overdue() ) : echo 'past_due'; endif; ?>" title="<?php if( Marmoset::is_overdue() ) : echo Marmoset::get_the_overdue_date(); endif; ?>"><?php Marmoset::the_due_date('F d, Y'); ?></span></span>
+ 				<span class="date" title="Estimated Date of Completion"><span ><?php Marmoset::the_due_date('F d, Y'); ?></span></span>
 				<span class="permalink">
 					[<a href="<?php the_permalink(); ?>" title="View Project Details">Details</a>]
 					<span class="editors-only">[<a href="<?php echo get_edit_post_link(); ?>" title="Edit Project Details">Edit</a>]</span>
