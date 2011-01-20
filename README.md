@@ -1,4 +1,4 @@
-![Marmoset](http://i.abackstrom.com/marmoset.png)
+![Marmoset](https://github.com/abackstrom/marmoset/raw/master/marmoset-theme/images/banner.png)
 Marmoset, a WordPress-powered project list.
 
 	cd path/to/wordpress/wp-content
