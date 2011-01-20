@@ -64,6 +64,8 @@ nav li {
   margin: 0;
   padding: 0;
   min-height: 5px; }
+  .projects .past-due {
+    border: 2px double red; }
   .projects h2 {
     display: inline;
     font-size: 1.2em;

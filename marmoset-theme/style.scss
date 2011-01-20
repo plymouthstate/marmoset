@@ -5,7 +5,6 @@ Description: The MIS Projects List.
 Author: Adam Backstrom
 Version: 0.1
 */
-
 @mixin inner-fade($args) {
 	-webkit-box-shadow: $args;
 	-moz-box-shadow: $args;
@@ -98,6 +97,10 @@ nav li {
 	margin: 0;
 	padding: 0;
 	min-height: 5px;
+	
+	.past-due {
+		border:2px double red;
+	}
 
 	h2 {
 		display: inline;
