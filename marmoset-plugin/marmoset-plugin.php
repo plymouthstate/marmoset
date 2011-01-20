@@ -296,12 +296,13 @@ class Marmoset {
 			),
 			'public' => true,
 			'hierarchical' => true,
-			'supports' => array('title', 'editor', 'comments', 'revisions', /*/), 'custom-fields', /*/),
+			'supports' => array('title', 'editor', 'comments', 'revisions' ),
 			'menu_position' => 4,
 			'taxonomies' => array( 'marm_status', 'marm_stakeholders', 'marm_complexity' ),
 			'register_meta_box_cb' => 'Marmoset::project_meta_box_cb',
 			'rewrite' => array('slug' => 'project'),
 		);
+		//$args['supports'][] = 'custom-fields';
 		register_post_type( 'marm_project', $args );
 
 		$args = array(
@@ -489,7 +490,6 @@ class Marmoset {
 			return $post_id;
 		}
 
-
 		$post = get_post( $post_id );
 		$tax = self::project_taxonomies( $post_id );
 
@@ -551,14 +551,7 @@ class Marmoset {
 
 		// if status or queue has changed, update the post order
 		if( $marm_status != $tax['marm_status'] || $marm_queue != $tax['marm_queue'])  {
-			$order_value = 0;
-
-			self::get_projects( array( 'posts_per_page' => 1, 'echo' => false ) );
-
-			if( have_posts() && $post = the_post() ) {
-				$order_value = get_post_meta( $post->ID, 'project_order', true );
-			}
-
+			$order_value = self::max_project_order( $marm_queue, $marm_status );
 			update_post_meta( $post_id, 'project_order', $order_value + 1 );
 		}
 	}//end project_properties_save
@@ -630,16 +623,29 @@ class Marmoset {
 			$queue = $qv['marm_queue'];
 		}
 
+		$status_field = 'slug';
+		$queue_field = 'slug';
+
+		if( is_int($status) || is_numeric($status) ) {
+			$status = (int)$status;
+			$status_field = 'term_id';
+		}
+
+		if( is_int($queue) || is_numeric($queue) ) {
+			$queue = (int)$queue;
+			$queue_field = 'term_id';
+		}
+
 		$tax_query = array(
 			array(
 				'taxonomy' => 'marm_status',
 				'terms' => $status,
-				'field' => 'slug',
+				'field' => $status_field,
 			),
 			array(
 				'taxonomy' => 'marm_queue',
 				'terms' => $queue,
-				'field' => 'slug',
+				'field' => $queue_field,
 			),
 		);
 
@@ -667,6 +673,19 @@ class Marmoset {
 	public static function the_start_date( $format = null, $gmt_offset = null ) {
 		echo self::get_the_start_date( $format, $gmt_offset );
 	}//end the_start_date
+
+	public static function max_project_order( $queue, $status ) {
+		Marmoset::get_projects( "posts_per_page=1&order=DESC&echo=0&status=$status&queue=$queue" );
+		the_post();
+		$latest_post_id = get_post_meta( get_the_ID(), 'project_order', true );
+		wp_reset_query();
+
+		if( ! $latest_post_id ) {
+			$latest_post_id = 1;
+		}
+
+		return $latest_post_id;
+	}//end max_project_order
 
 	/**
 	 * output the completion date for the project
@@ -851,6 +870,8 @@ class Marmoset {
 		$post_title = $_POST['marm-title'];
 		$post_content = $_POST['marm-content'];
 
+		$latest_post_id = self::max_project_order( 'proposed', 'proposed' );
+
 		$post = compact( 'post_type', 'post_status', 'post_title', 'post_content' );
 		$post_id = wp_insert_post( $post );
 
@@ -884,6 +905,7 @@ class Marmoset {
 		wp_set_object_terms( $post_id, $marm_complexity, 'marm_complexity' );
 
 		update_post_meta( $post_id, 'due_date', $_POST['marm-duedate'] );
+		update_post_meta( $post_id, 'project_order', $latest_post_id + 1 );
 
 		echo json_encode( array( 'post_id' => $post_id ) );
 		die();
