@@ -87,6 +87,96 @@ class Marmoset {
 		return $tax['marm_complexity'];
 	}//end get_the_complexity
 
+	public static function is_overdue()	{
+		global $post;
+
+		$date = get_post_meta( $post->ID, 'due_date', true );
+		if( $date - time() < 0 )	{
+			return true;
+		}
+
+	}
+	public static function date_diff( $time1, $time2, $format = '%1$s years, %2$s months'){
+		// If not numeric then convert texts to unix timestamps
+		if (!is_int($time1)) {
+			$time1 = strtotime($time1);
+		}
+		if (!is_int($time2)) {
+			$time2 = strtotime($time2);
+		}
+
+		// If time1 is bigger than time2
+		// Then swap time1 and time2
+		if ($time1 > $time2) {
+			$ttime = $time1;
+			$time1 = $time2;
+			$time2 = $ttime;
+		}
+
+		// Set up intervals and diffs arrays
+		$intervals = array('year','month','day','hour','minute','second');
+		$diffs = array();
+
+		// Loop thru all intervals
+		foreach ($intervals as $interval) {
+			// Set default diff to 0
+			$diffs[$interval] = 0;
+			// Create temp time from time1 and interval
+			$ttime = strtotime("+1 " . $interval, $time1);
+			// Loop until temp time is smaller than time2
+			while ($time2 >= $ttime) {
+				$time1 = $ttime;
+				$diffs[$interval]++;
+				// Create new temp time from time1 and interval
+				$ttime = strtotime("+1 " . $interval, $time1);
+			}
+		}
+		if( $format == 'array'){
+			return $diffs;
+		} else {
+			$text = sprintf($format, $diffs['year'], $diffs['month'], $diffs['day'], $diffs['hour'], $diffs['minute'], $diffs['second']);
+
+			foreach( $intervals as $interval){
+				if( $diffs[$interval] == 1 ){
+					$search[] = $interval.'s';
+					$replace[] = $interval;
+				}//end if
+			}//end foreach
+
+			return str_replace($search, $replace, $text);
+		}//end else
+	}//end date_diff
+	public static function get_the_overdue_date()	{
+		global $post;
+
+		$date = get_post_meta( $post->ID, 'due_date', true );
+		$months = self::date_diff((int)$date, strtotime( 'now' ), '%2$s');
+		$days = self::date_diff((int)$date, strtotime( 'now' ), '%3$s');
+
+		if( $months == 1 ) {
+			$month_str.= $months.' month';
+		}
+		else {
+			$month_str.= $months.' months';
+		}
+
+		if( $days == 1 ) {
+			$day_str = $days.' day';
+		}
+		else {
+			$day_str = $days.' days';
+		}
+		if( $months == 0 ) {
+			return $day_str. ' overdue';
+		}
+		elseif( $days == 0 ) {
+			return $month_str. ' overdue'; 
+		}
+		else {
+			return $month_str. ' ' .$day_str. ' overdue';
+		}
+		
+	}
 	/**
 	 * return the due date for the project
 	 * @param $format string date format
@@ -96,6 +186,7 @@ class Marmoset {
 		global $post;
 
 		$date = get_post_meta( $post->ID, 'due_date', true );
+
 		if( $date !== '' ) {
 			return self::format_date( $date, $format, $gmt_offset );
 		}//end if
