@@ -65,13 +65,19 @@ nav li {
   margin: 0;
   padding: 0;
   min-height: 5px; }
-  .projects .past-due {
-    border: 2px double red; }
   .projects h2 {
     display: inline;
     font-size: 1.2em;
     margin: 2px;
     padding: 0; }
+  .projects .past-due h2 span {
+    background-image: url(images/icon-past-due.png);
+    background-repeat: no-repeat;
+    background-position: 0px 2px;
+    padding-left: 20px; }
+  .projects .past-due .item-number {
+    color: #86100f;
+    opacity: 1.0; }
   .projects .date {
     float: right;
     font-size: 1.2em;
