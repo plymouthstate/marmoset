@@ -334,8 +334,8 @@ class Marmoset {
 			$complete_date = strftime('%F', $complete_date);
 		}
 
-		if( $project_proposed != '' ) {
-			$project_proposed = strftime('%F', $project_proposed);
+		if( $estimated_start_date != '' ) {
+			$estimated_start_date = strftime('%F', $estimated_start_date);
 		}
 
 		$tax = self::project_taxonomies( $post->ID );
@@ -792,7 +792,6 @@ class Marmoset {
 		wp_set_object_terms( $post_id, $marm_stakeholders, 'marm_stakeholders' );
 		wp_set_object_terms( $post_id, $marm_complexity, 'marm_complexity' );
 
-		update_post_meta( $post_id, 'project_proposed', strftime('%F') );
 		update_post_meta( $post_id, 'due_date', $_POST['marm-duedate'] );
 
 		echo json_encode( array( 'post_id' => $post_id ) );
