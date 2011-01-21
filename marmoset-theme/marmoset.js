@@ -239,7 +239,27 @@ marm.complexity = {
 			});
 		}
 	}
-};
+},
+//Object to handle form submission
+marm.submit = function(){
+	var stakeholders = [];
+	$('.input-stakeholders').find('input:checked').each( function(){
+		stakeholders.push( $(this).val() );
+	});
+	var get_args = {
+		'action': 'project_submit',
+		'marm-title': $( 'input[name="marm-title"]' ).val(),
+		'marm-content':	$( 'textarea[name="marm-content"]' ).val(),
+		'marm-complexity': $( 'input[name="marm-duedate"]' ).val(),
+		'marm-stakeholders': stakeholders,
+	};
+
+	$.getJSON( admin_ajax, get_args, function(json) {
+		window.location=json.url;
+		
+	});
+	return false;
+}; 
 
 (function($) {
 
@@ -397,6 +417,8 @@ $.root.delegate( '.submit-project .stakeholders a:last', 'click.submit-project.s
 	});
 });
 
+//bind for project submission ajax
+$('.save').click( marm.submit );
 /***************
  * Colorbox Stuff
  ***************/

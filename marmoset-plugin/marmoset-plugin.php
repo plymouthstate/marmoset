@@ -313,6 +313,12 @@ class Marmoset {
 		}//end if
 	}//end get_formatted_start_date
 
+	public static function get_the_date_entered( $format = null, $gmt_offset = null ) {
+		global $post;
+			
+		$date = strtotime( $post->post_date );
+		return self::format_date( $date, $format, $gmt_offset );
+	}//end get_formatted_start_date
 
 	public static function init() {
 		$args = array(
@@ -626,7 +632,7 @@ class Marmoset {
 	/**
 	 * Project list to fetch has an implicit queue. Fetch projects with a given status.
 	 */
-	public static function get_projects( $args ) {
+	public static function get_projects( $args, $display_date ) {
 		$defaults = array(
 			'posts_per_page' => -1,
 			'post_status' => 'publish',
@@ -677,7 +683,6 @@ class Marmoset {
 		);
 
 		$args['tax_query'] = $tax_query;
-
 		query_posts( $args );
 
 		if( $args['echo'] ) {
@@ -751,6 +756,19 @@ class Marmoset {
 	}//end the_due_date
 
 	/**
+	 * output the date the user entered the project
+	 * @param $format string date format
+	 * @param $gmt_offset string GMT offset
+	 */
+	public static function the_date_entered( $format = null, $gmt_offset = null ) {
+		echo self::get_the_date_entered( $format, $gmt_offset );
+	}//end the_due_date
+
+	public static function the_date( $function, $format = null, $gmt_offset = null ) {
+		call_user_func( 'self::the_'.$function, $format, $gmt_offset );
+	}//end the_due_date
+
+	/**
 	 * output the project's members
 	 */
 	public static function the_members() {
@@ -779,6 +797,11 @@ class Marmoset {
 	public static function the_queue() {
 		echo self::get_formatted_queue();
 	}//end the_queue
+
+	public static function format_date_title( $title ) {
+		$title = str_replace( '_', ' ', $title );
+		echo mb_convert_case( $title, MB_CASE_TITLE, "UTF-8" );
+	}
 
 	/**
 	 * output all queues
@@ -866,8 +889,8 @@ class Marmoset {
 
 		$post_type = 'marm_project';
 		$post_status = 'publish';
-		$post_title = $_POST['marm-title'];
-		$post_content = $_POST['marm-content'];
+		$post_title = $_GET['marm-title'];
+		$post_content = $_GET['marm-content'];
 
 		$latest_post_id = self::max_project_order( 'proposed', 'proposed' );
 
@@ -879,8 +902,8 @@ class Marmoset {
 			die( $post_id );
 		}
 
-		$marm_stakeholders = $_POST['tax_input']['marm_stakeholders'];
-		$marm_complexity = (int)$_POST['marm-complexity'];
+		$marm_stakeholders = $_GET['marm-stakeholders'];
+		$marm_complexity = (int)$_GET['marm-complexity'];
 
 		// will be null if there are no terms in the stakeholder taxonomy
 		if( is_array( $marm_stakeholders ) ) {
@@ -890,7 +913,7 @@ class Marmoset {
 		}
 
 		// find new stakeholders
-		foreach ( $_POST['marm-stakeholder'] as $stakeholder ) {
+		foreach ( $_GET['marm-stakeholders'] as $stakeholder ) {
 			$stakeholder = trim($stakeholder);
 
 			if( $stakeholder ) {
@@ -906,7 +929,9 @@ class Marmoset {
 		update_post_meta( $post_id, 'due_date', $_POST['marm-duedate'] );
 		update_post_meta( $post_id, 'project_order', $latest_post_id + 1 );
 
-		echo json_encode( array( 'post_id' => $post_id ) );
+		$url = get_permalink( $post_id );
+
+		echo json_encode( array( 'url' => $url ) );
 		die();
 	}//end submit_project
 
@@ -946,6 +971,8 @@ add_action( 'wp_ajax_save_complexity', 'Marmoset::save_complexity' );
 add_action( 'wp_ajax_display_complexity', 'Marmoset::display_complexity' );
 
 add_action( 'add_meta_boxes_marm_project', 'Marmoset::remove_meta_boxes' );
+
+add_action( 'wp_ajax_project_submit', 'Marmoset::submit_project' );
 
 if( !function_exists( 'the_project_complexity' ) ) {
 	$marm_project_complexity = array();

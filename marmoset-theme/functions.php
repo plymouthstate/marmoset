@@ -214,13 +214,12 @@ class Marmoset_Widget_Projects extends WP_Widget {
 
 		$term = get_term_by( 'slug', $instance['term_slug'], 'marm_status' );
 		$title = $term->name;
-
 		?>
 
 		<div class="grid_16 project-status" data-status="<?php echo $term->slug; ?>">
 		<h2><?php echo $title; ?></h2>
 			<div>
-				<?php Marmoset::get_projects( array( 'marm_status' => $term->slug) ); ?>
+				<?php Marmoset::get_projects( array( 'marm_status' => $term->slug ), $instance['date_display'] ); ?>
 			</div>
 		</div>
 		<div class="clear"></div>
@@ -234,7 +233,9 @@ class Marmoset_Widget_Projects extends WP_Widget {
 
 		$selected_term = $instance['term_slug'];
 
-		echo '<select id="' . $this->get_field_id('term_slug') .
+		echo '<ul>';
+		echo '<li>';
+		echo '<div class="marmoset-widget-span">Category: </div><select id="' . $this->get_field_id('term_slug') .
 			'" name="' . $this->get_field_name('term_slug') . '">';
 
 		foreach( $terms as $term ) {
@@ -246,13 +247,36 @@ class Marmoset_Widget_Projects extends WP_Widget {
 			echo esc_html( $term->name );
 			echo '</option>';;
 		}
-
 		echo '</select>';
+		echo '</li>';
+
+		$date_options = array(
+			'complete_date' => 'Complete',
+			'due_date' => 'Due',
+			'date_entered' => 'Entered',
+			'estimated_start_date' => 'Est. Start',	
+			'start_date' => 'Start'
+		);
+
+		echo '<li>';
+		echo '<div class="marmoset-widget-span">Date:</div>';
+		echo '<select id=' .$this->get_field_id('date_display').' name="'.$this->get_field_name('date_display').'">';
+		foreach( $date_options as $value=>$option ) {
+			echo '<option ';
+			if( $instance[ 'date_display' ] == $value ) {
+				echo 'selected=selected';
+			}
+			echo ' value=' .$value. ' >' .$option. '</option>';
+		}
+		echo '</select>';
+		echo '</li>';
+		echo '</ul>';
 	}//end form
 
 	public function update( $new, $old ) {
 		$instance = $old;
 		$instance['term_slug'] = $new['term_slug'];
+		$instance['date_display'] = $new['date_display'];
 		return $instance;
 	}//end update
 }//end Marmoset_Widget_Projects
