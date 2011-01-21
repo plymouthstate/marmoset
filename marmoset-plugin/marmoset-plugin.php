@@ -688,7 +688,6 @@ class Marmoset {
 	public static function remove_meta_boxes() {
 		remove_meta_box('tagsdiv-marm_queue', 'marm_project', 'side');
 		remove_meta_box('tagsdiv-marm_complexity', 'marm_project', 'side');
-		remove_meta_box('commentstatusdiv', 'marm_project', 'normal');
 		remove_meta_box('revisionsdiv', 'marm_project', 'normal');
 	}
 
