@@ -13,6 +13,14 @@ body {
   background-color: #eee;
   padding-top: 2em; }
 
+blockquote {
+  background: #eee;
+  margin: 1em 2em;
+  padding: 1em;
+  border-radius: 0.5em;
+  -webkit-border-radius: 0.5em;
+  -moz-border-radius: 0.5em; }
+
 /*************************
  * Header Area
  *************************/

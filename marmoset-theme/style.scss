@@ -24,6 +24,7 @@ Version: 0.1
 }
 
 $projectrounding: 5px;
+$bigrounding: 0.5em;
 
 /*************************
  * Base Tags
@@ -32,6 +33,14 @@ body {
 	font-family: Calibri, Trebuchet MS, Arial;
 	background-color: #eee;
 	padding-top: 2em;
+}
+
+blockquote {
+	background: #eee;
+	margin: 1em 2em;
+	padding: 1em;
+
+	@include round-border($bigrounding);
 }
 
 /*************************
