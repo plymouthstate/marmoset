@@ -87,6 +87,33 @@ class Marmoset {
 		return $tax['marm_complexity'];
 	}//end get_the_complexity
 
+	public static function get_the_complexity_int() {
+		global $post;
+
+		$slug = self::get_the_complexity_slug();
+		$integer = substr( $slug, -1 );
+
+		return $integer;
+	}//end get_the_complexity_slug
+
+	public static function get_the_complexity_name() {
+		global $post;
+
+		$term_id = self::get_the_complexity();
+		$term = get_term( $term_id, 'marm_complexity' );
+
+		return $term->name;
+	}//end get_the_complexity_name
+
+	public static function get_the_complexity_slug() {
+		global $post;
+
+		$term_id = self::get_the_complexity();
+		$term = get_term( $term_id, 'marm_complexity' );
+
+		return $term->slug;
+	}//end get_the_complexity_slug
+
 	public static function is_overdue()	{
 		global $post;
 
@@ -713,33 +740,6 @@ class Marmoset {
 
 	public static function the_complexity_int() {
 		echo self::get_the_complexity_int();
-	}//end get_the_complexity_name
-
-	public static function get_the_complexity_slug() {
-		global $post;
-
-		$term_id = self::get_the_complexity();
-		$term = get_term( $term_id, 'marm_complexity' );
-
-		return $term->slug;
-	}//end get_the_complexity_slug
-
-	public static function get_the_complexity_int() {
-		global $post;
-
-		$slug = self::get_the_complexity_slug();
-		$integer = substr( $slug, -1 );
-
-		return $integer;
-	}//end get_the_complexity_slug
-
-	public static function get_the_complexity_name() {
-		global $post;
-
-		$term_id = self::get_the_complexity();
-		$term = get_term( $term_id, 'marm_complexity' );
-
-		return $term->name;
 	}//end get_the_complexity_name
 
 	/**
