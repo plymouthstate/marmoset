@@ -16,6 +16,7 @@
 				<h2>
 					<span><span class="type"><a href="<?php bloginfo('url'); ?>/queue/<?php echo $post->queue->slug; ?>/"><?php echo $post->queue->name; ?></a> &raquo;</span> <?php the_title(); ?></span>
 				</h2>
+				<span class="progress-percent">(<span>Progress:</span><?php echo Marmoset::get_the_progress(); ?>%)</span>
  				<span class="date" title="Estimated Date of Completion"><span ><?php Marmoset::the_due_date('F d, Y'); ?></span></span>
 				<span class="permalink">
 					[<a href="<?php the_permalink(); ?>" title="View Project Details">Details</a>]
@@ -24,7 +25,7 @@
 			</div>
 			<div data-complexity="<?php Marmoset::the_complexity_int(); ?>" data-complexity-original="<?php Marmoset::the_complexity_int(); ?>" class="complexity <?php Marmoset::the_complexity_slug(); ?>" title="<?php Marmoset::the_complexity_name(); ?>">
 				<span class="readable"><?php Marmoset::the_complexity_name(); ?></span>
-				<span class="indicator indicator-1"></span><span class="indicator indicator-2"></span><span class="indicator indicator-3"></span><span class="indicator indicator-4"></span><span class="indicator indicator-5"></span></span>
+				<span class="indicator indicator-1">*</span><span class="indicator indicator-2">*</span><span class="indicator indicator-3">*</span><span class="indicator indicator-4">*</span><span class="indicator indicator-5">*</span></span>
 				<ul>
 					<li class="complexity-reset">reset</li>
 				</ul>

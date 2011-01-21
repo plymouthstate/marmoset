@@ -107,7 +107,7 @@ nav li {
 	}
 	
 	.past-due {
-		h2 span {
+		h2 > span {
 			background-image: url(images/icon-past-due.png);
 			background-repeat: no-repeat;
 			background-position: 0px 2px;
@@ -144,6 +144,15 @@ nav li {
 .project {
 	cursor: pointer; 
 	cursor: hand;
+
+	.progress-percent {
+		color: #555;
+
+		span {
+			display: none;
+			padding-right: 0.5em;
+		}
+	}
 
 	.permalink{
 		color: #777;
@@ -609,6 +618,8 @@ $projectwidth: 80%;
 	height: 2em;
 	margin-right: 1ex;
 	width: 1.5ex;
+	overflow: hidden;
+	text-indent: -99999px;
 }
 
 .complexity .readable { display: none; }
@@ -759,6 +770,10 @@ $projectwidth: 80%;
 .single-marmproject .projects > .expanded,
 .single-marmproject .projects > .project:hover {
 	.permalink { display: none; }
+}
+
+.single-marmproject .past-due h2 > span {
+	background-position: 0 6px;
 }
 
 textarea[name=marm-content] {
@@ -974,6 +989,65 @@ a.delete:hover{ background-color: #f7cfcf; }
 	.editors-only { display: inline; }
 	.project { cursor: move; }
 	.complexity:hover ul { display: block; }
+}
+
+@media print{
+	nav,
+	footer{ display: none !important; }
+
+	header h1 {
+		height: 1.5em;
+		margin-top: 0;
+		padding-left: 0;
+	}
+
+	.single-marmproject .past-due h2 > span,
+	.projects .past-due h2 > span {
+		background-image: none;
+		color: #86100f;
+		padding-left: 0;
+	}
+
+	.project {
+		.contents {
+			border-top: none;
+			border-left: none;
+			border-right: none;
+			border-bottom: 1px dotted #555;
+		}
+
+		.complexity span {
+			border: none;
+		}
+
+		.permalink { display: none; }
+
+		.progress {
+			border: none;
+		}
+
+		.progress-percent span {
+			display: inline;
+		}
+
+	}
+
+	.complexity-1 .indicator-1 { text-indent: 0; }
+	.complexity-2 .indicator-1,
+	.complexity-2 .indicator-2 { text-indent: 0; }
+	.complexity-3 .indicator-1,
+	.complexity-3 .indicator-2,
+	.complexity-3 .indicator-3 { text-indent: 0; }
+	.complexity-4 .indicator-1,
+	.complexity-4 .indicator-2,
+	.complexity-4 .indicator-3,
+	.complexity-4 .indicator-4 { text-indent: 0; }
+	.complexity-5 .indicator-1,
+	.complexity-5 .indicator-2,
+	.complexity-5 .indicator-3,
+	.complexity-5 .indicator-4,
+	.complexity-5 .indicator-5 { text-indent: 0; }
+
 }
 
 /* vim:filetype=css:
