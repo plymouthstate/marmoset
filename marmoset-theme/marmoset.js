@@ -254,9 +254,12 @@ marm.submit = function(){
 		'marm-stakeholders': stakeholders,
 	};
 
-	$.getJSON( admin_ajax, get_args, function(json) {
-		window.location=json.url;
-		
+	$.ajax({
+		type: 'POST',
+		url:  admin_ajax, 
+		data: get_args, 
+		success: function(json) { window.location=json.url; },
+		dataTYPE: 'json',
 	});
 	return false;
 }; 
