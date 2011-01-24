@@ -280,7 +280,7 @@ class Marmoset_Widget_Projects extends WP_Widget {
 			value="true"';
 		echo ( $instance[ 'display_overdue' ] ) ? ' checked="checked" />' : ' /> ';
 	 		
-		echo '<span> Show overdue</span>';
+		echo '<span> Overdue Warning </span>';
 		echo '</select>';
 		echo '</li>';
 		echo '</ul>';
