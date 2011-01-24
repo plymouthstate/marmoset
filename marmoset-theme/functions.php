@@ -219,7 +219,12 @@ class Marmoset_Widget_Projects extends WP_Widget {
 		<div class="grid_16 project-status" data-status="<?php echo $term->slug; ?>">
 		<h2><?php echo $title; ?></h2>
 			<div>
-				<?php Marmoset::get_projects( array( 'marm_status' => $term->slug ), $instance['date_display'] ); ?>
+				<?php Marmoset::get_projects( 
+					array( 'marm_status' => $term->slug, 
+						'date_display' => $instance[ 'date_display' ],
+						'display_overdue' => $instance[ 'display_overdue' ],
+					)
+				); ?>
 			</div>
 		</div>
 		<div class="clear"></div>
@@ -268,6 +273,14 @@ class Marmoset_Widget_Projects extends WP_Widget {
 			}
 			echo ' value=' .$value. ' >' .$option. '</option>';
 		}
+		echo '<input 
+			id=' .$this->get_field_id( 'display_overdue' ). '
+			name=' .$this->get_field_name( 'display_overdue' ). ' 
+			type="checkbox" 
+			value="true"';
+		echo ( $instance[ 'display_overdue' ] ) ? ' checked="checked" />' : ' /> ';
+	 		
+		echo '<span> Show overdue</span>';
 		echo '</select>';
 		echo '</li>';
 		echo '</ul>';
@@ -277,6 +290,7 @@ class Marmoset_Widget_Projects extends WP_Widget {
 		$instance = $old;
 		$instance['term_slug'] = $new['term_slug'];
 		$instance['date_display'] = $new['date_display'];
+		$instance['display_overdue'] = $new['display_overdue'];
 		return $instance;
 	}//end update
 }//end Marmoset_Widget_Projects

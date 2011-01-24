@@ -7,18 +7,18 @@
 		global $post; 
 		$post->meta = get_post_meta( $post->ID, '' );
 
-		$class = 'project'.(Marmoset::is_overdue( $display_date ) ? ' past-due' : '');
+		$class = 'project'.(Marmoset::is_overdue( $args ) ? ' past-due' : '');
 	?>
 	<li data-postid="<?php the_ID(); ?>" <?php post_class($class); ?>>
 		<span class="item-number"><?php echo $i; ?>.</span>
-		<div class="contents" title="<?php if( Marmoset::is_overdue( $display_date ) ) : echo Marmoset::get_the_overdue_date(); endif; ?>">
+		<div class="contents" title="<?php if( Marmoset::is_overdue( $args ) ) : echo Marmoset::get_the_overdue_date(); endif; ?>">
 			<div class="project-title">
 				<h2>
 					<span><span class="type"><a href="<?php bloginfo('url'); ?>/queue/<?php echo $post->queue->slug; ?>/"><?php echo $post->queue->name; ?></a> &raquo;</span> <?php the_title(); ?></span>
 				</h2>
 
 				<span class="progress-percent">(<span>Progress:</span><?php echo Marmoset::get_the_progress(); ?>%)</span>
-				<span class="date" title="<?php Marmoset::format_date_title( $display_date ) ; ?>"><span ><?php if( $display_date ) : Marmoset::the_date( $display_date, 'F d, Y' ); endif; ?></span></span>
+				<span class="date" title="<?php Marmoset::format_date_title( $args[ 'date_display' ] ) ; ?>"><span ><?php if( $args[ 'date_display' ] ) : Marmoset::the_date( $args[ 'date_display' ], 'F d, Y' ); endif; ?></span></span>
 				<span class="permalink">
 					[<a href="<?php the_permalink(); ?>" title="View Project Details">Details</a>]
 					<span class="editors-only">[<a href="<?php echo get_edit_post_link(); ?>" title="Edit Project Details">Edit</a>]</span>

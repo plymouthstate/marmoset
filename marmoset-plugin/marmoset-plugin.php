@@ -114,13 +114,11 @@ class Marmoset {
 		return $term->slug;
 	}//end get_the_complexity_slug
 
-	public static function is_overdue( $date_showing )	{
+	public static function is_overdue( $args )	{
 		global $post;
 
-		$date = get_post_meta( $post->ID, $date_showing, true );
-	//	Marmoset::get_the_status();
-	//	$terms = wp_get_post_categories( $post->ID, 'marm-status' );
-		if( $date ) {				
+		$date = get_post_meta( $post->ID, $args[ 'date_display' ], true );
+		if( $date && $args[ 'display_overdue' ] ) {				
 			if( $date - time() < 0 )	{
 				return true;
 			}
@@ -636,7 +634,7 @@ class Marmoset {
 	/**
 	 * Project list to fetch has an implicit queue. Fetch projects with a given status.
 	 */
-	public static function get_projects( $args, $display_date ) {
+	public static function get_projects( $args ) {
 		$defaults = array(
 			'posts_per_page' => -1,
 			'post_status' => 'publish',
