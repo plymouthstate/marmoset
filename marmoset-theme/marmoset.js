@@ -1,26 +1,46 @@
 var marm = {
-	meta_filters: [],
+	meta_filters_default: {
+		counter: 0,
+		stakeholders: [],
+		members: [],
+		status: []
+	},
+
+	meta_filters: null,
 
 	// a list of cached user capabilities
 	user_cap: {
 		edit_posts: false
 	},
 
+	reset_meta_filters: function() {
+		marm.meta_filters = marm.meta_filters_default;
+	},
+
+	init: function() {
+		this.meta_filters = this.meta_filters_default;
+	},
+
 	count_projects: function() {
-		var i = 0;
-		var final_count = 0;
-		var filter_classes = '';
+		var count_found = 0;
 
-		for( i in marm.meta_filters ) {
-			filter_classes += (filter_classes ? ',' : '') + '.project.' + marm.meta_filters[i];
-		}//end for
+		var filter_classes = [].concat(
+			marm.meta_filters.stakeholders,
+			marm.meta_filters.members,
+			marm.meta_filters.status
+		);
 
-		$('#project-filter-total').html( $( filter_classes ).length );
+		if( filter_classes.length > 0 ) {
+			filter_classes = '.project.' + filter_classes.join(', .project.');
+			count_found = $( filter_classes ).length;
+		}
+
+		$('#project-filter-total').html( count_found );
 	},
 
 	hide_unfocused: function( state ) {
 		// never hide when there are no focused items
-		if( marm.meta_filters.length == 0 ) {
+		if( marm.meta_filters.counter == 0 ) {
 			state = false;
 		}
 
@@ -76,10 +96,10 @@ var marm = {
 	},
 
 	clear_filters: function() {
-		marm.meta_filters = [];
+		marm.reset_meta_filters();
 
 		$('style.filter').each( function(i,e) { marm.toggle_filter_style(e,false); } );
-		$('body').toggleClass( 'focus-meta', marm.meta_filters.length > 0 );
+		$('body').toggleClass( 'focus-meta', marm.meta_filters.counter > 0 );
 
 		marm.count_projects();
 	},
@@ -101,7 +121,7 @@ var marm = {
 			}//end if
 		}
 
-		$('body').toggleClass( 'focus-meta', marm.meta_filters.length > 0 );
+		$('body').toggleClass( 'focus-meta', marm.meta_filters.counter > 0 );
 	},
 
 	toggle_meta_filter: function( meta, member, meta_contents, calc_project_count ) {
@@ -109,7 +129,7 @@ var marm = {
 
 		var meta_data = marm.meta_data( meta, member ),
 			$style = $('#' + meta_data.style_id),
-			filter_index = $.inArray( meta_data.id, marm.meta_filters );
+			filter_index = $.inArray( meta_data.id, marm.meta_filters[meta_data.meta] );
 
 		if( $style.length == 0 ) {
 			var theCss = '.focus-meta .' + meta_data.meta + '_' + meta_data.member +
@@ -131,10 +151,12 @@ var marm = {
 		}
 		
 		if( $style.data('disabled') == true ) {
-			marm.meta_filters.push(meta_data.id);
+			marm.meta_filters.counter += 1;
+			marm.meta_filters[meta_data.meta].push(meta_data.id);
 			marm.toggle_filter_style( $style );
 		} else {
-			marm.meta_filters.splice(filter_index, 1);
+			marm.meta_filters.counter -= 1;
+			marm.meta_filters[meta_data.meta].splice(filter_index, 1);
 			marm.toggle_filter_style( $style );
 		}//end else
 
@@ -175,6 +197,8 @@ var marm = {
 		});
 	}
 };
+
+marm.init();
 
 /**
  * Marmoset Complexity object
