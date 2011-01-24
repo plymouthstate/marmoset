@@ -891,8 +891,8 @@ class Marmoset {
 
 		$post_type = 'marm_project';
 		$post_status = 'publish';
-		$post_title = $_GET['marm-title'];
-		$post_content = $_GET['marm-content'];
+		$post_title = $_POST['marm-title'];
+		$post_content = $_POSt['marm-content'];
 
 		$latest_post_id = self::max_project_order( 'proposed', 'proposed' );
 
@@ -904,8 +904,8 @@ class Marmoset {
 			die( $post_id );
 		}
 
-		$marm_stakeholders = $_GET['marm-stakeholders'];
-		$marm_complexity = (int)$_GET['marm-complexity'];
+		$marm_stakeholders = $_POST['marm-stakeholders'];
+		$marm_complexity = get_term( (int)$_POST['marm-complexity'], 'marm_complexity', 'ARRAY_N' );
 
 		// will be null if there are no terms in the stakeholder taxonomy
 		if( is_array( $marm_stakeholders ) ) {
@@ -914,15 +914,18 @@ class Marmoset {
 			$marm_stakeholders = array();
 		}
 
-		// find new stakeholders
-		foreach ( $_GET['marm-stakeholders'] as $stakeholder ) {
-			$stakeholder = trim($stakeholder);
+		/*
+		 * This code is currently unuseable 
+		 * // find new stakeholders
+		foreach ( $_POST['marm-stakeholders'] as $stakeholder ) {
+			$stakeholder = trim($stakeholder[0]);
 
-			if( $stakeholder ) {
+			if( !term_exists( $stakeholder, 'marm_stakeholders' ) ) {
 				$marm_stakeholders[] = $stakeholder;
 			}
 		}
-
+		die( print_r($marm_stakeholders) );
+		*/
 		wp_set_object_terms( $post_id, 'Proposed', 'marm_status' );
 		wp_set_object_terms( $post_id, 'Proposed', 'marm_queue' );
 		wp_set_object_terms( $post_id, $marm_stakeholders, 'marm_stakeholders' );
@@ -932,7 +935,6 @@ class Marmoset {
 		update_post_meta( $post_id, 'project_order', $latest_post_id + 1 );
 
 		$url = get_permalink( $post_id );
-
 		echo json_encode( array( 'url' => $url ) );
 		die();
 	}//end submit_project

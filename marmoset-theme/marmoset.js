@@ -253,7 +253,6 @@ marm.submit = function(){
 		'marm-complexity': $( 'input[name="marm-duedate"]' ).val(),
 		'marm-stakeholders': stakeholders,
 	};
-
 	$.ajax({
 		type: 'POST',
 		url:  admin_ajax, 
@@ -420,8 +419,6 @@ $.root.delegate( '.submit-project .stakeholders a:last', 'click.submit-project.s
 	});
 });
 
-//bind for project submission ajax
-$('.save').click( marm.submit );
 /***************
  * Colorbox Stuff
  ***************/
@@ -449,6 +446,9 @@ $(function(){
 		$('#project-filter').toggle(false);
 		marm.toggle_select();
 	});
+
+	//bind for project submission ajax
+	$('.save').click( marm.submit );
 
 	$.root.bind('keydown', 'h', function(e) {
 		marm.hide_unfocused();
