@@ -102,6 +102,7 @@ var marm = {
 		$('body').toggleClass( 'focus-meta', marm.meta_filters.counter > 0 );
 
 		marm.count_projects();
+		marm.update_hash();
 	},
 
 	toggle_filter_style: function( elem, enable ) {
@@ -163,6 +164,8 @@ var marm = {
 		if( calc_project_count ) {
 			marm.count_projects();
 		}//end if
+
+		marm.update_hash();
 	},
 
 	toggle_select: function( $o ) {
@@ -191,6 +194,29 @@ var marm = {
 			$('body').removeClass('focused');
 		}//end else
 	},
+
+	update_hash: function() {
+		var hash = {};
+
+
+		if( marm.meta_filters.stakeholders.length  ) {
+			hash.stakeholders = marm.meta_filters.stakeholders.join(',');
+		}
+
+		if( marm.meta_filters.members.length  ) {
+			hash.members = marm.meta_filters.members.join(',');
+		}
+
+		if( marm.meta_filters.status.length  ) {
+			hash.status = marm.meta_filters.status.join(',');
+		}
+
+		hash = $.param( hash );
+		hash = decodeURIComponent( hash ); // "%2C" -> "," and others
+
+		document.location.hash = hash;
+	},
+
 	update_numbers: function( $list ) {
 		$list.children('li').each(function(i) {
 			$(this).find('.item-number').html( (i + 1) + '.' );
