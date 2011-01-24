@@ -25,13 +25,13 @@ var marm = {
 		var count_found = 0;
 
 		var filter_classes = [].concat(
-			marm.meta_filters.stakeholders,
-			marm.meta_filters.members,
-			marm.meta_filters.status
+			$.map( marm.meta_filters.stakeholders, function(n){ return '.stakeholders_' + n; } ),
+			$.map( marm.meta_filters.members, function(n){ return '.members_' + n; } ),
+			$.map( marm.meta_filters.status, function(n){ return '.status_' + n; } )
 		);
 
 		if( filter_classes.length > 0 ) {
-			filter_classes = '.project.' + filter_classes.join(', .project.');
+			filter_classes = '.project.' + filter_classes.join(', .project');
 			count_found = $( filter_classes ).length;
 		}
 
@@ -126,7 +126,7 @@ var marm = {
 
 		var meta_data = marm.meta_data( meta, member ),
 			$style = $('#' + meta_data.style_id),
-			filter_index = $.inArray( meta_data.id, marm.meta_filters[meta_data.meta] );
+			filter_index = $.inArray( meta_data.member, marm.meta_filters[meta_data.meta] );
 
 		if( $style.length == 0 ) {
 			var theCss = '.focus-meta .' + meta_data.meta + '_' + meta_data.member +
@@ -149,7 +149,7 @@ var marm = {
 		
 		if( $style.data('disabled') == true ) {
 			marm.meta_filters.counter += 1;
-			marm.meta_filters[meta_data.meta].push(meta_data.id);
+			marm.meta_filters[meta_data.meta].push(meta_data.member);
 			marm.toggle_filter_style( $style );
 		} else {
 			marm.meta_filters.counter -= 1;
