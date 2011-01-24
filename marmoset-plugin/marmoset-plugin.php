@@ -114,12 +114,16 @@ class Marmoset {
 		return $term->slug;
 	}//end get_the_complexity_slug
 
-	public static function is_overdue()	{
+	public static function is_overdue( $date_showing )	{
 		global $post;
 
-		$date = get_post_meta( $post->ID, 'due_date', true );
-		if( $date - time() < 0 )	{
-			return true;
+		$date = get_post_meta( $post->ID, $date_showing, true );
+	//	Marmoset::get_the_status();
+	//	$terms = wp_get_post_categories( $post->ID, 'marm-status' );
+		if( $date ) {				
+			if( $date - time() < 0 )	{
+				return true;
+			}
 		}
 
 	}

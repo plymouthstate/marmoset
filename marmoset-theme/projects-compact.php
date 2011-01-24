@@ -7,11 +7,11 @@
 		global $post; 
 		$post->meta = get_post_meta( $post->ID, '' );
 
-		$class = 'project'.(Marmoset::is_overdue() ? ' past-due' : '');
+		$class = 'project'.(Marmoset::is_overdue( $display_date ) ? ' past-due' : '');
 	?>
 	<li data-postid="<?php the_ID(); ?>" <?php post_class($class); ?>>
 		<span class="item-number"><?php echo $i; ?>.</span>
-		<div class="contents" title="<?php if( Marmoset::is_overdue() ) : echo Marmoset::get_the_overdue_date(); endif; ?>">
+		<div class="contents" title="<?php if( Marmoset::is_overdue( $display_date ) ) : echo Marmoset::get_the_overdue_date(); endif; ?>">
 			<div class="project-title">
 				<h2>
 					<span><span class="type"><a href="<?php bloginfo('url'); ?>/queue/<?php echo $post->queue->slug; ?>/"><?php echo $post->queue->name; ?></a> &raquo;</span> <?php the_title(); ?></span>
