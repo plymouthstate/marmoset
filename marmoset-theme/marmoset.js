@@ -53,10 +53,6 @@ var marm = {
 		}//end else
 	},
 
-	add_meta_filter: function( meta, member, meta_contents, calc_project_count ) {
-		meta_contents = meta_contents || marm.meta_contents( meta, member );
-	},
-
 	meta_contents: function( meta, member ) {
 		return $($('.project .meta .' + meta + ' a[href$=' + member + ']').get(0)).html(); 
 	},
