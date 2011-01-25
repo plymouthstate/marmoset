@@ -1,4 +1,4 @@
-var Marmoset_Filters = function() {
+function Marmoset_Filters() {
 	this.counter = 0;
 
 	this.filters = {
@@ -19,28 +19,68 @@ Marmoset_Filters.prototype.reset = function() {
 	});
 };
 
-var Marmoset_Hash = function() {
+function Marmoset_Hash() {
 	this.keypairs = {};
 };
 
-// Add new meta/value pair to the document's hash.
+Marmoset_Hash.prototype.ADD = 1;
+Marmoset_Hash.prototype.REMOVE = 2;
+Marmoset_Hash.prototype.AUTO = 3;
+
 Marmoset_Hash.prototype.add = function( meta, value ) {
+	this.toggle( meta, value, this.ADD );
+};
+
+Marmoset_Hash.prototype.remove = function( meta, value ) {
+	this.toggle( meta, value, this.REMOVE );
+};
+
+// Add new meta/value pair to the document's hash.
+Marmoset_Hash.prototype.toggle = function( meta, value, action ) {
+	action = action || this.AUTO;
+
 	// Trim leading # from hash.
 	var hash = document.location.hash.substr(1);
 
-	this.keypairs = this.hash2obj( hash || '' );
+	this.keypairs = this.hash2obj( hash );
 	var index = $.inArray( value, this.keypairs[meta] );
 
 	this.keypairs[meta] = this.keypairs[meta] || [];
-	
-	// Already there.
-	if( index > -1 ) {
-		return true;
+
+	// No need to add if it's already there.
+	if( index > -1 && action == this.ADD ) {
+		return;
 	}
 
-	this.keypairs[meta].push( value );
+	// Likewise, don't remove if it's not there.
+	if( index == -1 && action == this.REMOVE ) {
+		return;
+	}
+	
+	// Figure out what the automatic action is.
+	if( action == this.AUTO ) {
+		// Already there.
+		if( index > -1 ) {
+			action = this.REMOVE;
+		} else {
+			action = this.ADD;
+		}
+	}
+
+	if( action == this.ADD ) {
+		this.keypairs[meta].push( value );
+	} else {
+		this.keypairs[meta].splice( index, 1 );
+
+		// Don't let zero-length params stick around.
+		if( this.keypairs[meta].length == 0 ) {
+			delete this.keypairs[meta];
+		}
+	}
 
 	document.location.hash = this.toString();
+
+	return this.keypairs;
 };
 
 Marmoset_Hash.prototype.toString = function() {
@@ -51,13 +91,19 @@ Marmoset_Hash.prototype.obj2hash = function( obj ) {
 	var hash = [];
 	
 	$.each( obj, function( key, value ) {
-		hash.push( [key, value.join(',')].join('=') );
+		if( value.length > 0 ) {
+			hash.push( [key, value.join(',')].join('=') );
+		}
 	});
 
 	return hash.join('&');
 };
 
 Marmoset_Hash.prototype.hash2obj = function( hash ) {
+	if( hash == '' ) {
+		return {};
+	}
+
 	var query_parts = hash.split('&');
 	var filters = {};
 
@@ -65,9 +111,15 @@ Marmoset_Hash.prototype.hash2obj = function( hash ) {
 		query_part = query_part.split('=');
 
 		var meta = query_part[0];
-		var values = query_part[1].split(',');
+		var values = query_part[1];
 
-		filters[meta] = values;
+		if( values == '' ) {
+			return;
+		}
+
+		if( values.length > 0 ) {
+			filters[meta] = values.split(',');
+		}
 	});
 
 	return filters;
@@ -155,6 +207,17 @@ var marm = {
 
 		marm.count_projects();
 		marm.update_hash();
+	},
+
+	// Update the hash to include or exclude this filter.
+	toggle_filter_hash: function( meta, member ) {
+		$style = marm.get_or_create_style( meta, member );
+
+		if( $style.filterDisabled() ) {
+			marm.hash.add( meta, member );
+		} else {
+			marm.hash.remove( meta, member );
+		}
 	},
 
 	toggle_filter_style: function( elem, enable ) {
@@ -257,28 +320,6 @@ var marm = {
 		}//end else
 	},
 
-	update_hash: function() {
-		var hash = {};
-
-
-		if( marm.meta_filters.stakeholders.length  ) {
-			hash.stakeholders = marm.meta_filters.stakeholders.join(',');
-		}
-
-		if( marm.meta_filters.members.length  ) {
-			hash.members = marm.meta_filters.members.join(',');
-		}
-
-		if( marm.meta_filters.status.length  ) {
-			hash.status = marm.meta_filters.status.join(',');
-		}
-
-		hash = $.param( hash );
-		hash = decodeURIComponent( hash ); // "%2C" -> "," and others
-
-		document.location.hash = hash;
-	},
-
 	update_numbers: function( $list ) {
 		$list.children('li').each(function(i) {
 			$(this).find('.item-number').html( (i + 1) + '.' );
@@ -287,7 +328,8 @@ var marm = {
 };
 
 marm.init();
-marm.filters = new Marmoset_Filters;
+marm.filters = new Marmoset_Filters();
+marm.hash = new Marmoset_Hash();
 
 /**
  * Marmoset Complexity object
@@ -424,7 +466,7 @@ $.root.delegate('#project-filter ul a', 'click', function(e) {
 	var member = $li.attr('class'),
 		meta = $li.parents('li').attr('class');
 
-	marm.toggle_meta_filter( meta, member, true );
+	marm.toggle_filter_hash( meta, member );
 });
 
 $.root.delegate('.projects', 'sortstart', function(event, ui) {
