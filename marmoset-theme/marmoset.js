@@ -1,12 +1,51 @@
 function Marmoset_Filters( parent ) {
 	this.counter = 0;
+
+	// State of unfocused project show/hide toggle.
+	this.hide = false;
+
 	this.filters = {};
 	this.parent = parent;
+	this.options = {};
 };
 
 Marmoset_Filters.prototype.ADD = 1;
 Marmoset_Filters.prototype.REMOVE = 2;
 Marmoset_Filters.prototype.AUTO = 3;
+
+Marmoset_Filters.prototype.SHOW = 1;
+Marmoset_Filters.prototype.HIDE = 2;
+
+// Query string params that specify options rather than filters
+Marmoset_Filters.prototype.option_keys = ['hide'];
+
+Marmoset_Filters.prototype.set_options = function( options ) {
+	var f = this;
+
+	// Update known options to match the current hash state
+	this.toggle_hidden( options.hide ? this.HIDE : this.SHOW );
+};
+
+Marmoset_Filters.prototype.toggle_hidden = function( action ) {
+	action = action || this.AUTO;
+
+	// never hide when there are no focused items
+	if( this.counter == 0 ) {
+		action = this.SHOW;
+	}
+
+	if( action == this.AUTO ) {
+		action = this.options.hide ? this.HIDE : this.SHOW;
+	}
+
+	if( action == this.HIDE ) {
+		$('body').addClass('hide-unfocused');
+		this.options.hide = true;
+	} else {
+		$('body').removeClass('hide-unfocused');
+		this.options.hide = false;
+	}//end else
+};
 
 // Merge updated filters into our current filters.
 Marmoset_Filters.prototype.merge = function( updated ) {
@@ -59,10 +98,6 @@ Marmoset_Filters.prototype.diff = function( left, right ) {
 	return result;
 };
 
-Marmoset_Filters.prototype.reset = function() {
-	// merge in an empty filter set
-};
-
 function Marmoset_Hash(parent) {
 	this.keypairs = {};
 	this.parent = parent;
@@ -71,6 +106,9 @@ function Marmoset_Hash(parent) {
 Marmoset_Hash.prototype.ADD = 1;
 Marmoset_Hash.prototype.REMOVE = 2;
 Marmoset_Hash.prototype.AUTO = 3;
+
+Marmoset_Hash.prototype.SHOW = 1;
+Marmoset_Hash.prototype.HIDE = 2;
 
 Marmoset_Hash.prototype.add = function( meta, value ) {
 	this.toggle( meta, value, this.ADD );
@@ -89,16 +127,44 @@ Marmoset_Hash.prototype.remove = function( meta, value ) {
 	this.toggle( meta, value, this.REMOVE );
 };
 
+// Update hidden value and change the page hash.
+Marmoset_Hash.prototype.toggle_hidden = function( action ) {
+	action = action || this.AUTO;
+
+	this.parse_hash();
+
+	if( action == this.AUTO ) {
+		action = this.hide ? this.SHOW : this.HIDE;
+	}
+
+	this.hide = action == this.HIDE;
+
+	this.set_hash();
+};
+
+// Parse the currently set hash, populating this.keypairs.
+Marmoset_Hash.prototype.parse_hash = function() {
+	// Trim leading # from hash.
+	var hash = document.location.hash.substr(1),
+		hashobj = this.hash2obj( hash );
+
+	this.keypairs = hashobj.filters;
+
+	if( hashobj.options.hide ) {
+		this.hide = hashobj.options.hide ? true : false;
+	}
+};
+
+Marmoset_Hash.prototype.set_hash = function() {
+	document.location.hash = this.toString();
+}
+
 // Add new meta/value pair to the document's hash.
 Marmoset_Hash.prototype.toggle = function( meta, value, action ) {
 	action = action || this.AUTO;
 
-	// Trim leading # from hash.
-	var hash = document.location.hash.substr(1);
-
-	this.keypairs = this.hash2obj( hash );
+	this.parse_hash();
 	var index = $.inArray( value, this.keypairs[meta] );
-
 	this.keypairs[meta] = this.keypairs[meta] || [];
 
 	// No need to add if it's already there.
@@ -126,19 +192,30 @@ Marmoset_Hash.prototype.toggle = function( meta, value, action ) {
 	} else {
 		this.keypairs[meta].splice( index, 1 );
 
-		// Don't let zero-length params stick around.
+		// Don't let zero-length params stick around: #foo=
 		if( this.keypairs[meta].length == 0 ) {
 			delete this.keypairs[meta];
 		}
 	}
 
-	document.location.hash = this.toString();
+	this.set_hash();
 
 	return this.keypairs;
 };
 
 Marmoset_Hash.prototype.toString = function() {
-	return this.obj2hash( this.keypairs );
+	var hash = this.obj2hash( this.keypairs );
+
+	if( this.hide ) {
+		var append = 'hide=1';
+		if( hash.length > 0 ) {
+			return hash + '&' + append;
+		} else {
+			return append;
+		}
+	}
+
+	return hash;
 };
 
 Marmoset_Hash.prototype.obj2hash = function( obj ) {
@@ -154,12 +231,17 @@ Marmoset_Hash.prototype.obj2hash = function( obj ) {
 };
 
 Marmoset_Hash.prototype.hash2obj = function( hash ) {
+	var result = {
+		filters: {},
+		options: {}
+	};
+
 	if( hash == '' ) {
-		return {};
+		return result;
 	}
 
-	var query_parts = hash.split('&');
-	var filters = {};
+	var query_parts = hash.split('&'),
+		filters = this.parent.filters;
 
 	$.each( query_parts, function(i, query_part) {
 		query_part = query_part.split('=');
@@ -171,12 +253,16 @@ Marmoset_Hash.prototype.hash2obj = function( hash ) {
 			return;
 		}
 
-		if( values.length > 0 ) {
-			filters[meta] = values.split(',');
+		if( $.inArray( meta, filters.option_keys ) > -1 ) {
+			result.options[meta] = values;
+		} else {
+			if( values.length > 0 ) {
+				result.filters[meta] = values.split(',');
+			}
 		}
 	});
 
-	return filters;
+	return result;
 };
 
 var marm = {
@@ -190,8 +276,9 @@ var marm = {
 	},
 
 	history_changed: function( hash ) {
-		var new_filters = marm.hash.hash2obj( hash );
-		marm.filters.merge( new_filters );
+		var new_hash = marm.hash.hash2obj( hash );
+		marm.filters.merge( new_hash.filters );
+		marm.filters.set_options( new_hash.options );
 	},
 
 	count_projects: function() {
@@ -208,21 +295,6 @@ var marm = {
 		}
 
 		$('#project-filter-total').html( count_found );
-	},
-
-	hide_unfocused: function( state ) {
-		// never hide when there are no focused items
-		if( marm.filters.counter == 0 ) {
-			state = false;
-		}
-
-		if( state === true ) {
-			$('body').not('.hide-unfocused').addClass('hide-unfocused');
-		} else if( state === false ) {
-			$('body').removeClass('hide-unfocused');
-		} else {
-			$('body').toggleClass('hide-unfocused');
-		}//end else
 	},
 
 	meta_id: function( meta, member ) {
@@ -246,7 +318,7 @@ var marm = {
 			$style.data('disabled', true).empty();
 
 			if( $('#project-filter li').length == 0 ) {
-				marm.hide_unfocused( false );
+				marm.filters.set_hidden( false );
 			}//end if
 		}
 
@@ -329,6 +401,7 @@ var marm = {
 		}//end else
 	},
 
+	// Update the project sequence numbers in the vertical display
 	update_numbers: function( $list ) {
 		$list.children('li').each(function(i) {
 			$(this).find('.item-number').html( (i + 1) + '.' );
@@ -587,7 +660,7 @@ $(function(){
 	});
 
 	$.root.bind('keydown', 'h', function(e) {
-		marm.hide_unfocused();
+		marm.hash.toggle_hidden();
 	});
 
 	$.root.bind('keydown', 'c', function(e) {
