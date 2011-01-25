@@ -17,6 +17,8 @@ class Marmoset_Theme {
 			wp_deregister_script( 'jquery-hotkeys' );
 			wp_enqueue_script( 'jquery-hotkeys', get_bloginfo('template_directory') . '/js/jquery.hotkeys.js', array('jquery'), '0.8', true );
 
+			wp_enqueue_script( 'jquery-history', get_bloginfo('template_directory') . '/js/jquery.history.js', array('jquery'), '1', true );
+
 			wp_deregister_script( 'jquery-colorbox' );
 			wp_enqueue_script( 'jquery-colorbox', get_bloginfo('template_directory') . '/js/colorbox/jquery.colorbox-min.js', array('jquery'), '1.3.15', true );
 

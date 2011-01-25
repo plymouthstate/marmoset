@@ -1,4 +1,84 @@
+var Marmoset_Filters = function() {
+	this.counter = 0;
+
+	this.filters = {
+		stakeholders: [],
+		members: [],
+		status: []
+	};
+};
+
+Marmoset_Filters.prototype.enable = function( meta, value ) {
+	this.filters[meta] = value;
+};
+
+Marmoset_Filters.prototype.reset = function() {
+	var f = this;
+	$.each( this.filters, function( key, value ) {
+		f.filters[key] = [];
+	});
+};
+
+var Marmoset_Hash = function() {
+	this.keypairs = {};
+};
+
+// Add new meta/value pair to the document's hash.
+Marmoset_Hash.prototype.add = function( meta, value ) {
+	// Trim leading # from hash.
+	var hash = document.location.hash.substr(1);
+
+	this.keypairs = this.hash2obj( hash || '' );
+	var index = $.inArray( value, this.keypairs[meta] );
+
+	this.keypairs[meta] = this.keypairs[meta] || [];
+	
+	// Already there.
+	if( index > -1 ) {
+		return true;
+	}
+
+	this.keypairs[meta].push( value );
+
+	document.location.hash = this.toString();
+};
+
+Marmoset_Hash.prototype.toString = function() {
+	return this.obj2hash( this.keypairs );
+};
+
+Marmoset_Hash.prototype.obj2hash = function( obj ) {
+	var hash = [];
+	
+	$.each( obj, function( key, value ) {
+		hash.push( [key, value.join(',')].join('=') );
+	});
+
+	return hash.join('&');
+};
+
+Marmoset_Hash.prototype.hash2obj = function( hash ) {
+	var query_parts = hash.split('&');
+	var filters = {};
+
+	$.each( query_parts, function(i, query_part) {
+		query_part = query_part.split('=');
+
+		var meta = query_part[0];
+		var values = query_part[1].split(',');
+
+		filters[meta] = values;
+	});
+
+	return filters;
+};
+
 var marm = {
+	history_options: {
+		unescape: ','
+	},
+
+	// MIGRATED
 	meta_filters_default: {
 		counter: 0,
 		stakeholders: [],
@@ -6,6 +86,7 @@ var marm = {
 		status: []
 	},
 
+	// MIGRATED
 	meta_filters: null,
 
 	// a list of cached user capabilities
@@ -13,12 +94,17 @@ var marm = {
 		edit_posts: false
 	},
 
+	// MIGRATED
 	reset_meta_filters: function() {
 		marm.meta_filters = marm.meta_filters_default;
 	},
 
+	// MIGRATED
 	init: function() {
 		this.meta_filters = this.meta_filters_default;
+	},
+
+	history_changed: function( hash ) {
 	},
 
 	count_projects: function() {
@@ -53,42 +139,12 @@ var marm = {
 		}//end else
 	},
 
-	meta_contents: function( meta, member ) {
-		return $($('.project .meta .' + meta + ' a[href$=' + member + ']').get(0)).html(); 
+	meta_id: function( meta, member ) {
+		return [meta, member].join('_');
 	},
 
-	meta_data: function( meta, member, calc ) {
-		var meta_data = {
-			id: meta + '_' + member,
-			concat: 'as a',
-			count: 0,
-			member: member,
-			meta: meta,
-			readable_meta: meta,
-			or: ''
-		};
-
-		meta_data.style_id = 'selected-' + meta_data.id;
-
-		if( calc ) {
-			if( meta_data.meta.substr( -1 ) == 's' ) {
-				meta_data.singular_meta = meta.substr( 0, meta.length - 1 );
-			}//end if
-
-			meta_data.count = $('.' + meta_data.id).length;
-
-			if( $('#project-filter li').length > 0 ) {
-				meta_data.or = 'or ';
-			}//end if
-
-			if( meta == 'stakeholder' ) {
-				meta_data.readable_meta = 'stakeholder';
-			} else if( meta == 'queue' || meta == 'status' || meta == 'complexity' ) {
-				meta_data.concat = 'as its';
-			}
-		}//end if
-
-		return meta_data;
+	meta_style_id: function( meta, member ) {
+		return 'selected-' + marm.meta_id( meta, member );
 	},
 
 	clear_filters: function() {
@@ -118,26 +174,23 @@ var marm = {
 			}//end if
 		}
 
+		// body.focus-meta if there are active filters
 		$('body').toggleClass( 'focus-meta', marm.meta_filters.counter > 0 );
 	},
 
-	toggle_meta_filter: function( meta, member, meta_contents, calc_project_count ) {
-		meta_contents = meta_contents || marm.meta_contents( meta, member );
-
-		var meta_data = marm.meta_data( meta, member ),
-			$style = $('#' + meta_data.style_id),
-			filter_index = $.inArray( meta_data.member, marm.meta_filters[meta_data.meta] );
+	get_or_create_style: function( meta, member ) {
+		var $style = $('#' + marm.meta_style_id(meta, member) );
 
 		if( $style.length == 0 ) {
-			var theCss = '.focus-meta .' + meta_data.meta + '_' + meta_data.member +
+			var theCss = '.focus-meta .' + marm.meta_id(meta, member) +
 				'{display: block !important; opacity: 1}';
 
-			theCss = theCss + ' #project-filter .' + meta_data.meta + ' .' + meta_data.member + ' a ' +
+			theCss = theCss + ' #project-filter .' + meta + ' .' + member + ' a ' +
 				'{color: black; background-color: red;}';
 
 			// add in disabled state; will be enabled by toggle_filter_style
 			var $style = $('<style/>')
-				.attr('id', meta_data.style_id)
+				.attr('id', marm.meta_style_id(meta, member) )
 				.addClass('filter')
 				.attr('type', 'text/css')
 				.data('contents', theCss)
@@ -146,22 +199,35 @@ var marm = {
 
 			$style.appendTo('head');
 		}
-		
-		if( $style.data('disabled') == true ) {
+
+		return $style;
+	},
+
+	toggle_meta_filter: function( meta, member, toggleOn ) {
+		var filter_index = $.inArray( member, marm.meta_filters[meta] ),
+			$style = marm.get_or_create_style( meta, member ),
+			isCurrentlyDisabled = $style.filterDisabled();
+
+		if( typeof toggleOn == 'undefined' ) {
+			toggleOn = isCurrentlyDisabled;
+		}
+
+		// If these do not match, we already have the requested state.
+		if( toggleOn != isCurrentlyDisabled ) {
+			return;
+		}
+
+		if( toggleOn ) {
 			marm.meta_filters.counter += 1;
-			marm.meta_filters[meta_data.meta].push(meta_data.member);
-			marm.toggle_filter_style( $style );
+			marm.meta_filters[meta].push(member);
+			marm.toggle_filter_style( $style, toggleOn );
 		} else {
 			marm.meta_filters.counter -= 1;
-			marm.meta_filters[meta_data.meta].splice(filter_index, 1);
-			marm.toggle_filter_style( $style );
+			marm.meta_filters[meta].splice(filter_index, 1);
+			marm.toggle_filter_style( $style, toggleOn );
 		}//end else
 
-		if( calc_project_count ) {
-			marm.count_projects();
-		}//end if
-
-		marm.update_hash();
+		marm.count_projects();
 	},
 
 	toggle_select: function( $o ) {
@@ -221,6 +287,7 @@ var marm = {
 };
 
 marm.init();
+marm.filters = new Marmoset_Filters;
 
 /**
  * Marmoset Complexity object
@@ -355,11 +422,9 @@ $.root.delegate('#project-filter ul a', 'click', function(e) {
 	var $li = $(this).closest('li');
 
 	var member = $li.attr('class'),
-		meta_contents = $(this).html(),
-		href = $(this).attr('href'),
 		meta = $li.parents('li').attr('class');
 
-	marm.toggle_meta_filter( meta, member, meta_contents, true );
+	marm.toggle_meta_filter( meta, member, true );
 });
 
 $.root.delegate('.projects', 'sortstart', function(event, ui) {
@@ -479,6 +544,14 @@ $(function(){
 		marm.clear_filters();
 	});
 
+	$.history.init( marm.history_changed, marm.history_options );
 });
+
+/**************
+ * jQuery extensions
+ *************/
+$.fn.filterDisabled = function() {
+	return this.first().data('disabled') || false;
+};
 
 })(jQuery);
