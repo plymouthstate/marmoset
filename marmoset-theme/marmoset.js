@@ -8,8 +8,55 @@ function Marmoset_Filters() {
 	};
 };
 
-Marmoset_Filters.prototype.enable = function( meta, value ) {
-	this.filters[meta] = value;
+Marmoset_Filters.prototype.ADD = 1;
+Marmoset_Filters.prototype.REMOVE = 2;
+Marmoset_Filters.prototype.AUTO = 3;
+
+// Merge updated filters into our current filters.
+Marmoset_Filters.prototype.merge = function( updated ) {
+	// List to add: things in "updated" that are not in existing
+	var add_filters = this.diff( this.filters, updated );
+
+	// List to remove: things in existing that are not in updated
+	var remove_filters = this.diff( updated, this.filters );
+
+	var f = this;
+
+	$.each( add_filters, function( meta, values ) {
+		$.each( values, function( i, value ) {
+			f.filters[meta].push(value);
+
+			marm.toggle_meta_filter( meta, value, true );
+		});
+	});
+
+	$.each( remove_filters, function( meta, values ) {
+		$.each( values, function( i, value ) {
+			var index = $.inArray( value, f.filters[meta] );
+			f.filters[meta].splice( index, 1 );
+
+			marm.toggle_meta_filter( meta, value, false );
+		});
+	});
+};
+
+// Return a list of filters that are in the right array, but not in the left.
+Marmoset_Filters.prototype.diff = function( left, right ) {
+	var result = {};
+
+	$.each( right, function( meta, values ) {
+		result[meta] = result[meta] || [];
+
+		$.each( values, function( j, value ) {
+			var index = $.inArray( value, left[meta] );
+
+			if( index == -1 ) {
+				result[meta].push( value );
+			}
+		});
+	});
+
+	return result;
 };
 
 Marmoset_Filters.prototype.reset = function() {
@@ -157,6 +204,8 @@ var marm = {
 	},
 
 	history_changed: function( hash ) {
+		var new_filters = marm.hash.hash2obj( hash );
+		marm.filters.merge( new_filters );
 	},
 
 	count_projects: function() {
@@ -207,17 +256,6 @@ var marm = {
 
 		marm.count_projects();
 		marm.update_hash();
-	},
-
-	// Update the hash to include or exclude this filter.
-	toggle_filter_hash: function( meta, member ) {
-		$style = marm.get_or_create_style( meta, member );
-
-		if( $style.filterDisabled() ) {
-			marm.hash.add( meta, member );
-		} else {
-			marm.hash.remove( meta, member );
-		}
 	},
 
 	toggle_filter_style: function( elem, enable ) {
@@ -466,7 +504,7 @@ $.root.delegate('#project-filter ul a', 'click', function(e) {
 	var member = $li.attr('class'),
 		meta = $li.parents('li').attr('class');
 
-	marm.toggle_filter_hash( meta, member );
+	marm.hash.toggle( meta, member );
 });
 
 $.root.delegate('.projects', 'sortstart', function(event, ui) {
