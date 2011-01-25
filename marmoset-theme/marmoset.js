@@ -1,11 +1,7 @@
-function Marmoset_Filters() {
+function Marmoset_Filters( parent ) {
 	this.counter = 0;
-
-	this.filters = {
-		stakeholders: [],
-		members: [],
-		status: []
-	};
+	this.filters = {};
+	this.parent = parent;
 };
 
 Marmoset_Filters.prototype.ADD = 1;
@@ -23,8 +19,11 @@ Marmoset_Filters.prototype.merge = function( updated ) {
 	var f = this;
 
 	$.each( add_filters, function( meta, values ) {
+		f.filters[meta] = f.filters[meta] || [];
+
 		$.each( values, function( i, value ) {
 			f.filters[meta].push(value);
+			f.counter += 1;
 
 			marm.toggle_meta_filter( meta, value, true );
 		});
@@ -34,6 +33,7 @@ Marmoset_Filters.prototype.merge = function( updated ) {
 		$.each( values, function( i, value ) {
 			var index = $.inArray( value, f.filters[meta] );
 			f.filters[meta].splice( index, 1 );
+			f.counter -= 1;
 
 			marm.toggle_meta_filter( meta, value, false );
 		});
@@ -60,14 +60,12 @@ Marmoset_Filters.prototype.diff = function( left, right ) {
 };
 
 Marmoset_Filters.prototype.reset = function() {
-	var f = this;
-	$.each( this.filters, function( key, value ) {
-		f.filters[key] = [];
-	});
+	// merge in an empty filter set
 };
 
-function Marmoset_Hash() {
+function Marmoset_Hash(parent) {
 	this.keypairs = {};
+	this.parent = parent;
 };
 
 Marmoset_Hash.prototype.ADD = 1;
@@ -76,6 +74,15 @@ Marmoset_Hash.prototype.AUTO = 3;
 
 Marmoset_Hash.prototype.add = function( meta, value ) {
 	this.toggle( meta, value, this.ADD );
+};
+
+Marmoset_Hash.prototype.clear = function() {
+	if( document.location.hash == '' ) {
+		return;
+	}
+
+	this.keypairs = {};
+	document.location.hash = '';
 };
 
 Marmoset_Hash.prototype.remove = function( meta, value ) {
@@ -177,30 +184,9 @@ var marm = {
 		unescape: ','
 	},
 
-	// MIGRATED
-	meta_filters_default: {
-		counter: 0,
-		stakeholders: [],
-		members: [],
-		status: []
-	},
-
-	// MIGRATED
-	meta_filters: null,
-
 	// a list of cached user capabilities
 	user_cap: {
 		edit_posts: false
-	},
-
-	// MIGRATED
-	reset_meta_filters: function() {
-		marm.meta_filters = marm.meta_filters_default;
-	},
-
-	// MIGRATED
-	init: function() {
-		this.meta_filters = this.meta_filters_default;
 	},
 
 	history_changed: function( hash ) {
@@ -209,13 +195,12 @@ var marm = {
 	},
 
 	count_projects: function() {
-		var count_found = 0;
+		var count_found = 0,
+			filter_classes = [];
 
-		var filter_classes = [].concat(
-			$.map( marm.meta_filters.stakeholders, function(n){ return '.stakeholders_' + n; } ),
-			$.map( marm.meta_filters.members, function(n){ return '.members_' + n; } ),
-			$.map( marm.meta_filters.status, function(n){ return '.status_' + n; } )
-		);
+		$.each( this.filters.filters, function( meta, values ) {
+			filter_classes = filter_classes.concat( $.map( values, function(value){ return '.' + meta + '_' + value; } ) );
+		});
 
 		if( filter_classes.length > 0 ) {
 			filter_classes = '.project.' + filter_classes.join(', .project');
@@ -227,7 +212,7 @@ var marm = {
 
 	hide_unfocused: function( state ) {
 		// never hide when there are no focused items
-		if( marm.meta_filters.counter == 0 ) {
+		if( marm.filters.counter == 0 ) {
 			state = false;
 		}
 
@@ -248,16 +233,6 @@ var marm = {
 		return 'selected-' + marm.meta_id( meta, member );
 	},
 
-	clear_filters: function() {
-		marm.reset_meta_filters();
-
-		$('style.filter').each( function(i,e) { marm.toggle_filter_style(e,false); } );
-		$('body').toggleClass( 'focus-meta', marm.meta_filters.counter > 0 );
-
-		marm.count_projects();
-		marm.update_hash();
-	},
-
 	toggle_filter_style: function( elem, enable ) {
 		var $style = $(elem);
 
@@ -276,7 +251,7 @@ var marm = {
 		}
 
 		// body.focus-meta if there are active filters
-		$('body').toggleClass( 'focus-meta', marm.meta_filters.counter > 0 );
+		$('body').toggleClass( 'focus-meta', marm.filters.counter > 0 );
 	},
 
 	get_or_create_style: function( meta, member ) {
@@ -305,7 +280,7 @@ var marm = {
 	},
 
 	toggle_meta_filter: function( meta, member, toggleOn ) {
-		var filter_index = $.inArray( member, marm.meta_filters[meta] ),
+		var filter_index = $.inArray( member, marm.filters[meta] ),
 			$style = marm.get_or_create_style( meta, member ),
 			isCurrentlyDisabled = $style.filterDisabled();
 
@@ -319,12 +294,8 @@ var marm = {
 		}
 
 		if( toggleOn ) {
-			marm.meta_filters.counter += 1;
-			marm.meta_filters[meta].push(member);
 			marm.toggle_filter_style( $style, toggleOn );
 		} else {
-			marm.meta_filters.counter -= 1;
-			marm.meta_filters[meta].splice(filter_index, 1);
 			marm.toggle_filter_style( $style, toggleOn );
 		}//end else
 
@@ -365,9 +336,8 @@ var marm = {
 	}
 };
 
-marm.init();
-marm.filters = new Marmoset_Filters();
-marm.hash = new Marmoset_Hash();
+marm.filters = new Marmoset_Filters(marm);
+marm.hash = new Marmoset_Hash(marm);
 
 /**
  * Marmoset Complexity object
@@ -621,7 +591,7 @@ $(function(){
 	});
 
 	$.root.bind('keydown', 'c', function(e) {
-		marm.clear_filters();
+		marm.hash.clear();
 	});
 
 	$.history.init( marm.history_changed, marm.history_options );
