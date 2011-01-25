@@ -225,17 +225,21 @@ marm.complexity = {
 		if( finalize_complexity === true ) {
 			$el.data('complexity', complexity);
 			var params = { 
-				'action': 'save_complexity',  
-				'marm-complexity': $el.data('complexity'), 
-				'project-id': $el.closest('li').data('postid'), 
+				'action': 'change_complexity',  
+				'marm-complexity': complexity, 
+				'project-id' : $el.parents( 'li' ).data( 'postid' ),
 			};
-			$.post( admin_ajax, params );
-			var params = { 
-				'action': 'display_complexity',  
-				'marm-complexity': $el.data('complexity'), 
-			};
-			$.post( admin_ajax, params, function(description) {
-				$el.parents('div').next('div').find( '.complexity' ).text( 'Project Complexity: '+description ); 
+			console.log(	$el.find( '.readable'  ));
+			$.ajax({
+				type: 'POST',
+				url:  admin_ajax, 
+				data: params, 
+				dataTYPE: 'json',
+				success: function(json) { 
+					console.log(json);
+					$el.parent( '.contents' ).next( 'div' ).find( '.complexity' ).text( 'Project Complexity: '+json.description ); 
+					$el.attr('title', json.name ).find( '.readable' ).text( json.name );
+				},
 			});
 		}
 	}
@@ -246,17 +250,19 @@ marm.submit = function(){
 	$('.input-stakeholders').find('input:checked').each( function(){
 		stakeholders.push( $(this).val() );
 	});
-	var get_args = {
+	var args = {
 		'action': 'project_submit',
 		'marm-title': $( 'input[name="marm-title"]' ).val(),
 		'marm-content':	$( 'textarea[name="marm-content"]' ).val(),
-		'marm-complexity': $( 'input[name="marm-duedate"]' ).val(),
+		'marm-complexity': $( 'select[name="marm-complexity"]' ).val(),
+		'marm-duedate' : $( 'input[name="marm-duedate"]' ).val(),
 		'marm-stakeholders': stakeholders,
 	};
+	console.log(args);
 	$.ajax({
 		type: 'POST',
 		url:  admin_ajax, 
-		data: get_args, 
+		data: args, 
 		success: function(json) { window.location=json.url; },
 		dataTYPE: 'json',
 	});
