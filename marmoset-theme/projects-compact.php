@@ -6,7 +6,6 @@
 		Marmoset::get_the_queue(); 
 		global $post; 
 		$post->meta = get_post_meta( $post->ID, '' );
-
 		$class = 'project'.(Marmoset::is_overdue( $args ) ? ' past-due' : '');
 	?>
 	<li data-postid="<?php the_ID(); ?>" <?php post_class($class); ?>>
