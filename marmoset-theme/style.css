@@ -901,5 +901,10 @@ a.delete:hover {
   .complexity-5 .indicator-5 {
     text-indent: 0; } }
 
+.widget-inside .marmoset-widget-span {
+  display: inline-block;
+  width: 50%;
+  text-align: right; }
+
 /* vim:filetype=css:
 */

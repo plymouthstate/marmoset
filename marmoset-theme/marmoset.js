@@ -171,7 +171,7 @@ Marmoset_Hash.prototype.toggle = function( meta, value, action ) {
 	if( index == -1 && action == this.REMOVE ) {
 		return;
 	}
-	
+
 	// Figure out what the automatic action is.
 	if( action == this.AUTO ) {
 		// Already there.
@@ -215,7 +215,7 @@ Marmoset_Hash.prototype.toString = function() {
 
 Marmoset_Hash.prototype.obj2hash = function( obj ) {
 	var hash = [];
-	
+
 	$.each( obj, function( key, value ) {
 		if( value.length > 0 ) {
 			hash.push( [key, value.join(',')].join('=') );
@@ -455,21 +455,42 @@ marm.complexity = {
 
 		if( finalize_complexity === true ) {
 			$el.data('complexity', complexity);
-			var params = { 
-				'action': 'save_complexity',  
-				'marm-complexity': $el.data('complexity'), 
-				'project-id': $el.closest('li').data('postid'), 
+			var params = {
+				'action': 'change_complexity',
+				'marm-complexity': complexity,
+				'project-id' : $el.parents( 'li' ).data( 'postid' ),
 			};
-			$.post( admin_ajax, params );
-			var params = { 
-				'action': 'display_complexity',  
-				'marm-complexity': $el.data('complexity'), 
-			};
-			$.post( admin_ajax, params, function(description) {
-				$el.parents('div').next('div').find( '.complexity' ).text( 'Project Complexity: '+description ); 
+			$.ajax({
+				type: 'POST',
+				url:  admin_ajax,
+				data: params,
+				dataTYPE: 'json',
+				success: function(json) {
+					var $meta = $el.closest('.contents').nextAll('.details').find( '.meta' );
+					var $complexity = $meta.find('.complexity');
+
+					if( $complexity.length == 0 ) {
+						$complexity = $('<li/>').addClass('complexity').appendTo( $meta );
+					}
+
+					$complexity.text( 'Project Complexity: '+ (json.description ? json.description : json.name) );
+					$el.attr('title', json.name ).find( '.readable' ).text( json.name );
+				},
 			});
 		}
 	}
+},
+//Object to handle form submission
+marm.submit = function(e){
+	$.ajax({
+		type: 'POST',
+		url:  admin_ajax,
+		data: $(this).closest('form').serialize(),
+		success: function(json) { window.location=json.url; },
+		dataTYPE: 'json',
+	});
+
+	return false;
 };
 
 (function($) {
@@ -513,11 +534,11 @@ $.root.delegate('.project .permalink a', 'click', function(e) { e.stopPropagatio
  */
 
 if( marm.user_cap.edit_posts ) {
-	$.root.delegate('.project .complexity .complexity-reset', 'click.marm_complexity', marm.complexity.reset); 
+	$.root.delegate('.project .complexity .complexity-reset', 'click.marm_complexity', marm.complexity.reset);
 	$.root.delegate('.project .complexity ul', 'hover.marm_complexity', marm.complexity.cancel);
 	$.root.delegate('.project .complexity', 'mouseleave.marm_complexity', marm.complexity.cancel);
 	$.root.delegate('.project .complexity .indicator', 'mouseover.marm_complexity', marm.complexity.over);
-	$.root.delegate('.project .complexity', 'click.marm_complexity', function(e) { 
+	$.root.delegate('.project .complexity', 'click.marm_complexity', function(e) {
 		e.stopPropagation();
 		marm.complexity.set( $(this) );
 	});
@@ -573,7 +594,7 @@ $.root.delegate('.projects', 'sortupdate', function(event, ui) {
 		other_id = $next.data('postid');
 	} else {
 		var $prev = $e.prevAll('.project:first');
-		
+
 		if( $prev.length == 1 ) {
 			placement = 'after';
 			other_id = $prev.data('postid');
@@ -640,6 +661,7 @@ $(function(){
 
 	$.subscribe('submit-project-stakeholder-add', $.colorbox.resize);
 	$.subscribe('submit-project-stakeholder-remove', $.colorbox.resize);
+	$.subscribe('submit-project-save', marm.submit);
 });
 
 /**************
@@ -654,6 +676,9 @@ $(function(){
 		$('#project-filter').toggle(false);
 		marm.toggle_select();
 	});
+
+	//bind for project submission ajax
+	$('.save').click( marm.submit );
 
 	$.root.bind('keydown', 'h', function(e) {
 		marm.hash.toggle_hidden();
