@@ -118,6 +118,12 @@ Marmoset_Hash.prototype.clear = function() {
 	this.set_hash();
 };
 
+Marmoset_Hash.prototype.my_projects = function() {
+	this.clear();
+	this.toggle( 'members', wp_username );
+	this.toggle_hidden( this.HIDE );
+};
+
 Marmoset_Hash.prototype.remove = function( meta, value ) {
 	this.toggle( meta, value, this.REMOVE );
 };
@@ -686,6 +692,10 @@ $(function(){
 
 	$.root.bind('keydown', 'c', function(e) {
 		marm.hash.clear();
+	});
+
+	$.root.bind('keydown', 'm', function(e) {
+		marm.hash.my_projects();
 	});
 
 	$.history.init( marm.history_changed, marm.history_options );

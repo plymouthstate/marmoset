@@ -9,6 +9,7 @@
 <?php wp_head(); ?>
 <script type="text/javascript">
 var admin_ajax = '<?php echo admin_url('admin-ajax.php'); ?>';
+var wp_username = '<?php echo wp_get_current_user()->user_login; ?>';
 </script>
 </head>
 <body <?php body_class(); ?>>
