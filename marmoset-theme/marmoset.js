@@ -1,34 +1,288 @@
-var marm = {
-	meta_filters_default: {
-		counter: 0,
-		stakeholders: [],
-		members: [],
-		status: []
-	},
+function Marmoset_Filters( parent ) {
+	this.counter = 0;
 
-	meta_filters: null,
+	// State of unfocused project show/hide toggle.
+	this.hide = false;
+
+	this.filters = {};
+	this.parent = parent;
+	this.options = {};
+};
+
+Marmoset_Filters.prototype.ADD = 1;
+Marmoset_Filters.prototype.REMOVE = 2;
+Marmoset_Filters.prototype.AUTO = 3;
+
+Marmoset_Filters.prototype.SHOW = 1;
+Marmoset_Filters.prototype.HIDE = 2;
+
+// Query string params that specify options rather than filters
+Marmoset_Filters.prototype.option_keys = ['hide'];
+
+Marmoset_Filters.prototype.set_options = function( options ) {
+	var f = this;
+
+	// Update known options to match the current hash state
+	this.toggle_hidden( options.hide ? this.HIDE : this.SHOW );
+};
+
+Marmoset_Filters.prototype.toggle_hidden = function( action ) {
+	action = action || this.AUTO;
+
+	if( action == this.AUTO ) {
+		action = this.options.hide ? this.HIDE : this.SHOW;
+	}
+
+	if( action == this.HIDE ) {
+		$('body').addClass('hide-unfocused');
+		this.options.hide = true;
+	} else {
+		$('body').removeClass('hide-unfocused');
+		this.options.hide = false;
+	}//end else
+};
+
+// Merge updated filters into our current filters.
+Marmoset_Filters.prototype.merge = function( updated ) {
+	// List to add: things in "updated" that are not in existing
+	var add_filters = this.diff( this.filters, updated );
+
+	// List to remove: things in existing that are not in updated
+	var remove_filters = this.diff( updated, this.filters );
+
+	var f = this;
+
+	$.each( add_filters, function( meta, values ) {
+		f.filters[meta] = f.filters[meta] || [];
+
+		$.each( values, function( i, value ) {
+			f.filters[meta].push(value);
+			f.counter += 1;
+
+			marm.toggle_meta_filter( meta, value, true );
+		});
+	});
+
+	$.each( remove_filters, function( meta, values ) {
+		$.each( values, function( i, value ) {
+			var index = $.inArray( value, f.filters[meta] );
+			f.filters[meta].splice( index, 1 );
+			f.counter -= 1;
+
+			marm.toggle_meta_filter( meta, value, false );
+		});
+	});
+};
+
+// Return a list of filters that are in the right array, but not in the left.
+Marmoset_Filters.prototype.diff = function( left, right ) {
+	var result = {};
+
+	$.each( right, function( meta, values ) {
+		result[meta] = result[meta] || [];
+
+		$.each( values, function( j, value ) {
+			var index = $.inArray( value, left[meta] );
+
+			if( index == -1 ) {
+				result[meta].push( value );
+			}
+		});
+	});
+
+	return result;
+};
+
+function Marmoset_Hash(parent) {
+	this.keypairs = {};
+	this.parent = parent;
+};
+
+Marmoset_Hash.prototype.ADD = 1;
+Marmoset_Hash.prototype.REMOVE = 2;
+Marmoset_Hash.prototype.AUTO = 3;
+
+Marmoset_Hash.prototype.SHOW = 1;
+Marmoset_Hash.prototype.HIDE = 2;
+
+Marmoset_Hash.prototype.add = function( meta, value ) {
+	this.toggle( meta, value, this.ADD );
+};
+
+Marmoset_Hash.prototype.clear = function() {
+	if( document.location.hash == '' ) {
+		return;
+	}
+
+	this.keypairs = {};
+	this.set_hash();
+};
+
+Marmoset_Hash.prototype.remove = function( meta, value ) {
+	this.toggle( meta, value, this.REMOVE );
+};
+
+// Update hidden value and change the page hash.
+Marmoset_Hash.prototype.toggle_hidden = function( action ) {
+	action = action || this.AUTO;
+
+	this.parse_hash();
+
+	if( action == this.AUTO ) {
+		action = this.hide ? this.SHOW : this.HIDE;
+	}
+
+	this.hide = action == this.HIDE;
+
+	this.set_hash();
+};
+
+// Parse the currently set hash, populating this.keypairs.
+Marmoset_Hash.prototype.parse_hash = function() {
+	// Trim leading # from hash.
+	var hash = document.location.hash.substr(1),
+		hashobj = this.hash2obj( hash );
+
+	this.keypairs = hashobj.filters;
+
+	if( hashobj.options.hide ) {
+		this.hide = hashobj.options.hide ? true : false;
+	}
+};
+
+Marmoset_Hash.prototype.set_hash = function() {
+	document.location.hash = this.toString();
+}
+
+// Add new meta/value pair to the document's hash.
+Marmoset_Hash.prototype.toggle = function( meta, value, action ) {
+	action = action || this.AUTO;
+
+	this.parse_hash();
+	var index = $.inArray( value, this.keypairs[meta] );
+	this.keypairs[meta] = this.keypairs[meta] || [];
+
+	// No need to add if it's already there.
+	if( index > -1 && action == this.ADD ) {
+		return;
+	}
+
+	// Likewise, don't remove if it's not there.
+	if( index == -1 && action == this.REMOVE ) {
+		return;
+	}
+	
+	// Figure out what the automatic action is.
+	if( action == this.AUTO ) {
+		// Already there.
+		if( index > -1 ) {
+			action = this.REMOVE;
+		} else {
+			action = this.ADD;
+		}
+	}
+
+	if( action == this.ADD ) {
+		this.keypairs[meta].push( value );
+	} else {
+		this.keypairs[meta].splice( index, 1 );
+
+		// Don't let zero-length params stick around: #foo=
+		if( this.keypairs[meta].length == 0 ) {
+			delete this.keypairs[meta];
+		}
+	}
+
+	this.set_hash();
+
+	return this.keypairs;
+};
+
+Marmoset_Hash.prototype.toString = function() {
+	var hash = this.obj2hash( this.keypairs );
+
+	if( this.hide ) {
+		var append = 'hide=1';
+		if( hash.length > 0 ) {
+			return hash + '&' + append;
+		} else {
+			return append;
+		}
+	}
+
+	return hash;
+};
+
+Marmoset_Hash.prototype.obj2hash = function( obj ) {
+	var hash = [];
+	
+	$.each( obj, function( key, value ) {
+		if( value.length > 0 ) {
+			hash.push( [key, value.join(',')].join('=') );
+		}
+	});
+
+	return hash.join('&');
+};
+
+Marmoset_Hash.prototype.hash2obj = function( hash ) {
+	var result = {
+		filters: {},
+		options: {}
+	};
+
+	if( hash == '' ) {
+		return result;
+	}
+
+	var query_parts = hash.split('&'),
+		filters = this.parent.filters;
+
+	$.each( query_parts, function(i, query_part) {
+		query_part = query_part.split('=');
+
+		var meta = query_part[0];
+		var values = query_part[1];
+
+		if( values == '' ) {
+			return;
+		}
+
+		if( $.inArray( meta, filters.option_keys ) > -1 ) {
+			result.options[meta] = values;
+		} else {
+			if( values.length > 0 ) {
+				result.filters[meta] = values.split(',');
+			}
+		}
+	});
+
+	return result;
+};
+
+var marm = {
+	history_options: {
+		unescape: ','
+	},
 
 	// a list of cached user capabilities
 	user_cap: {
 		edit_posts: false
 	},
 
-	reset_meta_filters: function() {
-		marm.meta_filters = marm.meta_filters_default;
-	},
-
-	init: function() {
-		this.meta_filters = this.meta_filters_default;
+	history_changed: function( hash ) {
+		var new_hash = marm.hash.hash2obj( hash );
+		marm.filters.merge( new_hash.filters );
+		marm.filters.set_options( new_hash.options );
 	},
 
 	count_projects: function() {
-		var count_found = 0;
+		var count_found = 0,
+			filter_classes = [];
 
-		var filter_classes = [].concat(
-			$.map( marm.meta_filters.stakeholders, function(n){ return '.stakeholders_' + n; } ),
-			$.map( marm.meta_filters.members, function(n){ return '.members_' + n; } ),
-			$.map( marm.meta_filters.status, function(n){ return '.status_' + n; } )
-		);
+		$.each( this.filters.filters, function( meta, values ) {
+			filter_classes = filter_classes.concat( $.map( values, function(value){ return '.' + meta + '_' + value; } ) );
+		});
 
 		if( filter_classes.length > 0 ) {
 			filter_classes = '.project.' + filter_classes.join(', .project');
@@ -38,67 +292,12 @@ var marm = {
 		$('#project-filter-total').html( count_found );
 	},
 
-	hide_unfocused: function( state ) {
-		// never hide when there are no focused items
-		if( marm.meta_filters.counter == 0 ) {
-			state = false;
-		}
-
-		if( state === true ) {
-			$('body').not('.hide-unfocused').addClass('hide-unfocused');
-		} else if( state === false ) {
-			$('body').removeClass('hide-unfocused');
-		} else {
-			$('body').toggleClass('hide-unfocused');
-		}//end else
+	meta_id: function( meta, member ) {
+		return [meta, member].join('_');
 	},
 
-	meta_contents: function( meta, member ) {
-		return $($('.project .meta .' + meta + ' a[href$=' + member + ']').get(0)).html(); 
-	},
-
-	meta_data: function( meta, member, calc ) {
-		var meta_data = {
-			id: meta + '_' + member,
-			concat: 'as a',
-			count: 0,
-			member: member,
-			meta: meta,
-			readable_meta: meta,
-			or: ''
-		};
-
-		meta_data.style_id = 'selected-' + meta_data.id;
-
-		if( calc ) {
-			if( meta_data.meta.substr( -1 ) == 's' ) {
-				meta_data.singular_meta = meta.substr( 0, meta.length - 1 );
-			}//end if
-
-			meta_data.count = $('.' + meta_data.id).length;
-
-			if( $('#project-filter li').length > 0 ) {
-				meta_data.or = 'or ';
-			}//end if
-
-			if( meta == 'stakeholder' ) {
-				meta_data.readable_meta = 'stakeholder';
-			} else if( meta == 'queue' || meta == 'status' || meta == 'complexity' ) {
-				meta_data.concat = 'as its';
-			}
-		}//end if
-
-		return meta_data;
-	},
-
-	clear_filters: function() {
-		marm.reset_meta_filters();
-
-		$('style.filter').each( function(i,e) { marm.toggle_filter_style(e,false); } );
-		$('body').toggleClass( 'focus-meta', marm.meta_filters.counter > 0 );
-
-		marm.count_projects();
-		marm.update_hash();
+	meta_style_id: function( meta, member ) {
+		return 'selected-' + marm.meta_id( meta, member );
 	},
 
 	toggle_filter_style: function( elem, enable ) {
@@ -114,30 +313,27 @@ var marm = {
 			$style.data('disabled', true).empty();
 
 			if( $('#project-filter li').length == 0 ) {
-				marm.hide_unfocused( false );
+				marm.filters.set_hidden( false );
 			}//end if
 		}
 
-		$('body').toggleClass( 'focus-meta', marm.meta_filters.counter > 0 );
+		// body.focus-meta if there are active filters
+		$('body').toggleClass( 'focus-meta', marm.filters.counter > 0 );
 	},
 
-	toggle_meta_filter: function( meta, member, meta_contents, calc_project_count ) {
-		meta_contents = meta_contents || marm.meta_contents( meta, member );
-
-		var meta_data = marm.meta_data( meta, member ),
-			$style = $('#' + meta_data.style_id),
-			filter_index = $.inArray( meta_data.member, marm.meta_filters[meta_data.meta] );
+	get_or_create_style: function( meta, member ) {
+		var $style = $('#' + marm.meta_style_id(meta, member) );
 
 		if( $style.length == 0 ) {
-			var theCss = '.focus-meta .' + meta_data.meta + '_' + meta_data.member +
+			var theCss = '.focus-meta .' + marm.meta_id(meta, member) +
 				'{display: block !important; opacity: 1}';
 
-			theCss = theCss + ' #project-filter .' + meta_data.meta + ' .' + meta_data.member + ' a ' +
+			theCss = theCss + ' #project-filter .' + meta + ' .' + member + ' a ' +
 				'{color: black; background-color: red;}';
 
 			// add in disabled state; will be enabled by toggle_filter_style
 			var $style = $('<style/>')
-				.attr('id', meta_data.style_id)
+				.attr('id', marm.meta_style_id(meta, member) )
 				.addClass('filter')
 				.attr('type', 'text/css')
 				.data('contents', theCss)
@@ -146,22 +342,31 @@ var marm = {
 
 			$style.appendTo('head');
 		}
-		
-		if( $style.data('disabled') == true ) {
-			marm.meta_filters.counter += 1;
-			marm.meta_filters[meta_data.meta].push(meta_data.member);
-			marm.toggle_filter_style( $style );
+
+		return $style;
+	},
+
+	toggle_meta_filter: function( meta, member, toggleOn ) {
+		var filter_index = $.inArray( member, marm.filters[meta] ),
+			$style = marm.get_or_create_style( meta, member ),
+			isCurrentlyDisabled = $style.filterDisabled();
+
+		if( typeof toggleOn == 'undefined' ) {
+			toggleOn = isCurrentlyDisabled;
+		}
+
+		// If these do not match, we already have the requested state.
+		if( toggleOn != isCurrentlyDisabled ) {
+			return;
+		}
+
+		if( toggleOn ) {
+			marm.toggle_filter_style( $style, toggleOn );
 		} else {
-			marm.meta_filters.counter -= 1;
-			marm.meta_filters[meta_data.meta].splice(filter_index, 1);
-			marm.toggle_filter_style( $style );
+			marm.toggle_filter_style( $style, toggleOn );
 		}//end else
 
-		if( calc_project_count ) {
-			marm.count_projects();
-		}//end if
-
-		marm.update_hash();
+		marm.count_projects();
 	},
 
 	toggle_select: function( $o ) {
@@ -191,28 +396,7 @@ var marm = {
 		}//end else
 	},
 
-	update_hash: function() {
-		var hash = {};
-
-
-		if( marm.meta_filters.stakeholders.length  ) {
-			hash.stakeholders = marm.meta_filters.stakeholders.join(',');
-		}
-
-		if( marm.meta_filters.members.length  ) {
-			hash.members = marm.meta_filters.members.join(',');
-		}
-
-		if( marm.meta_filters.status.length  ) {
-			hash.status = marm.meta_filters.status.join(',');
-		}
-
-		hash = $.param( hash );
-		hash = decodeURIComponent( hash ); // "%2C" -> "," and others
-
-		document.location.hash = hash;
-	},
-
+	// Update the project sequence numbers in the vertical display
 	update_numbers: function( $list ) {
 		$list.children('li').each(function(i) {
 			$(this).find('.item-number').html( (i + 1) + '.' );
@@ -220,7 +404,8 @@ var marm = {
 	}
 };
 
-marm.init();
+marm.filters = new Marmoset_Filters(marm);
+marm.hash = new Marmoset_Hash(marm);
 
 /**
  * Marmoset Complexity object
@@ -340,7 +525,7 @@ if( marm.user_cap.edit_posts ) {
 
 $.root.delegate('#toggle-unfocused', 'click', function(e) {
 	e.preventDefault();
-	marm.hide_unfocused();
+	marm.hash.toggle_hidden();
 });
 
 // Don't let clicks in the filter window close that window.
@@ -348,6 +533,7 @@ $.root.delegate('#project-filter', 'click', function(e) {
 	e.stopPropagation();
 });
 
+// Allow clicks in the filter UI to toggle filters.
 $.root.delegate('#project-filter ul a', 'click', function(e) {
 	e.preventDefault();
 	e.stopPropagation();
@@ -355,11 +541,9 @@ $.root.delegate('#project-filter ul a', 'click', function(e) {
 	var $li = $(this).closest('li');
 
 	var member = $li.attr('class'),
-		meta_contents = $(this).html(),
-		href = $(this).attr('href'),
 		meta = $li.parents('li').attr('class');
 
-	marm.toggle_meta_filter( meta, member, meta_contents, true );
+	marm.hash.toggle( meta, member );
 });
 
 $.root.delegate('.projects', 'sortstart', function(event, ui) {
@@ -472,13 +656,21 @@ $(function(){
 	});
 
 	$.root.bind('keydown', 'h', function(e) {
-		marm.hide_unfocused();
+		marm.hash.toggle_hidden();
 	});
 
 	$.root.bind('keydown', 'c', function(e) {
-		marm.clear_filters();
+		marm.hash.clear();
 	});
 
+	$.history.init( marm.history_changed, marm.history_options );
 });
+
+/**************
+ * jQuery extensions
+ *************/
+$.fn.filterDisabled = function() {
+	return this.first().data('disabled') || false;
+};
 
 })(jQuery);
