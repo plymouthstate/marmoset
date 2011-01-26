@@ -335,7 +335,7 @@ var marm = {
 				'{display: block !important; opacity: 1}';
 
 			theCss = theCss + ' #project-filter .' + meta + ' .' + member + ' a ' +
-				'{color: black; background-color: red;}';
+				'{color: #fff; background-color: #444; border-color: #555;}';
 
 			// add in disabled state; will be enabled by toggle_filter_style
 			var $style = $('<style/>')

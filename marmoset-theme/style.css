@@ -176,9 +176,10 @@ nav li {
 
 #project-filter {
   background: #000;
+  border-bottom: 1px solid #333;
+  border-left: 1px solid #333;
   color: #eee;
-  border-bottom: 1px solid #ccc;
-  border-left: 1px solid #ccc;
+  font-size: 1.1em;
   padding: 0.5em;
   position: fixed;
   top: 10%;
@@ -187,10 +188,29 @@ nav li {
   margin-left: -480px;
   height: auto;
   z-index: 1000;
-  border-bottom-left-radius: 0.5em;
-  opacity: .9; }
+  opacity: .9;
+  border-radius: 0.5em;
+  -webkit-border-radius: 0.5em;
+  -moz-border-radius: 0.5em; }
+  #project-filter .shortcuts {
+    float: right;
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em; }
+    #project-filter .shortcuts li {
+      float: none;
+      display: inline; }
+      #project-filter .shortcuts li span {
+        float: none; }
+  #project-filter a {
+    border-bottom: 1px dotted #333;
+    color: #555;
+    text-decoration: none; }
   #project-filter ul span {
-    float: left; }
+    float: left;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-right: 0.5em; }
   #project-filter ul ul {
     display: inline-block;
     margin-left: 0; }
@@ -200,13 +220,18 @@ nav li {
       display: inline-block;
       margin: 0 2px; }
       #project-filter ul li li a {
-        padding: 0 4px;
-        border: 1px solid red;
+        background: #111;
+        border: 1px solid #111;
+        color: #777;
+        padding: 0.3em 0.5em;
         border-radius: 3px;
         -webkit-border-radius: 3px;
         -moz-border-radius: 3px;
-        text-decoration: none;
-        color: red; }
+        text-decoration: none; }
+      #project-filter ul li li a:hover {
+        background-color: #444;
+        border-color: #555;
+        color: #fff; }
 
 #project-filter .options {
   text-align: center; }

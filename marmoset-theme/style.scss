@@ -229,9 +229,10 @@ $projectwidth: 80%;
 
 #project-filter{
 	background: #000;
+	border-bottom: 1px solid #333;
+	border-left: 1px solid #333;
 	color: #eee;
-	border-bottom: 1px solid #ccc;
-	border-left: 1px solid #ccc;
+	font-size: 1.1em;
 	padding: 0.5em;
 	position: fixed;
 	top: 10%;
@@ -241,12 +242,37 @@ $projectwidth: 80%;
 	height: auto;
 	z-index: 1000;
 
-	border-bottom-left-radius: 0.5em;
-
 	opacity: .9;
 
+	@include round-border($bigrounding);
+
+	.shortcuts {
+		float: right;
+		position: absolute;
+		top: 0.5em;
+		right: 0.5em;
+
+		li {
+			float: none;
+			display: inline;
+
+			span { float: none; }
+		}
+	}
+
+	a {
+		border-bottom: 1px dotted #333;
+		color: #555;
+		text-decoration: none;
+	}
+
 	ul {
-		span { float: left; }
+		span { 
+			float: left; 
+			font-size: 1.1em; 
+			font-weight: bold; 
+			margin-right: 0.5em;
+		}
 
 		ul {
 			display: inline-block;
@@ -261,11 +287,18 @@ $projectwidth: 80%;
 				margin: 0 2px;
 
 				a {
-					padding: 0 4px;
-					border: 1px solid red;
+					background: #111;
+					border: 1px solid #111;
+					color: #777;
+					padding: 0.3em 0.5em;
 					@include round-border( 3px );
 					text-decoration: none;
-					color: red;
+				}
+
+				a:hover {
+					background-color: #444;
+					border-color: #555;
+					color: #fff;
 				}
 			}
 		}

@@ -2,6 +2,11 @@
 
 <div id="project-filter" style="display:none;">
 	<h2>Filters</h2>
+	<ul class="shortcuts">
+		<li><span>c</span> = clear</li>
+		<li><span>h</span> = hide/show unfocused</li>
+		<li><span>m</span> = my projects</li>
+	</ul>
 	<?php $marmoset_theme->output_found_terms(); ?>
 
 	<div class="options">
