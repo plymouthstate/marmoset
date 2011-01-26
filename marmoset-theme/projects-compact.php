@@ -21,7 +21,7 @@
 				<span class="date" title="<?php Marmoset::format_date_title( $args[ 'date_display' ] ) ; ?>"><span ><?php if( $args[ 'date_display' ] ) : Marmoset::the_date( $args[ 'date_display' ], 'F d, Y' ); endif; ?></span></span>
 				<span class="permalink">
 					[<a href="<?php the_permalink(); ?>" title="View Project Details">Details</a>]
-					<span class="editors-only">[<a href="<?php echo get_edit_post_link(); ?>" title="Edit Project Details">Edit</a>]</span>
+					<span class="editors-only">[<a href="<?php echo get_edit_post_link(); ?>" target="_blank" title="Edit Project Details">Edit</a>]</span>
 				</span>
 			</div>
 			<div data-complexity="<?php Marmoset::the_complexity_int(); ?>" data-complexity-original="<?php Marmoset::the_complexity_int(); ?>" class="complexity <?php Marmoset::the_complexity_slug(); ?>" title="<?php Marmoset::the_complexity_name(); ?>">

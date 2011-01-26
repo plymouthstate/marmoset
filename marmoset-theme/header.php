@@ -22,7 +22,7 @@ var admin_ajax = '<?php echo admin_url('admin-ajax.php'); ?>';
 			<?php if( is_user_logged_in() ) : ?>
 				<?php if( is_single() && 'marm_project' == get_post_type() ): ?>
 				<li>
-				<a href="<?php echo get_edit_post_link(); ?>" class="button save"><span>Edit Project</span></a>
+				<a href="<?php echo get_edit_post_link(); ?>" target="_blank" class="button save"><span>Edit Project</span></a>
 				</li>
 				<?php endif; ?>
 			<li>

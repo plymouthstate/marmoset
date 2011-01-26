@@ -678,7 +678,7 @@ $(function(){
 	});
 
 	//bind for project submission ajax
-	$('.save').click( marm.submit );
+	$('.submit-project .save').click( marm.submit );
 
 	$.root.bind('keydown', 'h', function(e) {
 		marm.hash.toggle_hidden();
