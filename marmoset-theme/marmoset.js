@@ -29,11 +29,6 @@ Marmoset_Filters.prototype.set_options = function( options ) {
 Marmoset_Filters.prototype.toggle_hidden = function( action ) {
 	action = action || this.AUTO;
 
-	// never hide when there are no focused items
-	if( this.counter == 0 ) {
-		action = this.SHOW;
-	}
-
 	if( action == this.AUTO ) {
 		action = this.options.hide ? this.HIDE : this.SHOW;
 	}
@@ -120,7 +115,7 @@ Marmoset_Hash.prototype.clear = function() {
 	}
 
 	this.keypairs = {};
-	document.location.hash = '';
+	this.set_hash();
 };
 
 Marmoset_Hash.prototype.remove = function( meta, value ) {
@@ -530,7 +525,7 @@ if( marm.user_cap.edit_posts ) {
 
 $.root.delegate('#toggle-unfocused', 'click', function(e) {
 	e.preventDefault();
-	marm.hide_unfocused();
+	marm.hash.toggle_hidden();
 });
 
 // Don't let clicks in the filter window close that window.
@@ -538,6 +533,7 @@ $.root.delegate('#project-filter', 'click', function(e) {
 	e.stopPropagation();
 });
 
+// Allow clicks in the filter UI to toggle filters.
 $.root.delegate('#project-filter ul a', 'click', function(e) {
 	e.preventDefault();
 	e.stopPropagation();
