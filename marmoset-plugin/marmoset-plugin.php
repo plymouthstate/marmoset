@@ -840,7 +840,7 @@ class Marmoset {
 	public static function get_the_complexity_description()
 	{
 		$complexity = wp_get_object_terms( get_the_ID(), 'marm_complexity' );
-		return $complexity[0]->description;
+		return ($complexity[0]->description ? $complexity[0]->description : $complexity[0]->name);
 	}
 	public static function the_complexity_description()
 	{
