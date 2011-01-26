@@ -923,7 +923,7 @@ class Marmoset {
 		}
 
 		wp_set_object_terms( $post_id, 'new', 'marm_status' );
-		wp_set_object_terms( $post_id, 'Project', 'marm_queue' );
+		wp_set_object_terms( $post_id, 'project', 'marm_queue' );
 		wp_set_object_terms( $post_id, $marm_stakeholders, 'marm_stakeholders' );
 		wp_set_object_terms( $post_id, $marm_complexity->slug, 'marm_complexity' );
 
