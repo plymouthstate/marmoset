@@ -7,17 +7,18 @@
 		global $post; 
 		$post->meta = get_post_meta( $post->ID, '' );
 
-		$class = 'project'.(Marmoset::is_overdue() ? ' past-due' : '');
+		$class = 'project'.(Marmoset::is_overdue( $args ) ? ' past-due' : '');
 	?>
 	<li data-postid="<?php the_ID(); ?>" <?php post_class($class); ?>>
 		<span class="item-number"><?php echo $i; ?>.</span>
-		<div class="contents" title="<?php if( Marmoset::is_overdue() ) : echo Marmoset::get_the_overdue_date(); endif; ?>">
+		<div class="contents" title="<?php if( Marmoset::is_overdue( $args ) ) : echo Marmoset::get_the_overdue_date(); endif; ?>">
 			<div class="project-title">
 				<h2>
 					<span><span class="type"><a href="<?php bloginfo('url'); ?>/queue/<?php echo $post->queue->slug; ?>/"><?php echo $post->queue->name; ?></a> &raquo;</span> <?php the_title(); ?></span>
 				</h2>
+
 				<span class="progress-percent">(<span>Progress:</span><?php echo Marmoset::get_the_progress(); ?>%)</span>
- 				<span class="date" title="Estimated Date of Completion"><span ><?php Marmoset::the_due_date('F d, Y'); ?></span></span>
+				<span class="date" title="<?php Marmoset::format_date_title( $args[ 'date_display' ] ) ; ?>"><span ><?php if( $args[ 'date_display' ] ) : Marmoset::the_date( $args[ 'date_display' ], 'F d, Y' ); endif; ?></span></span>
 				<span class="permalink">
 					[<a href="<?php the_permalink(); ?>" title="View Project Details">Details</a>]
 					<span class="editors-only">[<a href="<?php echo get_edit_post_link(); ?>" title="Edit Project Details">Edit</a>]</span>
@@ -44,7 +45,7 @@
 				<?php if( Marmoset::get_the_complete_date() ): ?><li class="complete_date"><span class="label">Date Completed:</span> <?php Marmoset::the_complete_date(); ?></li><?php endif; ?>
 				<?php if( Marmoset::get_the_members() ): ?><li class="members"><?php Marmoset::the_members(); ?></li><?php endif; ?>
 				<?php if( Marmoset::get_the_stakeholders() ): ?><li class="stakeholders"><?php Marmoset::the_stakeholders(); ?></li><?php endif; ?>
-				<?php if( Marmoset::get_the_complexity_description() ): ?><li class="complexity">Project Complexity: <?php Marmoset::the_complexity_description();  ?></li><?php endif; ?>
+				<?php if( Marmoset::get_the_complexity_description() ): ?><li class="complexity">Project Complexity: <?php Marmoset::the_complexity_description(); ?></li><?php endif; ?>
 			</ul>
 			<?php if( get_the_content() ): ?>
 				<div class="body">

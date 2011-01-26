@@ -1,7 +1,7 @@
 <?php require_once ABSPATH . '/wp-admin/includes/template.php'; ?>
 <div id="submit-container">
 <h2>Submit Project</h2>
-<form action="<?php echo admin_url( 'admin-ajax.php' ); ?>" class="submit-project" method="post">
+<form class="submit-project" method="post">
 	<input type="hidden" name="action" value="submit_project">
 	<?php Marmoset::wp_nonce_field(); ?>
 	<ul>
@@ -37,7 +37,7 @@
 				<input type="text" name="marm-stakeholder[]" size="20" placeholder="New stakeholder"><!-- No space, doesn't work with .siblings() anyway. --><a href="#">Delete</a><br>
 				<a href="#">Add another&hellip;</a>
 			</div>
-			<div class="help">Don't see your group? <a href="#">Create new stakeholders</a>.</div>
+			<!--<div class="help">Don't see your group? <a href="#">Create new stakeholders</a>.</div>-->
 		</li>
 		<li>
 			<label for="complexity">Complexity:</label>
