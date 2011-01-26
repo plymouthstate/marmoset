@@ -768,7 +768,7 @@ class Marmoset {
 	}//end the_due_date
 
 	public static function the_date( $function, $format = null, $gmt_offset = null ) {
-		call_user_func( 'self::the_'.$function, $format, $gmt_offset );
+		call_user_func( __CLASS__.'::the_'.$function, $format, $gmt_offset );
 	}//end the_due_date
 
 	/**
