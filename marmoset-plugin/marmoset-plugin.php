@@ -344,7 +344,7 @@ class Marmoset {
 		$args = array(
 			'label' => 'Project Status',
 			'show_in_nav_menus' => true,
-			'show_ui' => false,
+			'show_ui' => true,
 			'public' => true,
 			'publicly_queryable' => true,
 		);
