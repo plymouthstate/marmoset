@@ -896,15 +896,7 @@ class Marmoset {
 
 		$latest_post_id = self::max_project_order( 'proposed', 'proposed' );
 
-		$post = compact( 'post_type', 'post_status', 'post_title', 'post_content' );
-		$post_id = wp_insert_post( $post );
-
-		if ( is_wp_error( $post_id ) ) {
-			/// TODO: better
-			die( $post_id );
-		}
-
-		$marm_stakeholders = $_REQUEST['marm-stakeholders'];
+		$marm_stakeholders = $_REQUEST['tax_input']['marm_stakeholders'];
 		$marm_complexity = get_term( (int) $_REQUEST['marm-complexity'], 'marm_complexity' );
 
 		// will be null if there are no terms in the stakeholder taxonomy
@@ -914,18 +906,22 @@ class Marmoset {
 			$marm_stakeholders = array();
 		}
 
-		/*
-		 * This code is currently unuseable 
-		 * // find new stakeholders
-		foreach ( $_REQUEST['marm-stakeholders'] as $stakeholder ) {
-			$stakeholder = trim($stakeholder[0]);
+		foreach ( (array)$_REQUEST['marm-stakeholder'] as $stakeholder ) {
+			$stakeholder = trim($stakeholder);
 
-			if( !term_exists( $stakeholder, 'marm_stakeholders' ) ) {
+			if( $stakeholder ) {
 				$marm_stakeholders[] = $stakeholder;
 			}
 		}
-		die( print_r($marm_stakeholders) );
-		*/
+
+		$post = compact( 'post_type', 'post_status', 'post_title', 'post_content' );
+		$post_id = wp_insert_post( $post );
+
+		if ( is_wp_error( $post_id ) ) {
+			/// TODO: better
+			die( $post_id );
+		}
+
 		wp_set_object_terms( $post_id, 'proposed', 'marm_status' );
 		wp_set_object_terms( $post_id, 'mis', 'marm_queue' );
 		wp_set_object_terms( $post_id, $marm_stakeholders, 'marm_stakeholders' );

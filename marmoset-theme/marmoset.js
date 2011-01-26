@@ -481,26 +481,15 @@ marm.complexity = {
 	}
 },
 //Object to handle form submission
-marm.submit = function(){
-	var stakeholders = [];
-	$('.input-stakeholders').find('input:checked').each( function(){
-		stakeholders.push( $(this).val() );
-	});
-	var args = {
-		'action': 'project_submit',
-		'marm-title': $( 'input[name="marm-title"]' ).val(),
-		'marm-content':	$( 'textarea[name="marm-content"]' ).val(),
-		'marm-complexity': $( 'select[name="marm-complexity"]' ).val(),
-		'marm-duedate' : $( 'input[name="marm-duedate"]' ).val(),
-		'marm-stakeholders': stakeholders,
-	};
+marm.submit = function(e){
 	$.ajax({
 		type: 'POST',
 		url:  admin_ajax,
-		data: args,
+		data: $(this).closest('form').serialize(),
 		success: function(json) { window.location=json.url; },
 		dataTYPE: 'json',
 	});
+
 	return false;
 };
 
@@ -672,6 +661,7 @@ $(function(){
 
 	$.subscribe('submit-project-stakeholder-add', $.colorbox.resize);
 	$.subscribe('submit-project-stakeholder-remove', $.colorbox.resize);
+	$.subscribe('submit-project-save', marm.submit);
 });
 
 /**************
