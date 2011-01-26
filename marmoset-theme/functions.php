@@ -236,7 +236,7 @@ class Marmoset_Widget_Projects extends WP_Widget {
 
 	public function form( $instance ) {
 		$taxonomy = get_taxonomy( 'marm_status' );
-		$terms = get_terms( $taxonomy->name );
+		$terms = get_terms( $taxonomy->name, 'hide_empty=0' );
 
 		$selected_term = $instance['term_slug'];
 
