@@ -57,12 +57,16 @@ class Marmoset_Theme {
 
 	public function query_vars( $query_vars ) {
 		$query_vars[] = 'marm_submit';
+		$query_vars[] = 'marm_widget_area';
 		return $query_vars;
 	}//end query_vars
 
 	public function rewrite_rules_array( $rules ) {
-		$new = array();
-		$new['submit/?$'] = 'index.php?marm_submit=1';
+		$new = array(
+			'submit/?$' => 'index.php?marm_submit=1',	
+			'complete/?$' => 'index.php?marm_widget_area=Completed+List',
+		);
+
 		return $new + $rules;
 	}//end query_vars
 
@@ -196,6 +200,14 @@ class Marmoset_Theme {
 	public function widgets_init() {
 		register_sidebar(array(
 			'name' => 'Project List',
+			'before_widget' => '<div id="%1$s" class="widget %2$s">',
+			'after_widget' => '</div>',
+			'before_title' => '<h2>',
+			'after_title' => '</h2>',
+		)); 
+
+		register_sidebar(array(
+			'name' => 'Completed List',
 			'before_widget' => '<div id="%1$s" class="widget %2$s">',
 			'after_widget' => '</div>',
 			'before_title' => '<h2>',
