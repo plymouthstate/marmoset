@@ -505,7 +505,7 @@ $.root = $(document);
 
 marm.user_cap.edit_posts = $('body').hasClass('user-cap-edit_posts');
 
-$('.projects').sortable({
+$('.projects').not('.non-default-orderby').sortable({
 	connectWith: '.projects',
 	cursor: 'default',
 	opacity: 0.4,

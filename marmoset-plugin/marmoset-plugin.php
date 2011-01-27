@@ -10,6 +10,8 @@ License: GPL2
 */
 
 class Marmoset {
+	public static $project_classes = array();
+
 	/**
 	 * returns the project's members
 	 */
@@ -688,6 +690,10 @@ class Marmoset {
 		$args['tax_query'] = $tax_query;
 		query_posts( $args );
 
+		if( $args['orderby'] != 'marm_priority' ) {
+			Marmoset::$project_classes[] = 'non-default-orderby orderby-'.$args['orderby'];
+		}//end if
+
 		if( $args['echo'] ) {
 			include TEMPLATEPATH . '/projects-compact.php';
 		}
@@ -784,6 +790,13 @@ class Marmoset {
 	public static function the_progress() {
 		echo self::get_the_progress();
 	}//end the_progress
+
+	/**
+	 * output the project classes
+	 */
+	public static function the_project_classes() {
+		echo implode(' ', self::$project_classes );
+	}//end the_project_classes
 
 	/**
 	 * output the estimated_start date for the project

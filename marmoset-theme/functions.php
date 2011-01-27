@@ -50,6 +50,11 @@ class Marmoset_Theme {
 		return $classes;
 	}//end body_class
 
+	public function body_class_completed( $classes ) {
+		$classes[] = 'marm-completed-list';
+		return $classes;
+	}
+
 	public function body_class_submit( $classes ) {
 		$classes[] = 'marm-submit';
 		return $classes;
@@ -78,6 +83,9 @@ class Marmoset_Theme {
 			include TEMPLATEPATH . '/submit.php';
 			die();
 		} else {
+			if( $wp_query->query_vars['marm_widget_area'] == 'Completed List') {
+				add_filter( 'body_class', array( $this, 'body_class_completed' ) );
+			}//end if
 			add_action( 'wp_footer', array( $this, 'include_submit_form' ) );
 		}
 	}//end template_redirect
@@ -237,6 +245,8 @@ class Marmoset_Widget_Projects extends WP_Widget {
 					array( 'marm_status' => $term->slug, 
 						'date_display' => $instance[ 'date_display' ],
 						'display_overdue' => $instance[ 'display_overdue' ],
+						'orderby' => $instance['orderby'],
+						'order' => $instance['order'],
 					)
 				); ?>
 			</div>
@@ -287,14 +297,46 @@ class Marmoset_Widget_Projects extends WP_Widget {
 			}
 			echo ' value=' .$value. ' >' .$option. '</option>';
 		}
+		echo '</select>';
 		echo '<input 
 			id=' .$this->get_field_id( 'display_overdue' ). '
 			name=' .$this->get_field_name( 'display_overdue' ). ' 
 			type="checkbox" 
 			value="true"';
 		echo ( $instance[ 'display_overdue' ] ) ? ' checked="checked" />' : ' /> ';
-	 		
 		echo '<span> Overdue Warning </span>';
+		echo '</li>';
+
+		$sort_by_options = array(
+			'project_order' => 'Priority',
+			'complete_date' => 'Complete Date',
+			'due_date' => 'Due Date',
+			'date_entered' => 'Date Entered',
+			'estimated_start_date' => 'Est. Start Date',
+			'start_date' => 'Start Date',
+		);
+
+		echo '<li>';
+		echo '<div class="marmoset-widget-span">Sort By:</div>';
+		echo '<select id=' .$this->get_field_id('orderby').' name="'.$this->get_field_name('orderby').'">';
+		foreach( $sort_by_options as $value=>$option ) {
+			echo '<option ';
+			if( $instance[ 'orderby' ] == $value ) {
+				echo 'selected=selected';
+			}
+			echo ' value=' .$value. ' >' .$option. '</option>';
+		}
+		echo '</select>';
+
+		$order_dir_options = array('ASC'=>'Ascending', 'DESC' => 'Descending');
+		echo '<select id=' .$this->get_field_id('order').' name="'.$this->get_field_name('order').'">';
+		foreach( $order_dir_options as $value=>$option ) {
+			echo '<option ';
+			if( $instance[ 'order' ] == $value ) {
+				echo 'selected=selected';
+			}
+			echo ' value=' .$value. ' >' .$option. '</option>';
+		}
 		echo '</select>';
 		echo '</li>';
 		echo '</ul>';
@@ -305,6 +347,8 @@ class Marmoset_Widget_Projects extends WP_Widget {
 		$instance['term_slug'] = $new['term_slug'];
 		$instance['date_display'] = $new['date_display'];
 		$instance['display_overdue'] = $new['display_overdue'];
+		$instance['orderby'] = $new['orderby'];
+		$instance['order'] = $new['order'];
 		return $instance;
 	}//end update
 }//end Marmoset_Widget_Projects

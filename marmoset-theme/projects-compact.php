@@ -1,4 +1,4 @@
-<ol class="projects">
+<ol class="projects <?php Marmoset::the_project_classes(); ?>">
 <?php global $marmoset_theme; ?>
 <?php if ( have_posts() ) : $i = 1; ?>
 	<?php while ( have_posts() ) : the_post(); ?>
