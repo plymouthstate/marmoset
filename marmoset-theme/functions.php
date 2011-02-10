@@ -245,7 +245,7 @@ class Marmoset_Widget_Projects extends WP_Widget {
 					array( 'marm_status' => $term->slug, 
 						'date_display' => $instance[ 'date_display' ],
 						'display_overdue' => $instance[ 'display_overdue' ],
-						'orderby' => $instance['orderby'],
+						'meta_key' => $instance['meta_key'],
 						'order' => $instance['order'],
 					)
 				); ?>
@@ -318,10 +318,10 @@ class Marmoset_Widget_Projects extends WP_Widget {
 
 		echo '<li>';
 		echo '<div class="marmoset-widget-span">Sort By:</div>';
-		echo '<select id=' .$this->get_field_id('orderby').' name="'.$this->get_field_name('orderby').'">';
+		echo '<select id=' .$this->get_field_id('meta_key').' name="'.$this->get_field_name('meta_key').'">';
 		foreach( $sort_by_options as $value=>$option ) {
 			echo '<option ';
-			if( $instance[ 'orderby' ] == $value ) {
+			if( $instance[ 'meta_key' ] == $value ) {
 				echo 'selected=selected';
 			}
 			echo ' value=' .$value. ' >' .$option. '</option>';
@@ -347,7 +347,7 @@ class Marmoset_Widget_Projects extends WP_Widget {
 		$instance['term_slug'] = $new['term_slug'];
 		$instance['date_display'] = $new['date_display'];
 		$instance['display_overdue'] = $new['display_overdue'];
-		$instance['orderby'] = $new['orderby'];
+		$instance['meta_key'] = $new['meta_key'];
 		$instance['order'] = $new['order'];
 		return $instance;
 	}//end update

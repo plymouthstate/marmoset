@@ -690,8 +690,8 @@ class Marmoset {
 		$args['tax_query'] = $tax_query;
 		query_posts( $args );
 
-		if( $args['orderby'] != 'marm_priority' ) {
-			Marmoset::$project_classes[] = 'non-default-orderby orderby-'.$args['orderby'];
+		if( $args['meta_key'] != 'project_order' ) {
+			Marmoset::$project_classes[] = 'non-default-orderby orderby-'.$args['meta_key'];
 		}//end if
 
 		if( $args['echo'] ) {
