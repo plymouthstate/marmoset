@@ -521,17 +521,17 @@ $('.tax-marmqueue .projects').not('.non-default-orderby').sortable({
 	}
 });
 
-$.root.delegate('.projects', 'selectstart', function() { return false; });
+$.root.delegate('.tax-marmqueue .projects', 'selectstart', function() { return false; });
 
 var proj_queue = $('.project-queue').data('queue');
 
-$.root.delegate('.project', 'click', function(e) { e.stopPropagation(); marm.toggle_select( $(this) ); });
+$.root.delegate('.tax-marmqueue .project', 'click', function(e) { e.stopPropagation(); marm.toggle_select( $(this) ); });
 $.root.delegate('html', 'click', function() {
 	marm.toggle_select();
 	$('#project-filter').hide();
 });
-$.root.delegate('.project .details', 'click', function(e) { e.stopPropagation(); });
-$.root.delegate('.project .permalink a', 'click', function(e) { e.stopPropagation(); });
+$.root.delegate('.tax-marmqueue .project .details', 'click', function(e) { e.stopPropagation(); });
+$.root.delegate('.tax-marmqueue .project .permalink a', 'click', function(e) { e.stopPropagation(); });
 
 /**
  * Complexity Behaviors
