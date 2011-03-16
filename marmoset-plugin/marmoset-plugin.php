@@ -941,7 +941,7 @@ class Marmoset {
 		wp_set_object_terms( $post_id, $marm_stakeholders, 'marm_stakeholders' );
 		wp_set_object_terms( $post_id, $marm_complexity->slug, 'marm_complexity' );
 
-		update_post_meta( $post_id, 'due_date', $_REQUEST['marm-duedate'] );
+		update_post_meta( $post_id, 'due_date', strtotime( $_REQUEST['marm-duedate'] ) );
 		update_post_meta( $post_id, 'project_order', $latest_post_id + 1 );
 
 		$url = get_permalink( $post_id );
