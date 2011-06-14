@@ -6,7 +6,7 @@
 	<?php
 	
 	if( is_active_sidebar( 'queue-' . $active_term ) ) {
-		dynamic_sidebar( 'queue-' . get_query_var('term') );
+		dynamic_sidebar( 'queue-' . $active_term );
 	} else {
 		dynamic_sidebar( 'default-project-list' );
 	}

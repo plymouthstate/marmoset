@@ -7,6 +7,16 @@ class Marmoset_Theme {
 	public $found_stakeholders = array();
 	public $found_statuses = array();
 
+	/**
+	 * The initially-queried status.
+	 */
+	public $queried_status;
+
+	/**
+	 * The initially-queried queue.
+	 */
+	public $queried_queue;
+
 	public function init() {
 		if( !is_admin() ) {
 			wp_enqueue_script( 'marmoset-js', get_bloginfo('template_directory') . '/marmoset.js', array('jquery-ui-183', 'jquery-hotkeys'), 1295976528, true );
@@ -88,6 +98,30 @@ class Marmoset_Theme {
 
 	public function template_redirect() {
 		global $wp_query;
+
+		//
+		// Potentially override $wp_query->queried_object or we might get the wrong template
+		//
+
+		$taxes = array(
+			'marm_status' => null,
+			'marm_queue' => null,
+		);
+
+		foreach( $wp_query->tax_query->queries as $query ) {
+			$taxes[ $query['taxonomy'] ] = $query;
+		}
+
+		if( $taxes['marm_status'] && $taxes['marm_queue'] ) {
+			$wp_query->queried_object = get_term_by( $taxes['marm_queue']['field'], reset( $taxes['marm_queue']['terms'] ), 'marm_queue' );
+		}
+
+		$this->queried_status = $taxes['marm_status'];
+		$this->queried_queue = $taxes['marm_queue'];
+
+		//
+		// Other stuff.
+		//
 
 		if( isset($wp_query->query_vars['marm_submit']) && $wp_query->query_vars['marm_submit'] ) {
 			add_filter( 'body_class', array( $this, 'body_class_submit' ) );
@@ -258,23 +292,42 @@ class Marmoset_Widget_Projects extends WP_Widget {
 	}
 
 	public function widget( $args, $instance ) {
+		global $marmoset_theme;
+
 		extract( $args );
+
+		// our focused status, if any
+		$status = $marmoset_theme->queried_status;
+
+		// "focus only" widgets are only shown when the status matches
+		if( $instance['focus_only'] && ! $status ) {
+			return;
+		}
+
+		// if a status is specified, ignore statuses that don't match
+		if( $status && $instance['term_slug'] != reset( $status['terms'] ) ) {
+			return;
+		}
 
 		$term = get_term_by( 'slug', $instance['term_slug'], 'marm_status' );
 		$title = $term->name;
+
+		$project_args = array(
+			'marm_status' => $term->slug, 
+			'date_display' => $instance[ 'date_display' ],
+			'display_overdue' => $instance[ 'display_overdue' ],
+			'meta_key' => $instance['meta_key'],
+			'order' => $instance['order'],
+		);
+
+		wp_reset_query();
+
 		?>
 
 		<div class="grid_16 project-status" data-status="<?php echo $term->slug; ?>">
 		<h2><?php echo $title; ?></h2>
 			<div>
-				<?php Marmoset::get_projects( 
-					array( 'marm_status' => $term->slug, 
-						'date_display' => $instance[ 'date_display' ],
-						'display_overdue' => $instance[ 'display_overdue' ],
-						'meta_key' => $instance['meta_key'],
-						'order' => $instance['order'],
-					)
-				); ?>
+				<?php Marmoset::get_projects( $project_args ); ?>
 			</div>
 		</div>
 		<div class="clear"></div>
@@ -365,6 +418,16 @@ class Marmoset_Widget_Projects extends WP_Widget {
 		}
 		echo '</select>';
 		echo '</li>';
+
+		echo '<li>';
+		echo '<span>Focus only: </span><input type="checkbox" id="' . $this->get_field_id('focus_only') .
+			'" name="' . $this->get_field_name('focus_only') . '" ';
+		if( $instance['focus_only'] ) {
+			echo 'checked="checked"';
+		}
+		echo '>';
+		echo '</li>';
+
 		echo '</ul>';
 	}//end form
 
@@ -375,6 +438,7 @@ class Marmoset_Widget_Projects extends WP_Widget {
 		$instance['display_overdue'] = $new['display_overdue'];
 		$instance['meta_key'] = $new['meta_key'];
 		$instance['order'] = $new['order'];
+		$instance['focus_only'] = (bool)$new['focus_only'];
 		return $instance;
 	}//end update
 }//end Marmoset_Widget_Projects

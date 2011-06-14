@@ -372,6 +372,7 @@ class Marmoset {
 			'rewrite' => array('slug' => 'queue'),
 		);
 		register_taxonomy( 'marm_queue', 'marm_project', $args );
+		add_rewrite_rule( '^queue/([^/]+)/([^/]+)/?$', 'index.php?marm_status=$matches[2]&marm_queue=$matches[1]', 'top' );
 
 		$args = array(
 			'label' => 'Members',
