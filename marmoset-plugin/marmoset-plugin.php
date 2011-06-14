@@ -416,9 +416,9 @@ class Marmoset {
 				'desc' => 'more than a few developer months ( > 3 months )',
 			);
 
-			for( $i = 0; $i < 5; $i++ ) {
-				wp_insert_term( $default_complexity[$i]['name'], 'marm_complexity', array(
-					'description' => $default_complexity[$i]['dsec'],
+			for( $i = 1; $i <= 5; $i++ ) {
+				wp_insert_term( $default_complexity[$i - 1]['name'], 'marm_complexity', array(
+					'description' => $default_complexity[$i - 1]['dsec'],
 					'slug' => "complexity-$i",
 				));
 			}
