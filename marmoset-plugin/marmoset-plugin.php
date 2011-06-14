@@ -2,9 +2,9 @@
 /*
 Plugin Name: Marmoset
 Plugin URI: http://
-Description: 
+Description: A project list in WordPress.
 Version: 1.0
-Author: Adam Backstrom
+Author: Plymouth State University
 Author URI: http://www.plymouth.edu/
 License: GPL2
 */
@@ -393,6 +393,18 @@ class Marmoset {
 		);
 		register_taxonomy( 'marm_complexity', 'marm_project', $args );
 
+		if( is_admin() ) {
+			add_action( 'wp_ajax_project_order', __CLASS__ . '::project_order' );
+			add_action( 'admin_menu', __CLASS__ . '::remove_meta_boxes' );
+		}
+
+		add_action( 'wp_ajax_submit_project', __CLASS__ . '::submit_project' );
+	}//end init
+
+	/**
+	 * Create a default set of complexities.
+	 */
+	public static function init_complexities() {
 		if( wp_count_terms( 'marm_complexity' ) == 0 ) {
 			$default_complexity = array();
 			$default_complexity[] = array(
@@ -424,18 +436,16 @@ class Marmoset {
 			}
 		}
 
-		if( is_admin() ) {
-			add_action( 'wp_ajax_project_order', __CLASS__ . '::project_order' );
-			add_action( 'admin_menu', __CLASS__ . '::remove_meta_boxes' );
-		}
-
-		add_action( 'wp_ajax_submit_project', __CLASS__ . '::submit_project' );
-	}//end init
+		var_dump( $default_complexity );
+		var_dump( wp_count_terms('marm_complexity') );
+		die();
+	}//end init_complexities
 
 	/**
 	 * Plugin activation hook.
 	 */
 	public static function activate() {
+		self::init_complexities();
 	}//end activate
 
 	public static function project_meta_box_cb() {
@@ -982,7 +992,7 @@ class Marmoset {
 }
 
 add_action( 'init', 'Marmoset::init' );
-add_action('save_post', 'Marmoset::project_properties_save');
+add_action( 'save_post', 'Marmoset::project_properties_save' );
 
 add_action( 'wp_ajax_change_complexity', 'Marmoset::save_complexity', 1 );
 add_action( 'wp_ajax_change_complexity', 'Marmoset::display_complexity', 20 );
@@ -990,6 +1000,8 @@ add_action( 'wp_ajax_change_complexity', 'Marmoset::display_complexity', 20 );
 add_action( 'add_meta_boxes_marm_project', 'Marmoset::remove_meta_boxes' );
 
 add_action( 'wp_ajax_project_submit', 'Marmoset::submit_project' );
+
+register_activation_hook( __FILE__, 'Marmoset::activate' );
 
 if( !function_exists( 'the_project_complexity' ) ) {
 	$marm_project_complexity = array();

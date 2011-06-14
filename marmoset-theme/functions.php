@@ -78,12 +78,12 @@ class Marmoset_Theme {
 	public function template_redirect() {
 		global $wp_query;
 
-		if( $wp_query->query_vars['marm_submit'] ) {
+		if( isset($wp_query->query_vars['marm_submit']) && $wp_query->query_vars['marm_submit'] ) {
 			add_filter( 'body_class', array( $this, 'body_class_submit' ) );
 			include TEMPLATEPATH . '/submit.php';
 			die();
 		} else {
-			if( $wp_query->query_vars['marm_widget_area'] == 'Completed List') {
+			if( isset($wp_query->query['marm_widget_area']) && $wp_query->query_vars['marm_widget_area'] == 'Completed List' ) {
 				add_filter( 'body_class', array( $this, 'body_class_completed' ) );
 			}//end if
 			add_action( 'wp_footer', array( $this, 'include_submit_form' ) );
@@ -131,27 +131,48 @@ class Marmoset_Theme {
 
 		$get_meta = array();
 
-		if( $_GET['member'] ) { $_GET['members'] = $_GET['member']; unset( $_GET['member'] ); }
-		if( $_GET['members'] ) { $get_meta[] = 'members'; }
-		if( $_GET['status'] ) { $get_meta[] = 'status'; }
-		if( $_GET['stakeholder'] ) { $_GET['stakeholders'] = $_GET['stakeholder']; unset( $_GET['stakeholder'] ); }
-		if( $_GET['stakeholders'] ) { $get_meta[] = 'stakeholders'; }
+		if( isset($_GET['member']) && $_GET['member'] ) {
+			$_GET['members'] = $_GET['member'];
+			unset( $_GET['member'] );
+		}
+
+		if( isset($_GET['members']) && $_GET['members'] ) {
+			$get_meta[] = 'members';
+		}
+
+		if( isset($_GET['status']) && $_GET['status'] ) {
+			$get_meta[] = 'status';
+		}
+
+		if( isset($_GET['stakeholder']) && $_GET['stakeholder'] ) {
+			$_GET['stakeholders'] = $_GET['stakeholder'];
+			unset( $_GET['stakeholder'] );
+		}
+
+		if( isset($_GET['stakeholders']) && $_GET['stakeholders'] ) {
+			$get_meta[] = 'stakeholders';
+		}
 
 		if( $get_meta ) {
 			echo '<script>';
 			foreach( $get_meta as $meta_key ) {
-				$members = explode( ',', $_GET[ $meta_key ] );
-				foreach( (array) $members as $member ) {
-					$member = trim( $member );
-				?>
-					marm.toggle_meta_filter('<?php echo $meta_key; ?>', '<?php echo $member; ?>', false, false); 
+				$members = explode( ',', $_GET[ $meta_key ] ); ?>
+
+				<?php foreach( (array) $members as $member ) : ?>
+					marm.toggle_meta_filter('<?php echo $meta_key; ?>', '<?php echo trim($member); ?>', false, false); 
+				<?php endforeach; ?>
+
 				<?php
-				}//end foreach
 			}//end foreach
-			?> marm.count_projects(); <?php
-			if( $_GET['unfocused'] == 'false' ) {
-			?> marm.hide_unfocused(); <?php
-			}
+
+			?>
+
+			marm.count_projects();
+
+			<?php if( $_GET['unfocused'] == 'false' ) : ?>
+				marm.hide_unfocused();
+			<?php endif;
+
 			echo '</script>';
 		}//end if
 	}//end project_select
