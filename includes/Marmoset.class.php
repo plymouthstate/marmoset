@@ -830,7 +830,7 @@ class Marmoset {
 	 */
 	public static function the_queues( $class = 'queues', $term_class = '', $span = false, $include_completed = true) {
 		$terms = get_terms('marm_queue');
-		$text = '<ul class="'.$class.'">'."\n";
+
 		foreach( $terms as $term ) {
 			if( $term->slug == 'complete' ) {
 				continue;
@@ -842,11 +842,9 @@ class Marmoset {
 			$text .= '<li><a href="'.get_bloginfo('url').'/queue/'.$term->slug.'/" class="'.$term_class.' '.$term->slug.'">'.$term->name.'</a></li>'."\n";
 		}//end foreach
 
-		if( $include_completed ) {
-			$text .= '<li><a href="'.get_bloginfo('url').'/queue/complete/" class="'.$term_class.' completed">'.($span ? '<span>Completed</span>' : 'Completed').'</a></li>'."\n";
-		}
+		$text = apply_filters( 'the_queues', $text, $term_class, $span );
 
-		$text .= '</ul>';
+		$text = '<ul class="'.$class.'">'."\n" . $text . '</ul>';
 
 		echo $text;
 	}//end the_queues
