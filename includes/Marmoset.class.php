@@ -435,10 +435,6 @@ class Marmoset {
 				));
 			}
 		}
-
-		var_dump( $default_complexity );
-		var_dump( wp_count_terms('marm_complexity') );
-		die();
 	}//end init_complexities
 
 	/**
@@ -1001,7 +997,7 @@ add_action( 'add_meta_boxes_marm_project', 'Marmoset::remove_meta_boxes' );
 
 add_action( 'wp_ajax_project_submit', 'Marmoset::submit_project' );
 
-register_activation_hook( __FILE__, 'Marmoset::activate' );
+add_action( 'admin_init', 'Marmoset::activate' );
 
 if( !function_exists( 'the_project_complexity' ) ) {
 	$marm_project_complexity = array();
