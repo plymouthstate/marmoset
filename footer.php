@@ -1,6 +1,6 @@
 </div><!-- .body -->
 <footer class="grid_16">
-	<a href="http://github.com/abackstrom/marmoset">http://github.com/abackstrom/marmoset</a>
+	<a href="http://github.com/plymouthstate/marmoset">http://github.com/plymouthstate/marmoset</a>
 </footer>
 
 </div><!-- #outer.container_16 -->
