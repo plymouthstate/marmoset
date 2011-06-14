@@ -40,8 +40,7 @@ class Marmoset_Theme {
 			add_action( 'wp_footer', array( $this, 'project_filter' ) );
 		}
 
-		global $wp_rewrite;
-		$wp_rewrite->flush_rules();
+		flush_rewrite_rules();
 	}//end init
 
 	public function body_class( $classes ) {
