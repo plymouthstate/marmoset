@@ -394,7 +394,6 @@ class Marmoset {
 		register_taxonomy( 'marm_complexity', 'marm_project', $args );
 
 		if( wp_count_terms( 'marm_complexity' ) == 0 ) {
-
 			$default_complexity = array();
 			$default_complexity[] = array(
 				'name' => 'Value Size',
@@ -417,9 +416,9 @@ class Marmoset {
 				'desc' => 'more than a few developer months ( > 3 months )',
 			);
 
-			for( $i = 1; $i <= 5; $i++ ) {
-				wp_insert_term( $default_complexity[$i][$name], 'marm_complexity', array(
-					'description' => $default_complexity[$i][$dsec],
+			for( $i = 0; $i < 5; $i++ ) {
+				wp_insert_term( $default_complexity[$i]['name'], 'marm_complexity', array(
+					'description' => $default_complexity[$i]['dsec'],
 					'slug' => "complexity-$i",
 				));
 			}
