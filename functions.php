@@ -40,6 +40,17 @@ class Marmoset_Theme {
 			add_action( 'wp_footer', array( $this, 'project_filter' ) );
 		}
 
+		foreach( get_terms('marm_queue') as $term ) {
+			$id = register_sidebar(array(
+				'name' => 'Project Queue: ' . $term->name,
+				'before_widget' => '<div id="%1$s" class="widget %2$s">',
+				'after_widget' => '</div>',
+				'before_title' => '<h2>',
+				'after_title' => '</h2>',
+				'id' => sprintf( 'queue-%s', $term->slug ),
+			));
+		}
+
 		flush_rewrite_rules();
 	}//end init
 
@@ -70,7 +81,6 @@ class Marmoset_Theme {
 	public function rewrite_rules_array( $rules ) {
 		$new = array(
 			'submit/?$' => 'index.php?marm_submit=1',	
-			'complete/?$' => 'index.php?marm_widget_area=Completed+List',
 		);
 
 		return $new + $rules;
@@ -84,7 +94,7 @@ class Marmoset_Theme {
 			include TEMPLATEPATH . '/submit.php';
 			die();
 		} else {
-			if( isset($wp_query->query['marm_widget_area']) && $wp_query->query_vars['marm_widget_area'] == 'Completed List' ) {
+			if( isset($wp_query->query['marm_queue']) && $wp_query->query_vars['marm_queue'] == 'complete' ) {
 				add_filter( 'body_class', array( $this, 'body_class_completed' ) );
 			}//end if
 			add_action( 'wp_footer', array( $this, 'include_submit_form' ) );
@@ -229,19 +239,13 @@ class Marmoset_Theme {
 
 	public function widgets_init() {
 		register_sidebar(array(
-			'name' => 'Project List',
+			'name' => 'Default Project Queue',
 			'before_widget' => '<div id="%1$s" class="widget %2$s">',
 			'after_widget' => '</div>',
 			'before_title' => '<h2>',
 			'after_title' => '</h2>',
-		)); 
-
-		register_sidebar(array(
-			'name' => 'Completed List',
-			'before_widget' => '<div id="%1$s" class="widget %2$s">',
-			'after_widget' => '</div>',
-			'before_title' => '<h2>',
-			'after_title' => '</h2>',
+			'id' => 'default-project-list',
+			'description' => 'A default project list for queues that have not been customized below.',
 		)); 
 
 		register_widget( 'Marmoset_Widget_Projects' );
