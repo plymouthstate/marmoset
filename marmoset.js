@@ -505,7 +505,7 @@ $.root = $(document);
 
 marm.user_cap.edit_posts = $('body').hasClass('user-cap-edit_posts');
 
-$('.tax-marmqueue .projects').not('.non-default-orderby').sortable({
+$('.tax-marm_queue .projects').not('.non-default-orderby').sortable({
 	connectWith: '.projects',
 	cursor: 'default',
 	opacity: 0.4,
@@ -521,17 +521,17 @@ $('.tax-marmqueue .projects').not('.non-default-orderby').sortable({
 	}
 });
 
-$.root.delegate('.tax-marmqueue .projects', 'selectstart', function() { return false; });
+$.root.delegate('.tax-marm_queue .projects', 'selectstart', function() { return false; });
 
 var proj_queue = $('.project-queue').data('queue');
 
-$.root.delegate('.tax-marmqueue .project', 'click', function(e) { e.stopPropagation(); marm.toggle_select( $(this) ); });
+$.root.delegate('.tax-marm_queue .project', 'click', function(e) { e.stopPropagation(); marm.toggle_select( $(this) ); });
 $.root.delegate('html', 'click', function() {
 	marm.toggle_select();
 	$('#project-filter').hide();
 });
-$.root.delegate('.tax-marmqueue .project .details', 'click', function(e) { e.stopPropagation(); });
-$.root.delegate('.tax-marmqueue .project .permalink a', 'click', function(e) { e.stopPropagation(); });
+$.root.delegate('.tax-marm_queue .project .details', 'click', function(e) { e.stopPropagation(); });
+$.root.delegate('.tax-marm_queue .project .permalink a', 'click', function(e) { e.stopPropagation(); });
 
 /**
  * Complexity Behaviors
