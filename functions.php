@@ -108,8 +108,10 @@ class Marmoset_Theme {
 			'marm_queue' => null,
 		);
 
-		foreach( $wp_query->tax_query->queries as $query ) {
-			$taxes[ $query['taxonomy'] ] = $query;
+		if( $wp_query->tax_query->queries ) {
+			foreach( $wp_query->tax_query->queries as $query ) {
+				$taxes[ $query['taxonomy'] ] = $query;
+			}
 		}
 
 		if( $taxes['marm_status'] && $taxes['marm_queue'] ) {
