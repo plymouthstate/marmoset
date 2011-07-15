@@ -599,7 +599,7 @@ nav li {
 .complexity:hover ul {
   display: none; }
 
-.single-marmproject .projects > .project {
+.single-marm_project .projects > .project {
   background: #fff;
   border: 1px solid #888;
   cursor: default;
@@ -608,36 +608,36 @@ nav li {
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px; }
-  .single-marmproject .projects > .project .progress, .single-marmproject .projects > .project .contents, .single-marmproject .projects > .project .details, .single-marmproject .projects > .project .contents > div {
+  .single-marm_project .projects > .project .progress, .single-marm_project .projects > .project .contents, .single-marm_project .projects > .project .details, .single-marm_project .projects > .project .contents > div {
     position: relative; }
-  .single-marmproject .projects > .project .item-number {
+  .single-marm_project .projects > .project .item-number {
     display: none; }
-  .single-marmproject .projects > .project .contents {
+  .single-marm_project .projects > .project .contents {
     background: transparent;
     border-bottom: none;
     right: 1px; }
-  .single-marmproject .projects > .project .project-title {
+  .single-marm_project .projects > .project .project-title {
     background: transparent;
     border: none;
     padding-right: 6em;
     position: relative; }
-  .single-marmproject .projects > .project h2 {
+  .single-marm_project .projects > .project h2 {
     display: inline;
     font-size: 1.8em;
     margin-right: 5.2em; }
-    .single-marmproject .projects > .project h2 .type {
+    .single-marm_project .projects > .project h2 .type {
       display: inline; }
-  .single-marmproject .projects > .project .date {
+  .single-marm_project .projects > .project .date {
     font-size: 1.8em;
     margin-right: 1em; }
-  .single-marmproject .projects > .project .progress-container {
+  .single-marm_project .projects > .project .progress-container {
     border-bottom: 1px solid #888;
     border-top: 1px solid #888;
     clear: both;
     margin-top: 0.4em;
     position: static;
     height: 0.4em; }
-  .single-marmproject .projects > .project .progress {
+  .single-marm_project .projects > .project .progress {
     border: none;
     position: relative;
     height: 0.4em;
@@ -646,24 +646,24 @@ nav li {
     border-radius: 0;
     -moz-border-radius: 0;
     -webkit-border-radius: 0; }
-  .single-marmproject .projects > .project .progress-0 {
+  .single-marm_project .projects > .project .progress-0 {
     background-color: #f5f5f5;
     visibility: visible; }
-  .single-marmproject .projects > .project .progress-100 {
+  .single-marm_project .projects > .project .progress-100 {
     right: 1px; }
-  .single-marmproject .projects > .project .contents > div.complexity {
+  .single-marm_project .projects > .project .contents > div.complexity {
     position: absolute;
     opacity: 1;
     right: 3px;
     width: auto;
     top: 0; }
-  .single-marmproject .projects > .project .complexity span {
+  .single-marm_project .projects > .project .complexity span {
     height: 2.5em;
     margin-bottom: 0.25em;
     margin-top: 0.25em; }
-  .single-marmproject .projects > .project .complexity:hover ul {
+  .single-marm_project .projects > .project .complexity:hover ul {
     display: none; }
-  .single-marmproject .projects > .project .details {
+  .single-marm_project .projects > .project .details {
     background: transparent;
     border: none;
     display: block;
@@ -673,14 +673,14 @@ nav li {
     border-radius: 0;
     -moz-border-radius: 0;
     -webkit-border-radius: 0; }
-    .single-marmproject .projects > .project .details .meta, .single-marmproject .projects > .project .details .body p {
+    .single-marm_project .projects > .project .details .meta, .single-marm_project .projects > .project .details .body p {
       font-size: 1.1em; }
 
-.single-marmproject .projects > .expanded .permalink,
-.single-marmproject .projects > .project:hover .permalink {
+.single-marm_project .projects > .expanded .permalink,
+.single-marm_project .projects > .project:hover .permalink {
   display: none; }
 
-.single-marmproject .past-due h2 > span {
+.single-marm_project .past-due h2 > span {
   background-position: 0 6px; }
 
 textarea[name=marm-content] {
@@ -883,7 +883,7 @@ a.delete:hover {
     margin-top: 0;
     padding-left: 0; }
 
-  .single-marmproject .past-due h2 > span,
+  .single-marm_project .past-due h2 > span,
   .projects .past-due h2 > span {
     background-image: none;
     color: #86100f;

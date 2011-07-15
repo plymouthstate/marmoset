@@ -708,7 +708,7 @@ $projectwidth: 80%;
 	display: none;
 }
 
-.single-marmproject .projects > .project {
+.single-marm_project .projects > .project {
 	background: #fff;
 	border: 1px solid #888;
 	cursor: default;
@@ -811,12 +811,12 @@ $projectwidth: 80%;
 	}
 }
 
-.single-marmproject .projects > .expanded,
-.single-marmproject .projects > .project:hover {
+.single-marm_project .projects > .expanded,
+.single-marm_project .projects > .project:hover {
 	.permalink { display: none; }
 }
 
-.single-marmproject .past-due h2 > span {
+.single-marm_project .past-due h2 > span {
 	background-position: 0 6px;
 }
 
@@ -1045,7 +1045,7 @@ a.delete:hover{ background-color: #f7cfcf; }
 		padding-left: 0;
 	}
 
-	.single-marmproject .past-due h2 > span,
+	.single-marm_project .past-due h2 > span,
 	.projects .past-due h2 > span {
 		background-image: none;
 		color: #86100f;
