@@ -464,7 +464,7 @@ marm.complexity = {
 			var params = {
 				'action': 'change_complexity',
 				'marm-complexity': complexity,
-				'project-id' : $el.parents( 'li' ).data( 'postid' ),
+				'project-id' : $el.parents( 'li' ).data( 'postid' )
 			};
 			$.ajax({
 				type: 'POST',
@@ -481,7 +481,7 @@ marm.complexity = {
 
 					$complexity.text( 'Project Complexity: '+ (json.description ? json.description : json.name) );
 					$el.attr('title', json.name ).find( '.readable' ).text( json.name );
-				},
+				}
 			});
 		}
 	}
@@ -493,7 +493,7 @@ marm.submit = function(e){
 		url:  admin_ajax,
 		data: $(this).closest('form').serialize(),
 		success: function(json) { window.location=json.url; },
-		dataTYPE: 'json',
+		dataTYPE: 'json'
 	});
 
 	return false;
