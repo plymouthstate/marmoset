@@ -82,7 +82,7 @@ Marmoset_Filters.prototype.diff = function( left, right ) {
 		result[meta] = result[meta] || [];
 
 		$.each( values, function( j, value ) {
-			var index = $.inArray( value, left[meta] );
+			var index = $.inArray( value, left[meta] || [] );
 
 			if( index == -1 ) {
 				result[meta].push( value );
@@ -165,8 +165,8 @@ Marmoset_Hash.prototype.toggle = function( meta, value, action ) {
 	action = action || this.AUTO;
 
 	this.parse_hash();
-	var index = $.inArray( value, this.keypairs[meta] );
 	this.keypairs[meta] = this.keypairs[meta] || [];
+	var index = $.inArray( value, this.keypairs[meta] );
 
 	// No need to add if it's already there.
 	if( index > -1 && action == this.ADD ) {
@@ -353,7 +353,7 @@ var marm = {
 	},
 
 	toggle_meta_filter: function( meta, member, toggleOn ) {
-		var filter_index = $.inArray( member, marm.filters[meta] ),
+		var filter_index = $.inArray( member, marm.filters[meta] || [] ),
 			$style = marm.get_or_create_style( meta, member ),
 			isCurrentlyDisabled = $style.filterDisabled();
 
