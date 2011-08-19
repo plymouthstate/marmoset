@@ -19,10 +19,10 @@ class Marmoset_Theme {
 
 	public function init() {
 		if( !is_admin() ) {
-			wp_enqueue_script( 'marmoset-js', get_bloginfo('template_directory') . '/marmoset.js', array('jquery-ui-183', 'jquery-hotkeys'), 1295976528, true );
+			wp_enqueue_script( 'marmoset-js', get_bloginfo('template_directory') . '/marmoset.js', array('jquery-ui-183', 'jquery-hotkeys'), 1311087215, true );
 			wp_enqueue_style( 'marmoset-960', get_bloginfo('template_directory') . '/960.css' );
 			wp_enqueue_style( 'colorbox-theme6', get_bloginfo('template_directory') . '/js/colorbox/theme6/colorbox.css' );
-			wp_enqueue_style( 'marmoset-style', get_bloginfo('template_directory') . '/style.css', 'marmoset-960', 5 );
+			wp_enqueue_style( 'marmoset-style', get_bloginfo('template_directory') . '/style.css', 'marmoset-960', 1310760789 );
 
 			wp_enqueue_script( 'jquery-ui-183', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js', array('jquery'), '1.8.3', true );
 
@@ -108,8 +108,10 @@ class Marmoset_Theme {
 			'marm_queue' => null,
 		);
 
-		foreach( $wp_query->tax_query->queries as $query ) {
-			$taxes[ $query['taxonomy'] ] = $query;
+		if( $wp_query->tax_query->queries ) {
+			foreach( $wp_query->tax_query->queries as $query ) {
+				$taxes[ $query['taxonomy'] ] = $query;
+			}
 		}
 
 		if( $taxes['marm_status'] && $taxes['marm_queue'] ) {

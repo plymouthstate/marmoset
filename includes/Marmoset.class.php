@@ -656,8 +656,6 @@ class Marmoset {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		$status = $args['status'];
-
 		if( isset($args['queue']) ) {
 			$queue = $args['queue'];
 		} else {
@@ -671,29 +669,43 @@ class Marmoset {
 		$queue_field = 'slug';
 
 		if( is_int($status) || is_numeric($status) ) {
-			$status = (int)$status;
+			$status = (int)$args['marm_status'];
 			$status_field = 'term_id';
+		} else {
+			$status = $args['marm_status'];
+			$status_field = 'slug';
 		}
 
 		if( is_int($queue) || is_numeric($queue) ) {
-			$queue = (int)$queue;
+			$queue = (int)$args['marm_queue'];
 			$queue_field = 'term_id';
+		} else {
+			$queue = $args['marm_queue'];
+			$queue_field = 'slug';
 		}
 
-		$tax_query = array(
-			array(
+		$tax_query = array();
+
+		if( $status ) {
+			$tax_query[] = array(
 				'taxonomy' => 'marm_status',
 				'terms' => $status,
 				'field' => $status_field,
-			),
-			array(
+			);
+		}
+
+		if( $queue ) {
+			$tax_query[] = array(
 				'taxonomy' => 'marm_queue',
 				'terms' => $queue,
 				'field' => $queue_field,
-			),
-		);
+			);
+		}
 
-		$args['tax_query'] = $tax_query;
+		if( $tax_query ) {
+			$args['tax_query'] = $tax_query;
+		}
+
 		query_posts( $args );
 
 		if( $args['meta_key'] != 'project_order' ) {

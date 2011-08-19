@@ -82,7 +82,7 @@ Marmoset_Filters.prototype.diff = function( left, right ) {
 		result[meta] = result[meta] || [];
 
 		$.each( values, function( j, value ) {
-			var index = $.inArray( value, left[meta] );
+			var index = $.inArray( value, left[meta] || [] );
 
 			if( index == -1 ) {
 				result[meta].push( value );
@@ -165,8 +165,8 @@ Marmoset_Hash.prototype.toggle = function( meta, value, action ) {
 	action = action || this.AUTO;
 
 	this.parse_hash();
-	var index = $.inArray( value, this.keypairs[meta] );
 	this.keypairs[meta] = this.keypairs[meta] || [];
+	var index = $.inArray( value, this.keypairs[meta] );
 
 	// No need to add if it's already there.
 	if( index > -1 && action == this.ADD ) {
@@ -353,7 +353,7 @@ var marm = {
 	},
 
 	toggle_meta_filter: function( meta, member, toggleOn ) {
-		var filter_index = $.inArray( member, marm.filters[meta] ),
+		var filter_index = $.inArray( member, marm.filters[meta] || [] ),
 			$style = marm.get_or_create_style( meta, member ),
 			isCurrentlyDisabled = $style.filterDisabled();
 
@@ -464,7 +464,7 @@ marm.complexity = {
 			var params = {
 				'action': 'change_complexity',
 				'marm-complexity': complexity,
-				'project-id' : $el.parents( 'li' ).data( 'postid' ),
+				'project-id' : $el.parents( 'li' ).data( 'postid' )
 			};
 			$.ajax({
 				type: 'POST',
@@ -481,7 +481,7 @@ marm.complexity = {
 
 					$complexity.text( 'Project Complexity: '+ (json.description ? json.description : json.name) );
 					$el.attr('title', json.name ).find( '.readable' ).text( json.name );
-				},
+				}
 			});
 		}
 	}
@@ -493,7 +493,7 @@ marm.submit = function(e){
 		url:  admin_ajax,
 		data: $(this).closest('form').serialize(),
 		success: function(json) { window.location=json.url; },
-		dataTYPE: 'json',
+		dataTYPE: 'json'
 	});
 
 	return false;
@@ -505,7 +505,7 @@ $.root = $(document);
 
 marm.user_cap.edit_posts = $('body').hasClass('user-cap-edit_posts');
 
-$('.tax-marmqueue .projects').not('.non-default-orderby').sortable({
+$('.tax-marm_queue .projects').not('.non-default-orderby').sortable({
 	connectWith: '.projects',
 	cursor: 'default',
 	opacity: 0.4,
@@ -521,17 +521,17 @@ $('.tax-marmqueue .projects').not('.non-default-orderby').sortable({
 	}
 });
 
-$.root.delegate('.tax-marmqueue .projects', 'selectstart', function() { return false; });
+$.root.delegate('.tax-marm_queue .projects', 'selectstart', function() { return false; });
 
 var proj_queue = $('.project-queue').data('queue');
 
-$.root.delegate('.tax-marmqueue .project', 'click', function(e) { e.stopPropagation(); marm.toggle_select( $(this) ); });
+$.root.delegate('.tax-marm_queue .project', 'click', function(e) { e.stopPropagation(); marm.toggle_select( $(this) ); });
 $.root.delegate('html', 'click', function() {
 	marm.toggle_select();
 	$('#project-filter').hide();
 });
-$.root.delegate('.tax-marmqueue .project .details', 'click', function(e) { e.stopPropagation(); });
-$.root.delegate('.tax-marmqueue .project .permalink a', 'click', function(e) { e.stopPropagation(); });
+$.root.delegate('.tax-marm_queue .project .details', 'click', function(e) { e.stopPropagation(); });
+$.root.delegate('.tax-marm_queue .project .permalink a', 'click', function(e) { e.stopPropagation(); });
 
 /**
  * Complexity Behaviors
