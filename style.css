@@ -105,7 +105,8 @@ nav li {
 
 .project {
   cursor: pointer;
-  cursor: hand; }
+  cursor: hand;
+  position: relative; }
   .project .progress-percent {
     color: #555; }
     .project .progress-percent span {

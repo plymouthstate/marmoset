@@ -8,7 +8,7 @@
 <?php if ( is_singular() && get_option( 'thread_comments' ) ) wp_enqueue_script( 'comment-reply' ); ?>
 <?php wp_head(); ?>
 <script type="text/javascript">
-var admin_ajax = '<?php echo admin_url('admin-ajax.php'); ?>';
+var admin_ajax = '<?php $admin_url = admin_url('admin-ajax.php'); $admin_url = $_SERVER['HTTPS'] == 'on' ? str_replace('http:', 'https:', $admin_url) : str_replace('https:', 'http:', $admin_url); echo $admin_url;?>';
 var wp_username = '<?php echo wp_get_current_user()->user_login; ?>';
 </script>
 </head>
