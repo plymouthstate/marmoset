@@ -3,6 +3,9 @@
 include __DIR__ . '/includes/Marmoset.class.php';
 
 class Marmoset_Theme {
+	/** Tracked in option tables, used to flush rewrite rules. */
+	const REWRITE_VERSION = 2;
+
 	public $found_members = array();
 	public $found_stakeholders = array();
 	public $found_statuses = array();
@@ -61,7 +64,16 @@ class Marmoset_Theme {
 			));
 		}
 
-		flush_rewrite_rules();
+		if( false === ( $ver = get_option('marm_rewrite_ver') ) ) {
+			add_option( 'marm_rewrite_ver', self::REWRITE_VERSION, null, true );
+			$ver = self::REWRITE_VERSION;
+			flush_rewrite_rules();
+		}
+
+		if( $ver < self::REWRITE_VERSION ) {
+			update_option( 'marm_rewrite_ver', self::REWRITE_VERSION );
+			flush_rewrite_rules();
+		}
 	}//end init
 
 	public function body_class( $classes ) {
@@ -454,3 +466,8 @@ add_action( 'body_class', array( $marmoset_theme, 'body_class' ) );
 add_filter( 'query_vars', array( $marmoset_theme, 'query_vars' ) );
 add_action( 'template_redirect', array( $marmoset_theme, 'template_redirect' ) );
 add_action( 'rewrite_rules_array', array( $marmoset_theme, 'rewrite_rules_array' ) );
+
+add_action( 'post_rewrite_rules', function($r){
+	var_dump('post rewrite');
+	return $r;
+});
