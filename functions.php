@@ -127,7 +127,7 @@ class Marmoset_Theme {
 		}
 
 		if( $taxes['marm_status'] && $taxes['marm_queue'] ) {
-			$wp_query->queried_object = get_term_by( $taxes['marm_queue']['field'], reset( $taxes['marm_queue']['terms'] ), 'marm_queue' );
+			$wp_query->queried_object = Marmoset::get_term_by( $taxes['marm_queue']['field'], reset( $taxes['marm_queue']['terms'] ), 'marm_queue' );
 		}
 
 		$this->queried_status = $taxes['marm_status'];
@@ -241,44 +241,46 @@ class Marmoset_Theme {
 	 */
 	public function update_found_terms() {
 		$stakeholders = Marmoset::get_the_stakeholders();
-		foreach( $stakeholders as $stakeholder ) {
-			$this->found_stakeholders[ $stakeholder->slug ] += 1;
+		foreach( $stakeholders as &$stakeholder ) {
+			if( !$this->stakeholders[$stakeholder->slug] ) {
+				$this->stakeholders[$stakeholder->slug] = $stakeholder;
+			}
+			$this->stakeholders[$stakeholder->slug]->found_count++;
 		}
 
 		$members = Marmoset::get_the_members();
-		foreach( $members as $member ) {
-			$this->found_members[ $member->slug ] += 1;
+		foreach( $members as &$member ) {
+			if( !$this->members[$member->slug] ) {
+				$this->members[$member->slug] = $member;
+			}
+			$this->members[$member->slug]->found_count++;
 		}
 
 		$status = Marmoset::get_the_status();
-		$this->found_statuses[ $status->slug ] += 1;
+		if( !$this->statuses[$status->slug] ) {
+			$this->statuses[$status->slug] = $status;
+		}
+		$this->statuses[$status->slug]->found_count++;
 	}//end update_found_terms
 
 	public function output_found_terms() {
 		echo '<ul>';
-		$this->output_found_terms_for( 'marm_stakeholders', $this->found_stakeholders );
-		$this->output_found_terms_for( 'marm_members', $this->found_members );
-		$this->output_found_terms_for( 'marm_status', $this->found_statuses );
+		$this->output_found_terms_for( 'marm_stakeholders', $this->stakeholders );
+		$this->output_found_terms_for( 'marm_members', $this->members );
+		$this->output_found_terms_for( 'marm_status', $this->statuses );
 		echo '</ul>';
 	}
 
 	public function output_found_terms_for( $taxonomy_slug, $terms ) {
 		$taxonomy = get_taxonomy( $taxonomy_slug );
-		$terms_full = array();
-
 		// trim marm_ off the front (hacky, needs a fix)
 		echo '<li class="' . substr( $taxonomy->name, 5 ) . '"><span>' . $taxonomy->labels->name . ':</span>';
 
 		echo '<ul>';
-		foreach( $terms as $term_slug => $found_count ) {
-			$term = get_term_by( 'slug', $term_slug, $taxonomy->name );
-			$term->found_count = $found_count;
-			$terms_full[] = $term;
-		}
 
-		usort( $terms_full, create_function( '$a, $b', 'return strnatcasecmp($a->name, $b->name);' ) );
+		usort( $terms, create_function( '$a, $b', 'return strnatcasecmp($a->name, $b->name);' ) );
 
-		foreach( $terms_full as $term ) {
+		foreach( $terms as $term ) {
 			echo '<li class="' . $term->slug . '"><a href="#">' . $term->name . ' (' . $term->found_count . ')</a></li>';
 		}
 
@@ -323,7 +325,7 @@ class Marmoset_Widget_Projects extends WP_Widget {
 			return;
 		}
 
-		$term = get_term_by( 'slug', $instance['term_slug'], 'marm_status' );
+		$term = Marmoset::get_term_by( 'slug', $instance['term_slug'], 'marm_status' );
 		$title = $term->name;
 
 		$project_args = array(

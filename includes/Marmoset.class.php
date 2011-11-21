@@ -11,6 +11,7 @@ License: GPL2
 
 class Marmoset {
 	public static $project_classes = array();
+	public static $terms = array();
 
 	/**
 	 * returns the project's members
@@ -258,7 +259,7 @@ class Marmoset {
 		global $post;
 
 		if( !isset( $post->members ) ) {
-			$post->members = wp_get_object_terms( get_the_ID(), array('marm_members') );
+			$post->members = self::get_the_marm('marm_members');
 		}//end if
 
 		return $post->members;
@@ -271,7 +272,7 @@ class Marmoset {
 		global $post;
 
 		if( !isset( $post->queue ) ) {
-			$queue = wp_get_object_terms( get_the_ID(), array('marm_queue') );
+			$queue = self::get_the_marm('marm_queue');
 			$post->queue = $queue[0];
 		}//end if
 
@@ -285,9 +286,8 @@ class Marmoset {
 		global $post;
 
 		if( !isset( $post->stakeholders ) ) {
-			$post->stakeholders = wp_get_object_terms( get_the_ID(), array('marm_stakeholders') );
+			$post->stakeholders = self::get_the_marm('marm_stakeholders');
 		}//end if
-
 		return $post->stakeholders;
 	}//end get_the_stakeholders
 
@@ -298,7 +298,7 @@ class Marmoset {
 		global $post;
 
 		if( !isset( $post->marm_status ) ) {
-			$post->marm_status = array_pop( wp_get_object_terms( get_the_ID(), array('marm_status') ) );
+			$post->marm_status = array_pop( self::get_the_marm('marm_status') );
 		}//end if
 
 		return $post->marm_status;
@@ -445,6 +445,14 @@ class Marmoset {
 		self::init_complexities();
 	}//end activate
 
+
+	public static function get_term_by($field, $value, $taxonomy) {
+		if( !self::$terms[$taxonomy][$value][$field] ) {
+			self::$terms[$taxonomy][$value][$field] = get_term_by( $field, $value, $taxonomy );
+		} // end if
+		return self::$terms[$taxonomy][$value][$field] ;
+	} // end get_term_by
+
 	public static function project_meta_box_cb() {
 		add_meta_box('marm-project-props', 'Project Properties', 'Marmoset::project_properties', 'marm_project', 'side', 'high' );
 	}//end project_meta_box_cb
@@ -479,18 +487,18 @@ class Marmoset {
 		// set defaults if they weren't already set
 		if( !isset($tax['marm_queue']) ) {
 			/// TODO: hookable
-			$marm_queue = get_term_by( 'slug', 'small', 'marm_queue' );
+			$marm_queue = self::get_term_by( 'slug', 'small', 'marm_queue' );
 			$tax['marm_queue'] = $marm_queue->term_id;
 		}
 
 		if( !isset($tax['marm_status']) ) {
 			/// TODO: hookable
-			$marm_status = get_term_by( 'slug', 'current', 'marm_status' );
+			$marm_status = self::get_term_by( 'slug', 'current', 'marm_status' );
 			$tax['marm_status'] = $marm_status->term_id;
 		}
 
 		if( !isset($tax['marm_complexity']) ) {
-			$marm_complexity = get_term_by( 'slug', 'complexity-0', 'marm_complexity' );
+			$marm_complexity = self::get_term_by( 'slug', 'complexity-0', 'marm_complexity' );
 			$tax['marm_complexity'] = $marm_complexity->term_id;
 		}
 
@@ -520,7 +528,7 @@ class Marmoset {
 		echo '<br/>';
 
 		echo '<label for="marm-complexity">Complexity (1-5):</label> ';
-		wp_dropdown_categories("hide_empty=0&taxonomy=marm_complexity&orderby=slug&name=marm-complexity&selected={$tax['marm_complexity']}");
+		wp_dropdown_categories("hide_empty=0&taxonomy=marm_complexity&orderby=slug&name=marm-complexity&selected={$tax['marm_complexity']->term_id}");
 	}
 
 	public static function project_properties_save( $post_id, $force = false ) {
@@ -601,23 +609,23 @@ class Marmoset {
 	}//end project_properties_save
 
 	public static function project_taxonomies( $post_id ) {
+		static $terms = array();
+
 		if( $parent_id = wp_is_post_revision( $post_id ) ) {
 			$post_id = $parent_id;
 		}
 
-		$terms = wp_get_object_terms( $post_id, array('marm_queue', 'marm_status', 'marm_complexity') );
-
-		$return = array();
-
-		foreach( $terms as $term ) {
-			$return[$term->taxonomy] = $term->term_id;
+		if( !$terms[$post_id] ) {
+			$terms[$post_id]['marm_queue'] = self::get_the_marm('marm_queue', $post_id);
+			$terms[$post_id]['marm_status'] = self::get_the_marm('marm_status', $post_id);
+			$terms[$post_id]['marm_complexity'] = array_pop(self::get_the_marm('marm_complexity', $post_id));
 		}
 
-		if( ! isset($terms['marm_complexity']) ) {
-			$terms['marm_complexity'] = get_term_by( 'slug', 'complexity-0', 'marm_complexity' );
+		if( ! isset($terms[$post_id]['marm_complexity']) ) {
+			$terms[$post_id]['marm_complexity'] = self::get_term_by( 'slug', 'complexity-0', 'marm_complexity' );
 		}
 
-		return $return;
+		return $terms[$post_id];
 	}
 
 	/**
@@ -874,12 +882,33 @@ class Marmoset {
 	public static function the_status() {
 		echo self::get_formatted_status();
 	}//end the_queue
-	
+
+	public static function get_the_marm( $which=false, $post_id=null ) {
+		static $terms = array();
+
+		$id = $post_id ?: get_the_ID();
+
+		if( !$terms[$id] ) {
+			$stuff = wp_get_object_terms( $id, array('marm_complexity', 'marm_status', 'marm_members', 'marm_stakeholders', 'marm_queue') );
+			foreach( $stuff as $term ) {
+				$terms[$id][$term->taxonomy][] = $term;
+			}
+		} // end if
+
+		if($which){
+			return $terms[$id][$which];
+		} // end if
+
+		return $terms[$id];
+	} // end get_the_marm
+
 	public static function get_the_complexity_description()
 	{
-		$complexity = wp_get_object_terms( get_the_ID(), 'marm_complexity' );
-		return ($complexity[0]->description ? $complexity[0]->description : $complexity[0]->name);
-	}
+		$complexity = self::get_the_marm('marm_complexity');
+
+		return $complexity[0]->description ?: $complexity[0]->name;
+	} 	
+
 	public static function the_complexity_description()
 	{
 		echo self::get_the_complexity_description();
@@ -990,14 +1019,14 @@ class Marmoset {
 		$post_parent = wp_is_post_revision( $post_id );
 		$post_tax_id = $post_parent ? $post_parent : $post_id;
 
-		$term = get_term_by( 'slug', 'complexity-' . $project_complexity, 'marm_complexity' );
+		$term = self::get_term_by( 'slug', 'complexity-' . $project_complexity, 'marm_complexity' );
 
 		wp_set_object_terms( $post_tax_id, $term->slug, 'marm_complexity' );
 	}
 
 	public static function display_complexity() {
 		header("Content-type: json");
-		$tax = get_term_by( 'slug', 'complexity-' . $_REQUEST['marm-complexity'], 'marm_complexity' );
+		$tax = self::get_term_by( 'slug', 'complexity-' . $_REQUEST['marm-complexity'], 'marm_complexity' );
 		$complexity_info = array(
 			'description' => htmlspecialchars_decode( $tax->description ),
 			'name' => $tax->name,
